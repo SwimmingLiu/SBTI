@@ -9,7 +9,9 @@
     "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "capture:remote": "tsx scripts/capture-remote-results.ts",
+    "capture:local": "tsx scripts/capture-local-results.ts"
   },
   "dependencies": {
     "next": "16.2.3",
@@ -27,7 +29,9 @@
     "eslint-config-next": "16.2.3",
     "playwright": "^1.59.1",
     "tailwindcss": "^4",
+    "tsx": "^4.20.6",
     "typescript": "^5",
+    "vercel": "^48.1.6",
     "vitest": "^4.1.4"
   }
 }

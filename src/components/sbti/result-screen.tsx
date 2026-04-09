@@ -28,13 +28,17 @@ export function ResultScreen({
       <div className="px-4 pb-14 pt-6">
         <div className="mx-auto max-w-[980px] rounded-[22px] border border-[var(--line)] bg-[var(--panel)] p-6 shadow-[0_16px_40px_rgba(47,73,55,0.08)] md:p-7">
           <div className="grid gap-4 lg:grid-cols-[1.05fr_0.95fr]">
-            <div className="rounded-[24px] border border-[var(--line)] bg-[linear-gradient(180deg,#fbfefb,#f3f8f4)] p-4">
+            <div
+              className="rounded-[24px] border border-[var(--line)] bg-[linear-gradient(180deg,#fbfefb,#f3f8f4)] p-4"
+              id="posterBox"
+            >
               {imageSrc ? (
                 <div className="relative aspect-[3/4] w-full overflow-hidden rounded-[18px]">
                   <Image
                     alt={`${result.finalType.code}（${result.finalType.cn}）`}
                     className="object-cover"
                     fill
+                    id="posterImage"
                     sizes="(max-width: 1024px) 100vw, 50vw"
                     src={imageSrc}
                   />
@@ -44,21 +48,35 @@ export function ResultScreen({
                   图片缺失
                 </div>
               )}
-              <div className="mt-3 rounded-2xl bg-white px-4 py-3 text-sm text-[var(--muted)]">
+              <div
+                className="mt-3 rounded-2xl bg-white px-4 py-3 text-sm text-[var(--muted)]"
+                id="posterCaption"
+              >
                 {result.finalType.intro}
               </div>
             </div>
 
             <div className="flex flex-col gap-4">
               <div className="rounded-[24px] border border-[var(--line)] bg-[linear-gradient(180deg,#ffffff,#fbfdfb)] p-5">
-                <div className="text-sm text-[var(--muted)]">{result.modeKicker}</div>
-                <div className="mt-2 text-3xl font-semibold tracking-[-0.03em] text-[var(--foreground)] md:text-4xl">
+                <div className="text-sm text-[var(--muted)]" id="resultModeKicker">
+                  {result.modeKicker}
+                </div>
+                <div
+                  className="mt-2 text-3xl font-semibold tracking-[-0.03em] text-[var(--foreground)] md:text-4xl"
+                  id="resultTypeName"
+                >
                   {result.finalType.code}（{result.finalType.cn}）
                 </div>
-                <div className="mt-3 inline-flex rounded-full bg-[var(--soft)] px-3 py-1.5 text-sm font-medium text-[var(--accent-strong)]">
+                <div
+                  className="mt-3 inline-flex rounded-full bg-[var(--soft)] px-3 py-1.5 text-sm font-medium text-[var(--accent-strong)]"
+                  id="matchBadge"
+                >
                   {result.badge}
                 </div>
-                <div className="mt-3 text-sm leading-6 text-[var(--muted)]">
+                <div
+                  className="mt-3 text-sm leading-6 text-[var(--muted)]"
+                  id="resultTypeSub"
+                >
                   {result.sub}
                 </div>
               </div>
@@ -67,7 +85,10 @@ export function ResultScreen({
                 <h2 className="text-lg font-semibold text-[var(--foreground)]">
                   该人格的简单解读
                 </h2>
-                <p className="mt-3 whitespace-pre-wrap text-sm leading-7 text-[var(--muted)]">
+                <p
+                  className="mt-3 whitespace-pre-wrap text-sm leading-7 text-[var(--muted)]"
+                  id="resultDesc"
+                >
                   {result.finalType.desc}
                 </p>
               </div>
@@ -78,7 +99,7 @@ export function ResultScreen({
             <h2 className="text-lg font-semibold text-[var(--foreground)]">
               十五维度评分
             </h2>
-            <div className="mt-4">
+            <div className="mt-4" id="dimList">
               <DimensionList result={result} />
             </div>
           </div>
@@ -87,7 +108,7 @@ export function ResultScreen({
             <h2 className="text-lg font-semibold text-[var(--foreground)]">
               友情提示
             </h2>
-            <p className="mt-3 text-sm leading-7 text-[var(--muted)]">
+            <p className="mt-3 text-sm leading-7 text-[var(--muted)]" id="funNote">
               {getFunNote(result)}
             </p>
           </div>
@@ -115,6 +136,7 @@ export function ResultScreen({
           <div className="mt-6 flex flex-wrap gap-3">
             <button
               className="rounded-2xl border border-[var(--line)] bg-white px-5 py-3 font-semibold text-[var(--accent-strong)] transition hover:-translate-y-0.5"
+              id="restartBtn"
               onClick={onRestart}
               type="button"
             >
@@ -122,6 +144,7 @@ export function ResultScreen({
             </button>
             <button
               className="rounded-2xl bg-[var(--accent-strong)] px-5 py-3 font-semibold text-white shadow-[0_12px_30px_rgba(77,106,83,0.18)] transition hover:-translate-y-0.5"
+              id="toTopBtn"
               onClick={onToTop}
               type="button"
             >

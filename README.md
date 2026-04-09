@@ -8,7 +8,7 @@ SBTI 人格测试站点复刻工程。
 - [x] 原站结果图已同步到 `public/assets/original/sbti`
 - [x] 首页与答题页流程已完成
 - [x] 结果页与完整人格判定逻辑
-- [ ] 远端 / 本地全结果浏览器抓取
+- [x] 远端 / 本地全结果浏览器抓取
 - [ ] Vercel 生产部署
 
 ## 本地开发
@@ -32,3 +32,15 @@ npm run build
 ```bash
 node scripts/extract-remote-assets.mjs
 ```
+
+## 全结果抓取
+
+```bash
+npm run capture:remote
+npm run capture:local
+```
+
+抓取结果会输出到：
+
+- `research/original/results`
+- `research/local/results`
