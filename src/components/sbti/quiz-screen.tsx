@@ -36,13 +36,16 @@ export function QuizScreen({
             <div className="h-2.5 min-w-[240px] flex-1 overflow-hidden rounded-full bg-[#edf3ee]">
               <span
                 className="block h-full rounded-full bg-[linear-gradient(90deg,#97b59c,#5b7a62)] transition-[width] duration-200"
+                id="progressBar"
                 style={{ width: `${progress}%` }}
               />
             </div>
-            <div className="text-sm text-[var(--muted)]">{doneCount} / {totalCount}</div>
+            <div className="text-sm text-[var(--muted)]" id="progressText">
+              {doneCount} / {totalCount}
+            </div>
           </div>
 
-          <div className="grid gap-4">
+          <div className="grid gap-4" id="questionList">
             {visibleQuestions.map((question, index) => (
               <QuestionCard
                 index={index}
@@ -56,7 +59,7 @@ export function QuizScreen({
           </div>
 
           <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
-            <p className="text-sm leading-6 text-[var(--muted)]">
+            <p className="text-sm leading-6 text-[var(--muted)]" id="testHint">
               {isComplete
                 ? "都做完了。现在可以把你的电子魂魄交给结果页审判。"
                 : "全选完才会放行。世界已经够乱了，起码把题做完整。"}
@@ -64,6 +67,7 @@ export function QuizScreen({
             <div className="flex flex-wrap gap-3">
               <button
                 className="rounded-2xl border border-[var(--line)] bg-white px-5 py-3 font-semibold text-[var(--accent-strong)] transition hover:-translate-y-0.5"
+                id="backIntroBtn"
                 onClick={onBackToIntro}
                 type="button"
               >
@@ -72,6 +76,7 @@ export function QuizScreen({
               <button
                 className="rounded-2xl bg-[var(--accent-strong)] px-5 py-3 font-semibold text-white shadow-[0_12px_30px_rgba(77,106,83,0.18)] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-55 disabled:hover:translate-y-0"
                 disabled={!isComplete}
+                id="submitBtn"
                 onClick={onSubmit}
                 type="button"
               >

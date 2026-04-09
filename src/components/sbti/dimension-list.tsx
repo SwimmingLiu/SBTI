@@ -18,14 +18,14 @@ export function DimensionList({ result }: DimensionListProps) {
 
         return (
           <div
-            className="rounded-2xl border border-[var(--line)] bg-white px-4 py-3"
+            className="dim-item rounded-2xl border border-[var(--line)] bg-white px-4 py-3"
             key={dimension}
           >
             <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-              <div className="font-semibold text-[var(--foreground)]">
+              <div className="dim-item-name font-semibold text-[var(--foreground)]">
                 {dimensionMeta[dimension].name}
               </div>
-              <div className="text-sm text-[var(--muted)]">
+              <div className="dim-item-score text-sm text-[var(--muted)]">
                 {level} / {result.rawScores[dimension]}分
               </div>
             </div>

@@ -10,6 +10,7 @@ import {
   getVisibleQuestions,
   sumToLevel,
 } from "@/lib/sbti-engine";
+import { buildResultScenarios } from "@/lib/sbti-scenarios";
 
 describe("sbti data helpers", () => {
   it("extracts type image mappings from original html", () => {
@@ -137,5 +138,15 @@ describe("sbti engine", () => {
     expect(result.finalType.code).toBe("HHHH");
     expect(result.special).toBe(true);
     expect(result.bestNormal.similarity).toBeLessThan(60);
+  });
+
+  it("builds deterministic scenarios for all reachable results", () => {
+    const scenarios = buildResultScenarios();
+    const codes = scenarios.map((scenario) => scenario.code);
+
+    expect(new Set(codes).size).toBe(27);
+    expect(codes).toContain("CTRL");
+    expect(codes).toContain("DRUNK");
+    expect(codes).toContain("HHHH");
   });
 });
