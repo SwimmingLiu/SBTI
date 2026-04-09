@@ -4,10 +4,11 @@ import { useMemo, useState } from "react";
 
 import { IntroScreen } from "@/components/sbti/intro-screen";
 import { QuizScreen } from "@/components/sbti/quiz-screen";
-import { getVisibleQuestions } from "@/lib/sbti-engine";
+import { ResultScreen } from "@/components/sbti/result-screen";
+import { computeResult, getVisibleQuestions } from "@/lib/sbti-engine";
 import { questions, specialQuestions, type Question } from "@/lib/sbti-data";
 
-type Screen = "intro" | "quiz";
+type Screen = "intro" | "quiz" | "result";
 
 function shuffleQuestions(items: Question[]) {
   const nextItems = [...items];
@@ -48,6 +49,7 @@ export function SbtiApp() {
   const doneCount = visibleQuestions.filter(
     (question) => answers[question.id] !== undefined,
   ).length;
+  const result = useMemo(() => computeResult(answers), [answers]);
 
   function startQuiz() {
     setAnswers({});
@@ -74,13 +76,23 @@ export function SbtiApp() {
     return <IntroScreen onStart={startQuiz} />;
   }
 
+  if (screen === "result") {
+    return (
+      <ResultScreen
+        onRestart={startQuiz}
+        onToTop={() => setScreen("intro")}
+        result={result}
+      />
+    );
+  }
+
   return (
     <QuizScreen
       answers={answers}
       doneCount={doneCount}
       onAnswerChange={handleAnswerChange}
       onBackToIntro={() => setScreen("intro")}
-      onSubmit={() => undefined}
+      onSubmit={() => setScreen("result")}
       totalCount={visibleQuestions.length}
       visibleQuestions={visibleQuestions}
     />
