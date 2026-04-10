@@ -36,8 +36,8 @@ export const testCatalog: TestCatalogEntry[] = [
     questionCount: 32,
     resultCount: 9,
     slug: "sdti",
-    status: "planned",
-    tagline: "黑白纸面感 · 隐藏结果图 · 接入中",
+    status: "live",
+    tagline: "黑白纸面感 · 隐藏结果图 · 已上线",
     tags: ["新题库", "维度条", "隐藏结局"],
   },
   {

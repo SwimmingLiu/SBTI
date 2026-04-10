@@ -15,9 +15,7 @@ test("shows multiple test entries on the home page and routes into sbti", async 
   await expect(page.getByTestId("test-card-sbti")).toBeVisible();
   await expect(page.getByTestId("test-card-sdti")).toBeVisible();
   await expect(page.getByTestId("test-card-herti")).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: "SDTI 即将开放" }),
-  ).toBeDisabled();
+  await expect(page.getByRole("link", { name: "进入 SDTI" })).toBeVisible();
   await expect(
     page.getByRole("button", { name: "HERTI 即将开放" }),
   ).toBeDisabled();
