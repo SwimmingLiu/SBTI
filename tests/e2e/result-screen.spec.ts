@@ -34,7 +34,7 @@ async function answerQuestion(page: Page, questionId: string, value: number) {
 test("submits a full quiz and renders the result screen", async ({ page }) => {
   const answers = buildAnswersForPattern("HHH-HMH-MHH-HHH-MHM");
 
-  await page.goto("/");
+  await page.goto("/tests/sbti");
   await page.getByRole("button", { name: "开始测试" }).click();
 
   for (const question of questions) {

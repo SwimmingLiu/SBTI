@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 test("opens the mini program code dialog from the intro screen", async ({
   page,
 }) => {
-  await page.goto("/");
+  await page.goto("/tests/sbti");
 
   await page.getByRole("button", { name: "查看小程序码" }).click();
 
@@ -18,7 +18,7 @@ test("opens the mini program code dialog from the intro screen", async ({
 
 test("shows the auto redirect screen on mobile devices", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/");
+  await page.goto("/tests/sbti");
 
   await expect(
     page.getByRole("heading", { name: "正在跳转到微信小程序..." }),
@@ -29,7 +29,7 @@ test("shows the auto redirect screen on mobile devices", async ({ page }) => {
 });
 
 test("uses the configured mini program url in the dialog", async ({ page }) => {
-  await page.goto("/?disableMiniProgramRedirect=1");
+  await page.goto("/tests/sbti?disableMiniProgramRedirect=1");
   await page.getByRole("button", { name: "查看小程序码" }).click();
 
   await expect(
@@ -47,7 +47,7 @@ test("hides mini program entry content inside the mini program webview", async (
     });
   });
 
-  await page.goto("/");
+  await page.goto("/tests/sbti");
 
   await expect(page.getByRole("button", { name: "开始测试" })).toBeVisible();
   await expect(page.getByRole("button", { name: "查看小程序码" })).toHaveCount(0);

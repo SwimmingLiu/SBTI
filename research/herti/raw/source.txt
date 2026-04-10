@@ -1,0 +1,3 @@
+URL: https://herti.netlify.app
+Captured at: 2026-04-10 Asia/Shanghai
+Method: curl -L --max-time 30 -D research/herti/raw/headers.txt -o research/herti/raw/index.html https://herti.netlify.app
