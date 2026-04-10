@@ -3,6 +3,9 @@ import { expect, test } from "@playwright/test";
 test("starts the quiz from intro screen", async ({ page }) => {
   await page.goto("/");
   await expect(page).toHaveTitle("SBTI 人格测试｜SBTI 测评｜SBTI 官网");
+  await expect(
+    page.getByText("保留题目流程、隐藏题与结果机制的本地版本。先做题，再等系统审判。"),
+  ).toHaveCount(0);
 
   await page.getByRole("button", { name: "开始测试" }).click();
 
