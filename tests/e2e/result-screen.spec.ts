@@ -72,16 +72,19 @@ test("submits a full quiz and renders the result screen", async ({ page }) => {
   await expect(
     shareDialog.getByRole("button", { name: "立即分享" }),
   ).toBeVisible();
-  await expect(
-    shareDialog.getByAltText("CTRL（拿捏者）分享主图"),
-  ).toBeVisible();
+  await expect
+    .poll(async () => {
+      return shareDialog.getByAltText("CTRL（拿捏者）分享预览图").count();
+    })
+    .toBe(1);
+  await expect(shareDialog.getByText("小橙有门")).toBeVisible();
   await expect
     .poll(async () => {
       return shareDialog
-        .getByAltText("CTRL（拿捏者）分享主图")
-        .evaluate((node) => window.getComputedStyle(node).objectFit);
+        .getByAltText("CTRL（拿捏者）分享预览图")
+        .evaluate((node) => window.getComputedStyle(node).width);
     })
-    .toBe("contain");
+    .not.toBe("0px");
 
   await page.goBack();
   await expect(page).toHaveURL(/screen=test/);

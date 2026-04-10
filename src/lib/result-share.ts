@@ -1,7 +1,9 @@
 type ResultShareMetaInput = {
-  badge: string;
-  cn: string;
   code: string;
+  label: string;
+  quizName: string;
+  slug: string;
+  summary: string;
 };
 
 export type ResultShareMeta = {
@@ -11,15 +13,41 @@ export type ResultShareMeta = {
 };
 
 export function buildResultShareMeta({
-  badge,
-  cn,
   code,
+  label,
+  quizName,
+  slug,
+  summary,
 }: ResultShareMetaInput): ResultShareMeta {
   return {
-    fileName: `sbti-${code}.png`,
-    text: `我测出来的 SBTI 结果是 ${code}（${cn}），${badge}。快来看看你的结果。`,
-    title: `我的 SBTI 结果：${code}（${cn}）`,
+    fileName: `${slug}-${code}.png`,
+    text: `我测出来的${quizName}结果是 ${label}，${summary}。快来看看你的结果。`,
+    title: `我的${quizName}结果：${label}`,
   };
+}
+
+export const shareQrCodeUrl = "/assets/mini-program/qrcode.png";
+
+export async function waitForRenderableImages(container: HTMLElement | null) {
+  if (!container) {
+    return;
+  }
+
+  const images = Array.from(container.querySelectorAll("img"));
+  await Promise.all(
+    images.map(
+      (image) =>
+        new Promise<void>((resolve) => {
+          if (image.complete && image.naturalWidth > 0) {
+            resolve();
+            return;
+          }
+
+          image.addEventListener("load", () => resolve(), { once: true });
+          image.addEventListener("error", () => resolve(), { once: true });
+        }),
+    ),
+  );
 }
 
 export function isNativeShareSupported() {

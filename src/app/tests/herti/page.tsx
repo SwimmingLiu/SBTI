@@ -1,15 +1,23 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { HertiSeoSections } from "@/components/herti/seo-sections";
 import { HertiApp } from "@/features/herti/herti-app";
 
 export const metadata: Metadata = {
-  title: "HERTI 她的人格地图｜HERTI 测试",
+  title: "HERTI 她的人格测评｜HERTI 她的人格地图｜HERTI 测试",
   description:
-    "HERTI 她的人格地图在线入口，复刻 20 道题、16 位女性原型、镜像人格与反面人格结果长卷。",
+    "HERTI 她的人格测评在线入口，复刻 20 道题、16 位女性原型、镜像人格与反面人格结果长卷，适合搜索 herti她的人格测评、herti人格地图 的用户访问。",
   alternates: {
     canonical: "/tests/herti",
   },
+  keywords: [
+    "HERTI 她的人格测评",
+    "HERTI 她的人格地图",
+    "herti她的人格测评",
+    "herti人格地图",
+    "女性人格原型测试",
+  ],
 };
 
 export default function HertiPage() {
@@ -26,6 +34,7 @@ export default function HertiPage() {
         </div>
       </div>
       <HertiApp />
+      <HertiSeoSections />
     </>
   );
 }

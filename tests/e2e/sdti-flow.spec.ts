@@ -47,4 +47,7 @@ test("reveals the hidden feminist ending in sdti", async ({ page }) => {
   );
   await expect(page.locator("#result-image")).toBeVisible();
   await expect(page.locator("#image-credit")).toContainText("小红书 @13读作一三");
+  await page.getByRole("button", { name: "分享结果" }).click();
+  await expect(page.getByRole("dialog", { name: "分享这张结果图" })).toBeVisible();
+  await expect(page.getByText("小橙有门")).toBeVisible();
 });

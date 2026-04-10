@@ -5,7 +5,9 @@ test("shows multiple test entries on the home page and routes into sbti", async 
 }) => {
   await page.goto("/");
 
-  await expect(page).toHaveTitle("人格测试题库｜SBTI · SDTI · HERTI");
+  await expect(page).toHaveTitle(
+    "人格测试题库｜SBTI 人格测试 · SDTI 人格测评 · HERTI 她的人格测评 · FWTI",
+  );
   await expect(page.getByRole("heading", { name: "人格测试题库" })).toBeVisible();
   await expect(
     page.getByText(
@@ -38,6 +40,7 @@ test("injects baidu analytics bootstrap script into head", async ({ page }) => {
     "https://hm.baidu.com/hm.js?7683f719c9e5176f575fd5b68bdc1bf2",
   );
   expect(bootstrapContent).toContain("var _hmt = _hmt || [];");
+  expect(bootstrapContent).toContain('document.createElement("script")');
 });
 
 test("keeps home card titles and status badges on one line", async ({ page }) => {
@@ -59,4 +62,36 @@ test("keeps home card titles and status badges on one line", async ({ page }) =>
 
   expect(statusWhiteSpace).toBe("nowrap");
   expect(titleWhiteSpace).toBe("nowrap");
+});
+
+test("keeps SEO and GEO support content hidden from users on the home page", async ({
+  page,
+}) => {
+  await page.goto("/");
+
+  const seoContent = page.locator("[data-home-seo-content]");
+
+  await expect(seoContent).toHaveCount(1);
+  await expect(seoContent).toContainText("SBTI 和 SBTi 有什么不同");
+  await expect(seoContent).toContainText("FWTI 恋爱废物人格测评");
+
+  const seoStyle = await seoContent.evaluate((node) => {
+    const style = window.getComputedStyle(node);
+
+    return {
+      clipPath: style.clipPath,
+      height: style.height,
+      overflow: style.overflow,
+      pointerEvents: style.pointerEvents,
+      position: style.position,
+      width: style.width,
+    };
+  });
+
+  expect(seoStyle.position).toBe("absolute");
+  expect(seoStyle.overflow).toBe("hidden");
+  expect(seoStyle.pointerEvents).toBe("none");
+  expect(seoStyle.clipPath).not.toBe("none");
+  expect(seoStyle.width).toBe("1px");
+  expect(seoStyle.height).toBe("1px");
 });

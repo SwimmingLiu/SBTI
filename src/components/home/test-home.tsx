@@ -1,3 +1,4 @@
+import { SeoGeoSections } from "@/components/home/seo-geo-sections";
 import { TestEntryCard } from "@/components/home/test-entry-card";
 import { testCatalog } from "@/lib/test-catalog";
 
@@ -20,6 +21,7 @@ export function TestHome() {
           ))}
         </div>
       </section>
+      <SeoGeoSections />
     </main>
   );
 }

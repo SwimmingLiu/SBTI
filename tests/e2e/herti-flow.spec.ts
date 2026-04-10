@@ -48,4 +48,7 @@ test("renders mirror and opposite cards for herti results", async ({ page }) => 
   await expect(page.locator("#hertiPrimaryCode")).toHaveText("GAZE");
   await expect(page.locator("#hertiRelations")).toContainText("your mirror");
   await expect(page.locator("#hertiRelations")).toContainText("your opposite");
+  await page.getByRole("button", { name: "分 享 结 果" }).click();
+  await expect(page.getByRole("dialog", { name: "分享这张结果图" })).toBeVisible();
+  await expect(page.getByText("小橙有门")).toBeVisible();
 });
