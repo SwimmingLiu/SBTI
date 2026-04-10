@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { DimensionList } from "@/components/sbti/dimension-list";
+import { ShareQrWatermark } from "@/components/shared/share-qr-watermark";
 import { typeImages } from "@/lib/sbti-data";
 import type { SbtiResult } from "@/lib/sbti-engine";
 import {
@@ -12,6 +13,7 @@ import {
   dataUrlToBlob,
   isNativeShareSupported,
   isWechatBrowser,
+  waitForRenderableImages,
 } from "@/lib/result-share";
 
 type ResultScreenProps = {
@@ -39,9 +41,11 @@ export function ResultScreen({
   const shareMeta = useMemo(
     () =>
       buildResultShareMeta({
-        badge: result.badge,
-        cn: result.finalType.cn,
         code: result.finalType.code,
+        label: `${result.finalType.code}（${result.finalType.cn}）`,
+        quizName: "SBTI 人格测试",
+        slug: "sbti",
+        summary: result.badge,
       }),
     [result.badge, result.finalType.cn, result.finalType.code],
   );
@@ -54,29 +58,13 @@ export function ResultScreen({
     };
   }, [shareImageUrl]);
 
-  async function waitForShareImages() {
-    const container = shareCardRef.current;
-
-    if (!container) {
+  useEffect(() => {
+    if (!isShareOpen) {
       return;
     }
 
-    const images = Array.from(container.querySelectorAll("img"));
-    await Promise.all(
-      images.map(
-        (image) =>
-          new Promise<void>((resolve) => {
-            if (image.complete && image.naturalWidth > 0) {
-              resolve();
-              return;
-            }
-
-            image.addEventListener("load", () => resolve(), { once: true });
-            image.addEventListener("error", () => resolve(), { once: true });
-          }),
-      ),
-    );
-  }
+    void ensureShareImage();
+  }, [isShareOpen]);
 
   async function ensureShareImage() {
     if (shareImageUrl) {
@@ -90,7 +78,7 @@ export function ResultScreen({
     setShareMessage("");
 
     try {
-      await waitForShareImages();
+      await waitForRenderableImages(shareCardRef.current);
 
       const dataUrl = await toPng(shareCardRef.current, {
         backgroundColor: "#f6faf6",
@@ -109,7 +97,7 @@ export function ResultScreen({
 
   async function handleOpenShare() {
     setIsShareOpen(true);
-    await ensureShareImage();
+    setShareMessage("");
   }
 
   async function handleNativeShare() {
@@ -313,42 +301,99 @@ export function ResultScreen({
               </div>
 
               <div className="mt-5 rounded-[20px] border border-[var(--line)] bg-white p-4">
-                <div
-                  className="mx-auto w-full max-w-sm rounded-[24px] bg-[#f6faf6] p-4 text-[#1e2a22]"
-                  ref={shareCardRef}
-                >
-                  <div className="rounded-[20px] border border-[#dbe8dd] bg-white p-4 shadow-[0_16px_40px_rgba(47,73,55,0.08)]">
-                    <div className="text-xs font-medium tracking-[0.18em] text-[#6c8d71]">
-                      SBTI RESULT
-                    </div>
-                    <div className="mt-4 grid gap-4">
-                      {imageSrc ? (
-                        <div className="relative aspect-[3/4] w-full overflow-hidden rounded-[18px] bg-white">
-                          <Image
-                            alt={`${result.finalType.code}（${result.finalType.cn}）分享主图`}
-                            className="object-contain p-2"
-                            fill
-                            loading="eager"
-                            priority
-                            sizes="384px"
-                            src={imageSrc}
-                            unoptimized
-                          />
-                        </div>
-                      ) : null}
+                {shareImageUrl ? (
+                  <img
+                    alt={`${result.finalType.code}（${result.finalType.cn}）分享预览图`}
+                    className="mx-auto w-full max-w-sm rounded-[24px] border border-[#dbe8dd] bg-[#f6faf6]"
+                    src={shareImageUrl}
+                  />
+                ) : (
+                  <div className="mx-auto flex w-full max-w-sm items-center justify-center rounded-[24px] border border-[#dbe8dd] bg-[#f6faf6] px-6 py-16 text-sm text-[#6a786f]">
+                    正在生成分享图片...
+                  </div>
+                )}
 
-                      <div className="rounded-[18px] border border-[#dbe8dd] bg-[#fbfefb] p-4">
-                        <div className="text-xs text-[#6a786f]">{result.modeKicker}</div>
-                        <div className="mt-2 text-2xl font-semibold tracking-[-0.03em]">
+                <div className="pointer-events-none absolute left-0 top-0 -z-10 opacity-0">
+                  <div
+                    className="w-[720px] rounded-[24px] bg-[#f6faf6] p-6 text-[#1e2a22]"
+                    ref={shareCardRef}
+                    style={{
+                      fontFamily:
+                        '-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif',
+                    }}
+                  >
+                    <div className="relative rounded-[22px] border border-[#dbe8dd] bg-white p-5 shadow-[0_16px_40px_rgba(47,73,55,0.08)]">
+                      <div className="text-sm font-medium tracking-[0.28em] text-[#6c8d71]">
+                        SBTI RESULT
+                      </div>
+                      <div className="mt-5">
+                        {imageSrc ? (
+                          <img
+                            alt=""
+                            src={imageSrc}
+                            style={{
+                              background: "#fff",
+                              borderRadius: "18px",
+                              display: "block",
+                              height: "auto",
+                              padding: "8px",
+                              width: "100%",
+                            }}
+                          />
+                        ) : null}
+                      </div>
+
+                      <div
+                        style={{
+                          background: "#fbfefb",
+                          border: "1px solid #dbe8dd",
+                          borderRadius: "18px",
+                          marginTop: "18px",
+                          padding: "20px",
+                        }}
+                      >
+                        <div style={{ color: "#6a786f", fontSize: "20px", lineHeight: 1.5 }}>
+                          {result.modeKicker}
+                        </div>
+                        <div
+                          style={{
+                            fontSize: "42px",
+                            fontWeight: 700,
+                            letterSpacing: "-0.03em",
+                            lineHeight: 1.2,
+                            marginTop: "12px",
+                          }}
+                        >
                           {result.finalType.code}（{result.finalType.cn}）
                         </div>
-                        <div className="mt-3 inline-flex rounded-full bg-[#edf6ef] px-3 py-1.5 text-xs font-medium text-[#4d6a53]">
+                        <div
+                          style={{
+                            background: "#edf6ef",
+                            borderRadius: "999px",
+                            color: "#4d6a53",
+                            display: "inline-block",
+                            fontSize: "20px",
+                            fontWeight: 600,
+                            lineHeight: 1.5,
+                            marginTop: "18px",
+                            padding: "10px 16px",
+                          }}
+                        >
                           {result.badge}
                         </div>
-                        <div className="mt-3 text-xs leading-6 text-[#6a786f]">
-                          {result.finalType.intro}
+                        <div
+                          style={{
+                            color: "#6a786f",
+                            fontSize: "22px",
+                            lineHeight: 1.7,
+                            marginTop: "18px",
+                          }}
+                        >
+                          {result.sub}
                         </div>
                       </div>
+
+                      <ShareQrWatermark className="absolute bottom-5 right-5" />
                     </div>
                   </div>
                 </div>

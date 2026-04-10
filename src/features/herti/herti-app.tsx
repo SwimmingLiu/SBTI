@@ -1,9 +1,17 @@
 "use client";
 
+import { toPng } from "html-to-image";
 import { useEffect, useMemo, useRef, useState } from "react";
 
+import { ShareQrWatermark } from "@/components/shared/share-qr-watermark";
 import { hertiQuestions } from "@/features/herti/data";
 import { computeHertiResult, type HertiResult } from "@/features/herti/engine";
+import {
+  buildResultShareMeta,
+  dataUrlToBlob,
+  isNativeShareSupported,
+  waitForRenderableImages,
+} from "@/lib/result-share";
 
 type Screen = "cover" | "loading" | "quiz" | "result";
 
@@ -32,7 +40,11 @@ export function HertiApp() {
     new Array(hertiQuestions.length).fill(null),
   );
   const [result, setResult] = useState<HertiResult | null>(null);
+  const [isShareOpen, setIsShareOpen] = useState(false);
+  const [shareImageUrl, setShareImageUrl] = useState<string | null>(null);
+  const [shareMessage, setShareMessage] = useState("");
   const loadingTimerRef = useRef<number | null>(null);
+  const shareCardRef = useRef<HTMLDivElement>(null);
   const currentResult = useMemo(
     () =>
       result ??
@@ -43,14 +55,40 @@ export function HertiApp() {
   );
   const question = hertiQuestions[currentQuestion];
   const selectedOption = answers[currentQuestion];
+  const shareMeta = useMemo(
+    () =>
+      buildResultShareMeta({
+        code: currentResult.primary.code,
+        label: `${currentResult.primary.code}（${currentResult.primary.persona.cn}）`,
+        quizName: "HERTI 她的人格测评",
+        slug: "herti",
+        summary: currentResult.primary.persona.cnName,
+      }),
+    [
+      currentResult.primary.code,
+      currentResult.primary.persona.cn,
+      currentResult.primary.persona.cnName,
+    ],
+  );
 
   useEffect(() => {
     return () => {
       if (loadingTimerRef.current !== null) {
         window.clearTimeout(loadingTimerRef.current);
       }
+      if (shareImageUrl?.startsWith("blob:")) {
+        URL.revokeObjectURL(shareImageUrl);
+      }
     };
-  }, []);
+  }, [shareImageUrl]);
+
+  useEffect(() => {
+    if (!isShareOpen) {
+      return;
+    }
+
+    void ensureShareImage();
+  }, [isShareOpen]);
 
   function resetQuiz() {
     if (loadingTimerRef.current !== null) {
@@ -61,8 +99,68 @@ export function HertiApp() {
     setAnswers(new Array(hertiQuestions.length).fill(null));
     setCurrentQuestion(0);
     setResult(null);
+    setShareImageUrl(null);
     setScreen("cover");
     window.scrollTo({ behavior: "smooth", top: 0 });
+  }
+
+  async function ensureShareImage() {
+    if (shareImageUrl) {
+      return shareImageUrl;
+    }
+
+    try {
+      await waitForRenderableImages(shareCardRef.current);
+      const dataUrl = await toPng(shareCardRef.current!, {
+        backgroundColor: "#f4f1ea",
+        cacheBust: true,
+        pixelRatio: 2,
+      });
+      setShareImageUrl(dataUrl);
+      return dataUrl;
+    } catch {
+      setShareMessage("结果图生成失败，请稍后重试。");
+      return null;
+    }
+  }
+
+  async function openShare() {
+    setIsShareOpen(true);
+    setShareMessage("");
+  }
+
+  async function handleNativeShare() {
+    const imageUrl = await ensureShareImage();
+
+    if (!imageUrl) {
+      return;
+    }
+
+    if (!isNativeShareSupported()) {
+      setShareMessage("当前浏览器不支持系统分享，可长按图片保存。");
+      return;
+    }
+
+    try {
+      const blob = dataUrlToBlob(imageUrl);
+      const file = new File([blob], shareMeta.fileName, { type: blob.type });
+      const payload: ShareData = {
+        text: shareMeta.text,
+        title: shareMeta.title,
+      };
+
+      if (
+        typeof navigator.canShare === "function" &&
+        navigator.canShare({ files: [file] })
+      ) {
+        payload.files = [file];
+      }
+
+      await navigator.share(payload);
+      setShareMessage("已打开系统分享。");
+    } catch {
+      setShareMessage("系统分享未完成，可长按图片保存。");
+    }
   }
 
   function openQuiz() {
@@ -357,6 +455,15 @@ export function HertiApp() {
           </p>
           <button
             className="mt-8 bg-[#1a1a1a] px-10 py-4 text-sm tracking-[0.2em] text-[#f4f1ea]"
+            onClick={() => {
+              void openShare();
+            }}
+            type="button"
+          >
+            分 享 结 果
+          </button>
+          <button
+            className="mt-4 bg-[#1a1a1a] px-10 py-4 text-sm tracking-[0.2em] text-[#f4f1ea]"
             onClick={resetQuiz}
             type="button"
           >
@@ -364,6 +471,135 @@ export function HertiApp() {
           </button>
         </div>
       </div>
+
+      {isShareOpen ? (
+        <div
+          aria-labelledby="hertiShareTitle"
+          aria-modal="true"
+          className="fixed inset-0 z-50 flex items-end justify-center bg-black/45 p-0 sm:items-center sm:p-4"
+          onClick={() => setIsShareOpen(false)}
+          role="dialog"
+        >
+          <div
+            className="flex max-h-[88vh] w-full max-w-md flex-col overflow-y-auto rounded-t-[24px] border border-[#d9d0bd] bg-[#faf7f0] p-6 shadow-[0_16px_40px_rgba(56,42,26,0.18)] sm:rounded-[24px]"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h2
+                  className="text-xl font-semibold text-[#1a1a1a]"
+                  id="hertiShareTitle"
+                >
+                  分享这张结果图
+                </h2>
+                <p className="mt-2 text-sm leading-6 text-[#6a5f4c]">
+                  预览图与真实分享图保持一致。
+                </p>
+              </div>
+              <button
+                aria-label="Close share dialog"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#d9d0bd] text-[#6a5f4c]"
+                onClick={() => setIsShareOpen(false)}
+                type="button"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="mt-5 rounded-[20px] border border-[#e6dfcd] bg-white p-4">
+              {shareImageUrl ? (
+                <img
+                  alt={`${currentResult.primary.code}分享预览图`}
+                  className="mx-auto w-full max-w-sm rounded-[24px] border border-[#d9d0bd] bg-[#f4f1ea]"
+                  src={shareImageUrl}
+                />
+              ) : (
+                <div className="mx-auto flex w-full max-w-sm items-center justify-center rounded-[24px] border border-[#d9d0bd] bg-white px-6 py-16 text-sm text-[#6a5f4c]">
+                  正在生成分享图片...
+                </div>
+              )}
+
+              <div className="pointer-events-none absolute left-0 top-0 -z-10 opacity-0">
+                <div
+                  className="w-[720px] rounded-[28px] bg-[#f4f1ea] p-6 text-[#1a1a1a]"
+                  ref={shareCardRef}
+                  style={{
+                    fontFamily:
+                      '-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif',
+                  }}
+                >
+                  <div className="relative overflow-hidden rounded-[24px] border border-[#d9d0bd] bg-[#faf7f0] p-6">
+                    <div style={{ color: "#8a7d6a", fontSize: "18px", letterSpacing: "0.18em" }}>
+                      HERTI
+                    </div>
+                    <div
+                      style={{
+                        fontSize: "64px",
+                        fontWeight: 300,
+                        letterSpacing: "0.12em",
+                        lineHeight: 1,
+                        marginTop: "18px",
+                      }}
+                    >
+                      {currentResult.primary.code}
+                    </div>
+                    <div
+                      style={{
+                        color: "#2a2620",
+                        fontSize: "32px",
+                        letterSpacing: "0.08em",
+                        marginTop: "16px",
+                      }}
+                    >
+                      {currentResult.primary.persona.cn}
+                    </div>
+                    <div
+                      style={{
+                        borderBottom: "1px solid #d9d0bd",
+                        borderTop: "1px solid #d9d0bd",
+                        color: "#4a4338",
+                        fontSize: "24px",
+                        fontStyle: "italic",
+                        lineHeight: 1.7,
+                        marginTop: "24px",
+                        padding: "20px 0",
+                      }}
+                    >
+                      {currentResult.primary.persona.epigraph.replaceAll("<br>", " ")}
+                    </div>
+                    <div
+                      style={{
+                        color: "#2a2620",
+                        fontSize: "22px",
+                        lineHeight: 1.8,
+                        marginTop: "24px",
+                      }}
+                    >
+                      {currentResult.primary.persona.persona[0]}
+                    </div>
+
+                    <ShareQrWatermark className="absolute bottom-5 right-5" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <button
+              className="mt-5 bg-[#1a1a1a] px-5 py-3 text-sm font-medium text-[#f4f1ea]"
+              onClick={() => {
+                void handleNativeShare();
+              }}
+              type="button"
+            >
+              立即分享
+            </button>
+
+            {shareMessage ? (
+              <p className="mt-3 text-sm text-[#1a1a1a]">{shareMessage}</p>
+            ) : null}
+          </div>
+        </div>
+      ) : null}
     </section>
   );
 }
