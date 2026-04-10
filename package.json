@@ -11,10 +11,12 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
+    "sync:herti-data": "tsx scripts/generate-herti-data.ts",
     "sync:sdti-data": "tsx scripts/generate-sdti-data.ts",
     "capture:remote": "tsx scripts/capture-remote-results.ts",
     "capture:local": "tsx scripts/capture-local-results.ts",
-    "capture:sdti": "tsx scripts/capture-sdti-results.ts"
+    "capture:sdti": "tsx scripts/capture-sdti-results.ts",
+    "capture:herti": "tsx scripts/capture-herti-results.ts"
   },
   "dependencies": {
     "html-to-image": "^1.11.13",
