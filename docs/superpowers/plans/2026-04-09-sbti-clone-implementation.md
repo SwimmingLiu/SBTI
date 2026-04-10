@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** 从空仓库构建并上线一个可在 Vercel 运行的 SBTI 人格测试克隆站，完整复刻原站题库、结果和资源，并补齐浏览器级验证与发布流程。
+**Goal:** 从空仓库构建并上线一个可在 Vercel 运行的 SBTI 人格测试克隆站，完整复刻页面结果和资源，并补齐浏览器级验证与发布流程。
 
-**Architecture:** 使用 Next.js App Router + TypeScript + Tailwind 构建客户端测试应用；核心判定逻辑抽离为纯函数模块并通过 Vitest 验证；使用 Playwright 对原站和本地站做结果抓取与端到端校验；资源和运行时抓取证据单独保存在 research/original 与 public/assets/original 中。
+**Architecture:** 使用 Next.js App Router + TypeScript + Tailwind 构建客户端测试应用；核心判定逻辑抽离为纯函数模块并通过 Vitest 验证；使用 Playwright 对参考页面和本地站做结果抓取与端到端校验；资源和运行时抓取证据单独保存在 research/original 与 public/assets/original 中。
 
 **Tech Stack:** Next.js, React, TypeScript, Tailwind CSS, Vitest, Playwright, GitHub CLI, Vercel CLI
 
@@ -66,7 +66,7 @@ Expected: 退出码 0
 Run: `git add . && git commit -m "chore: initialize nextjs app"`
 Expected: 生成第一条有效提交
 
-### Task 2: 抓取原站 HTML 与结果图片
+### Task 2: 抓取页面快照与结果图片
 
 **Files:**
 - Create: `research/original/SBTI.html`

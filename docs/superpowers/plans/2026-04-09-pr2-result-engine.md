@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** 交付完整结果判定引擎和结果页，让本地站可根据答题结果渲染与原站一致的类型、文案、图片和十五维说明。
+**Goal:** 交付完整结果判定引擎和结果页，让本地站可根据答题结果渲染与参考页面一致的类型、文案、图片和十五维说明。
 
 **Architecture:** 在 `src/lib/sbti-engine.ts` 中补齐纯函数化结果计算逻辑；页面端增加 `result-screen`、`dimension-list` 组件，通过同一份 `answers` 状态在 Quiz/Result 之间切换；先用单元测试锁定常规人格、`DRUNK` 和 `HHHH` 行为，再用 Playwright 验证结果页渲染。
 

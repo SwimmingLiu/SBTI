@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** 建立 Next.js 工程骨架，把原站题库和图片资源迁入本地，并交付可运行的首页 + 答题页流程。
+**Goal:** 建立 Next.js 工程骨架，把题目数据和图片资源迁入本地，并交付可运行的首页 + 答题页流程。
 
-**Architecture:** 先用脚手架建立前端工程；把原站数据迁入 `src/lib`，图片迁入 `public/assets/original`；以纯客户端状态驱动 Intro/Quiz 两屏切换，并复刻题目随机插入和隐藏题显隐。
+**Architecture:** 先用脚手架建立前端工程；把页面数据迁入 `src/lib`，图片迁入 `public/assets/original`；以纯客户端状态驱动 Intro/Quiz 两屏切换，并复刻题目随机插入和隐藏题显隐。
 
 **Tech Stack:** Next.js, React, TypeScript, Tailwind CSS, Vitest, Playwright
 
@@ -23,16 +23,16 @@
 - [ ] 安装 Vitest / Playwright 依赖
 - [ ] 跑 `npm run lint` 验证基线
 
-### Task 2: 本地化原站数据与图片
+### Task 2: 本地化页面数据与图片
 
 **Files:**
 - Create: `src/lib/sbti-data.ts`
 - Create: `public/assets/original/sbti/*`
 - Create: `scripts/extract-remote-assets.mjs`
 
-- [ ] 编写原站资源抓取脚本
+- [ ] 编写资源抓取脚本
 - [ ] 下载 `TYPE_IMAGES` 中全部图片
-- [ ] 将题库、类型库、pattern、维度解释整理为 TypeScript 常量
+- [ ] 将题目数据、类型库、pattern、维度解释整理为 TypeScript 常量
 
 ### Task 3: 先写失败测试，再实现题目流程
 
