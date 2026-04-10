@@ -1,7 +1,10 @@
 const defaultOssAssetBaseUrl =
   "https://sbti-orangemust.oss-cn-beijing.aliyuncs.com/assets";
 const assetBaseUrl =
-  process.env.NEXT_PUBLIC_ASSET_BASE_URL?.trim() || defaultOssAssetBaseUrl;
+  (process.env.NEXT_PUBLIC_ASSET_BASE_URL?.trim() || defaultOssAssetBaseUrl).replace(
+    /\/+$/,
+    "",
+  );
 const preferLocalAssets = process.env.NEXT_PUBLIC_USE_LOCAL_ASSETS === "1";
 
 export function toAssetUrl(assetPath: string) {
