@@ -1,14 +1,20 @@
 import { expect, test } from "@playwright/test";
 
-test("shows the mini program qr entry on the home page", async ({ page }) => {
-  await page.goto("/");
+test("reveals the mini program qr preview only after clicking the download trigger", async ({
+  page,
+}) => {
+  await page.goto("/?disableMiniProgramRedirect=1");
 
   await expect(page.getByText("微信小程序入口")).toBeVisible();
-  await expect(page.getByAltText("SBTI 微信小程序二维码")).toBeVisible();
+  await expect(page.getByAltText("SBTI 微信小程序二维码")).toHaveCount(0);
   await expect(
     page.getByRole("link", { name: "打开微信小程序" }),
   ).toHaveAttribute("href", "https://wxaurl.cn/MG3YoSpo23s");
-  await expect(page.getByRole("link", { name: "下载小程序码" })).toBeVisible();
+
+  await page.getByRole("button", { name: "下载小程序码" }).click();
+
+  await expect(page.getByAltText("SBTI 微信小程序二维码")).toBeVisible();
+  await expect(page.getByRole("link", { name: "下载原图" })).toBeVisible();
 });
 
 test("shows the auto redirect screen on mobile devices", async ({ page }) => {
