@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:static": "next build",
+    "package:static": "rm -rf dist && mkdir -p dist && next build && cd out && zip -qr ../dist/sbti-static-site.zip .",
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",

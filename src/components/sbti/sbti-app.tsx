@@ -93,6 +93,17 @@ export function SbtiApp() {
     };
   }, [miniProgramConfig.miniProgramUrl, shouldShowRedirect]);
 
+  useEffect(() => {
+    if (screen !== "result") {
+      return;
+    }
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, [screen]);
+
   function startQuiz() {
     setAnswers({});
     setBaseQuestions(buildQuizQuestions());

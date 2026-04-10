@@ -43,6 +43,9 @@ test("submits a full quiz and renders the result screen", async ({ page }) => {
   }
 
   await answerQuestion(page, "drink_gate_q1", 2);
+  await page.evaluate(() => {
+    window.scrollTo({ top: document.body.scrollHeight, behavior: "auto" });
+  });
   await page.getByRole("button", { name: "提交并查看结果" }).click();
 
   await expect(page.getByText("CTRL（拿捏者）")).toBeVisible();
@@ -50,4 +53,7 @@ test("submits a full quiz and renders the result screen", async ({ page }) => {
   await expect(page.getByText("该人格的简单解读")).toBeVisible();
   await expect(page.getByText("十五维度评分")).toBeVisible();
   await expect(page.getByText("友情提示")).toBeVisible();
+  await expect.poll(async () => {
+    return page.evaluate(() => Math.round(window.scrollY));
+  }).toBeLessThan(80);
 });
