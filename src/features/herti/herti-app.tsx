@@ -528,7 +528,10 @@ export function HertiApp() {
                       '-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif',
                   }}
                 >
-                  <div className="relative overflow-hidden rounded-[24px] border border-[#d9d0bd] bg-[#faf7f0] p-6">
+                  <div
+                    className="relative overflow-hidden rounded-[24px] border border-[#d9d0bd] bg-[#faf7f0] p-6"
+                    style={{ paddingRight: "150px" }}
+                  >
                     <div style={{ color: "#8a7d6a", fontSize: "18px", letterSpacing: "0.18em" }}>
                       HERTI
                     </div>
@@ -577,8 +580,7 @@ export function HertiApp() {
                     >
                       {currentResult.primary.persona.persona[0]}
                     </div>
-
-                    <ShareQrWatermark className="absolute bottom-5 right-5" />
+                    <ShareQrWatermark className="absolute right-5 top-5" />
                   </div>
                 </div>
               </div>

@@ -383,6 +383,8 @@ export function ResultScreen({
                         </div>
                         <div
                           style={{
+                            paddingRight: "150px",
+                            position: "relative",
                             color: "#6a786f",
                             fontSize: "22px",
                             lineHeight: 1.7,
@@ -390,10 +392,9 @@ export function ResultScreen({
                           }}
                         >
                           {result.sub}
+                          <ShareQrWatermark className="absolute right-4 top-3" />
                         </div>
                       </div>
-
-                      <ShareQrWatermark className="absolute bottom-5 right-5" />
                     </div>
                   </div>
                 </div>
