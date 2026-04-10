@@ -16,7 +16,7 @@ export function ShareQrWatermark({ className }: ShareQrWatermarkProps) {
           alt="小橙有门二维码"
           className="object-cover"
           fill
-          sizes="48px"
+          sizes="40px"
           src={shareQrCodeUrl}
           unoptimized
         />

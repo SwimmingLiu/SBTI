@@ -134,6 +134,31 @@ test("sdti result and share dialog visual baseline", async ({ page }) => {
   await expectLocatorSnapshot(shareDialog, "sdti-share-dialog.png");
 });
 
+test("sdti feminist share dialog visual baseline (long text)", async ({ page }) => {
+  const scenario = getSdtiScenarioByCode("feminist");
+
+  if (!scenario) {
+    throw new Error("Missing SDTI scenario: feminist");
+  }
+
+  await page.goto("/tests/sdti");
+  await disableMotion(page);
+
+  for (const [questionNumber, optionKey] of Object.entries(scenario.answers)) {
+    await page.locator(`[data-q="${questionNumber}"][data-opt="${optionKey}"]`).click();
+  }
+
+  await page.getByRole("button", { name: "提 交" }).click();
+
+  await page.getByRole("button", { name: "分享结果" }).click();
+  const shareDialog = page.getByRole("dialog", { name: "分享这张结果图" });
+  await expect
+    .poll(async () => shareDialog.getByAltText(`${scenario.name}分享预览图`).count())
+    .toBe(1);
+
+  await expectLocatorSnapshot(shareDialog, "sdti-feminist-share-dialog.png");
+});
+
 test("herti result and share dialog visual baseline", async ({ page }) => {
   const scenario = getHertiScenario("WAVE");
 

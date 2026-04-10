@@ -10,6 +10,7 @@ import {
   buildResultShareMeta,
   dataUrlToBlob,
   isNativeShareSupported,
+  shareQrWatermarkInsetWidth,
   waitForRenderableImages,
 } from "@/lib/result-share";
 
@@ -530,7 +531,7 @@ export function HertiApp() {
                 >
                   <div
                     className="relative overflow-hidden rounded-[24px] border border-[#d9d0bd] bg-[#faf7f0] p-6"
-                    style={{ paddingRight: "150px" }}
+                    style={{ paddingRight: shareQrWatermarkInsetWidth }}
                   >
                     <div style={{ color: "#8a7d6a", fontSize: "18px", letterSpacing: "0.18em" }}>
                       HERTI

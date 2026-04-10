@@ -13,6 +13,7 @@ import {
   dataUrlToBlob,
   isNativeShareSupported,
   isWechatBrowser,
+  shareQrWatermarkInsetWidth,
   waitForRenderableImages,
 } from "@/lib/result-share";
 
@@ -350,7 +351,7 @@ export function ResultScreen({
                           borderRadius: "18px",
                           marginTop: "18px",
                           padding: "20px",
-                          paddingRight: "150px",
+                          paddingRight: shareQrWatermarkInsetWidth,
                           position: "relative",
                         }}
                       >

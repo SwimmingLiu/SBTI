@@ -12,6 +12,7 @@ export type ResultShareMeta = {
   title: string;
 };
 
+export const shareQrWatermarkInsetWidth = 150;
 export function buildResultShareMeta({
   code,
   label,

@@ -15,6 +15,7 @@ import {
   buildResultShareMeta,
   dataUrlToBlob,
   isNativeShareSupported,
+  shareQrWatermarkInsetWidth,
   waitForRenderableImages,
 } from "@/lib/result-share";
 
@@ -392,7 +393,7 @@ export function SdtiApp() {
                           borderRadius: "18px",
                           marginTop: "20px",
                           padding: "20px",
-                          paddingRight: "150px",
+                          paddingRight: shareQrWatermarkInsetWidth,
                           position: "relative",
                         }}
                       >
