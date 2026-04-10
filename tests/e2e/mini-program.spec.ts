@@ -36,3 +36,22 @@ test("uses the configured mini program url in the dialog", async ({ page }) => {
     page.getByRole("link", { name: "打开微信小程序" }),
   ).toHaveAttribute("href", "https://wxaurl.cn/MG3YoSpo23s");
 });
+
+test("hides mini program entry content inside the mini program webview", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(window, "__wxjs_environment", {
+      configurable: true,
+      value: "miniprogram",
+    });
+  });
+
+  await page.goto("/");
+
+  await expect(page.getByRole("button", { name: "开始测试" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "查看小程序码" })).toHaveCount(0);
+  await expect(
+    page.getByText("如需在微信内体验，可打开 SBTI 微信小程序 并通过小程序码进入。"),
+  ).toHaveCount(0);
+});
