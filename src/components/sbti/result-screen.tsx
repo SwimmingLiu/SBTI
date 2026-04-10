@@ -33,7 +33,6 @@ export function ResultScreen({
 }: ResultScreenProps) {
   const imageSrc = typeImages[result.finalType.code];
   const shareCardRef = useRef<HTMLDivElement>(null);
-  const [isPreparingShareImage, setIsPreparingShareImage] = useState(false);
   const [isShareOpen, setIsShareOpen] = useState(false);
   const [shareImageUrl, setShareImageUrl] = useState<string | null>(null);
   const [shareMessage, setShareMessage] = useState("");
@@ -88,7 +87,6 @@ export function ResultScreen({
       return null;
     }
 
-    setIsPreparingShareImage(true);
     setShareMessage("");
 
     try {
@@ -105,7 +103,7 @@ export function ResultScreen({
       setShareMessage("结果图生成失败，请稍后重试。");
       return null;
     } finally {
-      setIsPreparingShareImage(false);
+      // no-op
     }
   }
 
@@ -276,7 +274,7 @@ export function ResultScreen({
             role="dialog"
           >
             <div
-              className="flex max-h-[88vh] w-full max-w-md flex-col rounded-t-[24px] border border-[var(--line)] bg-[var(--panel)] p-6 shadow-[0_16px_40px_rgba(47,73,55,0.2)] sm:rounded-[24px]"
+              className="flex max-h-[88vh] w-full max-w-md flex-col overflow-y-auto rounded-t-[24px] border border-[var(--line)] bg-[var(--panel)] p-6 shadow-[0_16px_40px_rgba(47,73,55,0.2)] sm:rounded-[24px]"
               onClick={(event) => event.stopPropagation()}
             >
               <div className="flex items-start justify-between gap-4">
@@ -314,23 +312,46 @@ export function ResultScreen({
                 </button>
               </div>
 
-              <div className="mt-5 flex-1 overflow-y-auto rounded-[20px] border border-[var(--line)] bg-white p-4">
-                {shareImageUrl ? (
-                  <div className="relative mx-auto aspect-[3/4] w-full overflow-hidden rounded-xl">
-                    <Image
-                      alt="结果页分享预览"
-                      className="object-contain"
-                      fill
-                      sizes="(max-width: 640px) 100vw, 384px"
-                      src={shareImageUrl}
-                      unoptimized
-                    />
+              <div className="mt-5 rounded-[20px] border border-[var(--line)] bg-white p-4">
+                <div
+                  className="mx-auto w-full max-w-sm rounded-[24px] bg-[#f6faf6] p-4 text-[#1e2a22]"
+                  ref={shareCardRef}
+                >
+                  <div className="rounded-[20px] border border-[#dbe8dd] bg-white p-4 shadow-[0_16px_40px_rgba(47,73,55,0.08)]">
+                    <div className="text-xs font-medium tracking-[0.18em] text-[#6c8d71]">
+                      SBTI RESULT
+                    </div>
+                    <div className="mt-4 grid gap-4">
+                      {imageSrc ? (
+                        <div className="relative aspect-[3/4] w-full overflow-hidden rounded-[18px] bg-[#edf6ef]">
+                          <Image
+                            alt={`${result.finalType.code}（${result.finalType.cn}）分享主图`}
+                            className="object-cover"
+                            fill
+                            loading="eager"
+                            priority
+                            sizes="384px"
+                            src={imageSrc}
+                            unoptimized
+                          />
+                        </div>
+                      ) : null}
+
+                      <div className="rounded-[18px] border border-[#dbe8dd] bg-[#fbfefb] p-4">
+                        <div className="text-xs text-[#6a786f]">{result.modeKicker}</div>
+                        <div className="mt-2 text-2xl font-semibold tracking-[-0.03em]">
+                          {result.finalType.code}（{result.finalType.cn}）
+                        </div>
+                        <div className="mt-3 inline-flex rounded-full bg-[#edf6ef] px-3 py-1.5 text-xs font-medium text-[#4d6a53]">
+                          {result.badge}
+                        </div>
+                        <div className="mt-3 text-xs leading-6 text-[#6a786f]">
+                          {result.finalType.intro}
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                ) : (
-                  <div className="flex min-h-[320px] items-center justify-center rounded-xl bg-[var(--soft)] text-sm text-[var(--muted)]">
-                    {isPreparingShareImage ? "正在生成结果图..." : "准备分享结果图"}
-                  </div>
-                )}
+                </div>
               </div>
 
               <button
@@ -357,58 +378,6 @@ export function ResultScreen({
             </div>
           </div>
         ) : null}
-
-        <div
-          aria-hidden="true"
-          className="pointer-events-none fixed -left-[9999px] top-0"
-        >
-          <div
-            className="w-[720px] rounded-[40px] bg-[#f6faf6] p-8 text-[#1e2a22]"
-            ref={shareCardRef}
-          >
-            <div className="rounded-[28px] border border-[#dbe8dd] bg-white p-6 shadow-[0_16px_40px_rgba(47,73,55,0.08)]">
-              <div className="text-sm font-medium tracking-[0.18em] text-[#6c8d71]">
-                SBTI RESULT
-              </div>
-              <div className="mt-4 grid gap-6">
-                {imageSrc ? (
-                  <div className="relative aspect-[3/4] w-full overflow-hidden rounded-[24px] bg-[#edf6ef]">
-                    <Image
-                      alt={`${result.finalType.code}（${result.finalType.cn}）`}
-                      className="object-cover"
-                      fill
-                      loading="eager"
-                      priority
-                      sizes="720px"
-                      src={imageSrc}
-                      unoptimized
-                    />
-                  </div>
-                ) : null}
-
-                <div className="rounded-[24px] border border-[#dbe8dd] bg-[#fbfefb] p-5">
-                  <div className="text-sm text-[#6a786f]">{result.modeKicker}</div>
-                  <div className="mt-2 text-4xl font-semibold tracking-[-0.03em]">
-                    {result.finalType.code}（{result.finalType.cn}）
-                  </div>
-                  <div className="mt-3 inline-flex rounded-full bg-[#edf6ef] px-3 py-1.5 text-sm font-medium text-[#4d6a53]">
-                    {result.badge}
-                  </div>
-                  <div className="mt-3 text-sm leading-6 text-[#6a786f]">
-                    {result.finalType.intro}
-                  </div>
-                </div>
-
-                <div className="rounded-[24px] border border-[#dbe8dd] bg-white p-5">
-                  <div className="text-base font-semibold">结果摘要</div>
-                  <div className="mt-3 text-sm leading-7 text-[#6a786f]">
-                    {result.finalType.desc}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
   );

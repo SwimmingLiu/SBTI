@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SBTI 人格测试",
+  title: "SBTI 人格测试｜SBTI 测评｜SBTI 官网",
   description: "SBTI 人格测试复刻站",
 };
 

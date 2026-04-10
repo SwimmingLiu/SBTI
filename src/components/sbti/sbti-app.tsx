@@ -21,6 +21,20 @@ const SERVER_CLIENT_ENV_SNAPSHOT = JSON.stringify({
   search: "",
 });
 
+function parseScreenFromSearch(search: string): Screen {
+  const screenParam = new URLSearchParams(search).get("screen");
+
+  if (screenParam === "test") {
+    return "quiz";
+  }
+
+  if (screenParam === "result") {
+    return "result";
+  }
+
+  return "intro";
+}
+
 function shuffleQuestions(items: Question[]) {
   const nextItems = [...items];
 
@@ -100,8 +114,48 @@ export function SbtiApp() {
       },
     [clientEnvSnapshot],
   );
+  const hasSessionState = baseQuestions.length > 0;
+  const effectiveScreen: Screen =
+    screen !== "intro" && !hasSessionState ? "intro" : screen;
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const syncScreenFromRoute = () => {
+      setScreen(parseScreenFromSearch(window.location.search));
+    };
+
+    syncScreenFromRoute();
+    window.addEventListener("popstate", syncScreenFromRoute);
+
+    return () => {
+      window.removeEventListener("popstate", syncScreenFromRoute);
+    };
+  }, []);
+
+  function updateScreenRoute(nextScreen: Screen, mode: "push" | "replace" = "push") {
+    if (typeof window === "undefined") {
+      setScreen(nextScreen);
+      return;
+    }
+
+    const url = new URL(window.location.href);
+
+    if (nextScreen === "intro") {
+      url.searchParams.delete("screen");
+    } else {
+      url.searchParams.set("screen", nextScreen === "quiz" ? "test" : "result");
+    }
+
+    const method = mode === "replace" ? "replaceState" : "pushState";
+    window.history[method]({}, "", url);
+    setScreen(nextScreen);
+  }
+
   const shouldShowRedirect = useMemo(() => {
-    if (isRedirectDismissed) {
+    if (isRedirectDismissed || effectiveScreen !== "intro") {
       return false;
     }
 
@@ -111,7 +165,7 @@ export function SbtiApp() {
       miniProgramUrl: miniProgramConfig.miniProgramUrl,
       search: clientEnv.search,
     });
-  }, [clientEnv, isRedirectDismissed, miniProgramConfig.miniProgramUrl]);
+  }, [clientEnv, effectiveScreen, isRedirectDismissed, miniProgramConfig.miniProgramUrl]);
 
   useEffect(() => {
     if (!shouldShowRedirect) {
@@ -128,7 +182,7 @@ export function SbtiApp() {
   }, [miniProgramConfig.miniProgramUrl, shouldShowRedirect]);
 
   useEffect(() => {
-    if (screen !== "result") {
+    if (effectiveScreen !== "result") {
       return;
     }
 
@@ -136,12 +190,36 @@ export function SbtiApp() {
       top: 0,
       behavior: "smooth",
     });
-  }, [screen]);
+  }, [effectiveScreen]);
+
+  useEffect(() => {
+    if (screen === "intro" || hasSessionState || typeof window === "undefined") {
+      return;
+    }
+
+    const url = new URL(window.location.href);
+    url.searchParams.delete("screen");
+    window.history.replaceState({}, "", url);
+  }, [hasSessionState, screen]);
 
   function startQuiz() {
     setAnswers({});
     setBaseQuestions(buildQuizQuestions());
-    setScreen("quiz");
+    updateScreenRoute("quiz");
+  }
+
+  function goToIntro() {
+    updateScreenRoute("intro");
+  }
+
+  function submitQuiz() {
+    updateScreenRoute("result");
+  }
+
+  function restartQuiz() {
+    setAnswers({});
+    setBaseQuestions(buildQuizQuestions());
+    updateScreenRoute("quiz");
   }
 
   function handleAnswerChange(questionId: string, value: number) {
@@ -183,7 +261,7 @@ export function SbtiApp() {
     );
   }
 
-  if (screen === "intro") {
+  if (effectiveScreen === "intro") {
     return (
       <>
         <IntroScreen
@@ -202,11 +280,11 @@ export function SbtiApp() {
     );
   }
 
-  if (screen === "result") {
+  if (effectiveScreen === "result") {
     return (
       <ResultScreen
-        onRestart={startQuiz}
-        onToTop={() => setScreen("intro")}
+        onRestart={restartQuiz}
+        onToTop={goToIntro}
         result={result}
       />
     );
@@ -217,8 +295,8 @@ export function SbtiApp() {
       answers={answers}
       doneCount={doneCount}
       onAnswerChange={handleAnswerChange}
-      onBackToIntro={() => setScreen("intro")}
-      onSubmit={() => setScreen("result")}
+      onBackToIntro={goToIntro}
+      onSubmit={submitQuiz}
       totalCount={visibleQuestions.length}
       visibleQuestions={visibleQuestions}
     />
