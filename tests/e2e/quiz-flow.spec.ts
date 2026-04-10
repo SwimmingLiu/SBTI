@@ -18,6 +18,37 @@ test("starts the quiz from intro screen", async ({ page }) => {
   await expect(page.getByRole("button", { name: "开始测试" })).toBeVisible();
 });
 
+test("keeps seo content out of sight for users", async ({ page }) => {
+  await page.goto("/");
+
+  const seoContent = page.locator("[data-seo-content]");
+
+  await expect(seoContent).toHaveCount(1);
+  await expect(seoContent).toContainText("SBTI 人格测试是什么");
+  await expect(seoContent).toContainText("SBTI 测试入口与流程");
+
+  const seoStyle = await seoContent.evaluate((node) => {
+    const style = window.getComputedStyle(node);
+
+    return {
+      clipPath: style.clipPath,
+      height: style.height,
+      overflow: style.overflow,
+      pointerEvents: style.pointerEvents,
+      position: style.position,
+      width: style.width,
+    };
+  });
+
+  expect(seoStyle.position).toBe("absolute");
+  expect(seoStyle.overflow).toBe("hidden");
+  expect(seoStyle.pointerEvents).toBe("none");
+  expect(seoStyle.clipPath).not.toBe("none");
+  expect(seoStyle.width).toBe("1px");
+  expect(seoStyle.height).toBe("1px");
+  await expect(page.getByRole("button", { name: "开始测试" })).toBeVisible();
+});
+
 test("reveals drink follow-up question when choosing 饮酒", async ({ page }) => {
   await page.goto("/");
 

@@ -156,10 +156,10 @@ export function ResultScreen({
               id="posterBox"
             >
               {imageSrc ? (
-                <div className="relative aspect-[3/4] w-full overflow-hidden rounded-[18px]">
+                <div className="relative aspect-[3/4] w-full overflow-hidden rounded-[18px] bg-white">
                   <Image
                     alt={`${result.finalType.code}（${result.finalType.cn}）`}
-                    className="object-cover"
+                    className="object-contain p-2"
                     fill
                     id="posterImage"
                     sizes="(max-width: 1024px) 100vw, 50vw"
@@ -323,10 +323,10 @@ export function ResultScreen({
                     </div>
                     <div className="mt-4 grid gap-4">
                       {imageSrc ? (
-                        <div className="relative aspect-[3/4] w-full overflow-hidden rounded-[18px] bg-[#edf6ef]">
+                        <div className="relative aspect-[3/4] w-full overflow-hidden rounded-[18px] bg-white">
                           <Image
                             alt={`${result.finalType.code}（${result.finalType.cn}）分享主图`}
-                            className="object-cover"
+                            className="object-contain p-2"
                             fill
                             loading="eager"
                             priority

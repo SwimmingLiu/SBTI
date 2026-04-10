@@ -54,6 +54,13 @@ test("submits a full quiz and renders the result screen", async ({ page }) => {
   await expect(page.locator("#resultDesc")).toBeVisible();
   await expect(page.locator("#dimList")).toBeVisible();
   await expect(page.locator("#funNote")).toBeVisible();
+  await expect
+    .poll(async () => {
+      return page.locator("#posterImage").evaluate((node) => {
+        return window.getComputedStyle(node).objectFit;
+      });
+    })
+    .toBe("contain");
   await expect.poll(async () => {
     return page.evaluate(() => Math.round(window.scrollY));
   }).toBeLessThan(80);
@@ -68,6 +75,13 @@ test("submits a full quiz and renders the result screen", async ({ page }) => {
   await expect(
     shareDialog.getByAltText("CTRL（拿捏者）分享主图"),
   ).toBeVisible();
+  await expect
+    .poll(async () => {
+      return shareDialog
+        .getByAltText("CTRL（拿捏者）分享主图")
+        .evaluate((node) => window.getComputedStyle(node).objectFit);
+    })
+    .toBe("contain");
 
   await page.goBack();
   await expect(page).toHaveURL(/screen=test/);

@@ -48,3 +48,17 @@ textarea,
 select {
   font: inherit;
 }
+
+.seo-content-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  white-space: nowrap;
+  pointer-events: none;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+}

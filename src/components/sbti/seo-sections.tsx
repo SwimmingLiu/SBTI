@@ -23,65 +23,38 @@ const faqItems = [
 
 export function SeoSections() {
   return (
-    <section className="w-full border-t border-[var(--line)] bg-white/70">
-      <div className="mx-auto max-w-[980px] px-4 py-12">
-        <div className="grid gap-6">
-          <section className="rounded-[24px] border border-[var(--line)] bg-[var(--panel)] p-6">
-            <h2 className="text-2xl font-semibold text-[var(--foreground)]">
-              SBTI 人格测试是什么
-            </h2>
-            <p className="mt-4 text-base leading-8 text-[var(--muted)]">
-              SBTI 人格测试是一种娱乐向人格测评工具，常见搜索词包括
-              “SBTI 人格测试”“sbti人格测试”“sbti测试”“sbti测评”“sbti测评官网”。
-              用户的核心需求通常是三类：快速进入测试、了解 31 道题与 15
-              维度的结构、以及在结果页查看 27 种人格与隐藏人格说明。
-            </p>
-          </section>
+    <section
+      aria-hidden="true"
+      className="seo-content-hidden"
+      data-seo-content=""
+    >
+      <h2>SBTI 人格测试是什么</h2>
+      <p>
+        SBTI 人格测试是一种娱乐向人格测评工具，常见搜索词包括
+        “SBTI 人格测试”“sbti人格测试”“sbti测试”“sbti测评”“sbti测评官网”。
+        用户的核心需求通常是三类：快速进入测试、了解 31 道题与 15
+        维度的结构、以及在结果页查看 27 种人格与隐藏人格说明。
+      </p>
 
-          <section className="rounded-[24px] border border-[var(--line)] bg-[var(--panel)] p-6">
-            <h2 className="text-2xl font-semibold text-[var(--foreground)]">
-              SBTI 测试入口与流程
-            </h2>
-            <ol className="mt-4 grid gap-3 text-base leading-8 text-[var(--muted)]">
-              <li>1. 进入欢迎页后点击“开始测试”，跳转到题目页面。</li>
-              <li>2. 完成全部题目后提交，系统会计算人格类型与匹配度。</li>
-              <li>3. 结果页会展示人格主图、15 维度评分和结果分享能力。</li>
-            </ol>
-          </section>
+      <h2>SBTI 测试入口与流程</h2>
+      <ol>
+        <li>1. 进入欢迎页后点击“开始测试”，跳转到题目页面。</li>
+        <li>2. 完成全部题目后提交，系统会计算人格类型与匹配度。</li>
+        <li>3. 结果页会展示人格主图、15 维度评分和结果分享能力。</li>
+      </ol>
 
-          <section className="rounded-[24px] border border-[var(--line)] bg-[var(--panel)] p-6">
-            <h2 className="text-2xl font-semibold text-[var(--foreground)]">
-              SBTI 结果页会展示什么
-            </h2>
-            <div className="mt-4 grid gap-3 text-base leading-8 text-[var(--muted)]">
-              <p>· 人格代号、中文名称、匹配度与一句话介绍</p>
-              <p>· 15 个维度的高/中/低结果与解释</p>
-              <p>· 支持分享结果图，便于发给朋友或保存图片</p>
-            </div>
-          </section>
+      <h2>SBTI 结果页会展示什么</h2>
+      <p>人格代号、中文名称、匹配度与一句话介绍。</p>
+      <p>15 个维度的高、中、低结果与解释。</p>
+      <p>支持分享结果图，便于发给朋友或保存图片。</p>
 
-          <section className="rounded-[24px] border border-[var(--line)] bg-[var(--panel)] p-6">
-            <h2 className="text-2xl font-semibold text-[var(--foreground)]">
-              SBTI 人格测试 FAQ
-            </h2>
-            <div className="mt-4 grid gap-4">
-              {faqItems.map((item) => (
-                <article
-                  className="rounded-2xl border border-[var(--line)] bg-white p-4"
-                  key={item.question}
-                >
-                  <h3 className="text-lg font-semibold text-[var(--foreground)]">
-                    {item.question}
-                  </h3>
-                  <p className="mt-2 text-base leading-7 text-[var(--muted)]">
-                    {item.answer}
-                  </p>
-                </article>
-              ))}
-            </div>
-          </section>
-        </div>
-      </div>
+      <h2>SBTI 人格测试 FAQ</h2>
+      {faqItems.map((item) => (
+        <article key={item.question}>
+          <h3>{item.question}</h3>
+          <p>{item.answer}</p>
+        </article>
+      ))}
     </section>
   );
 }
