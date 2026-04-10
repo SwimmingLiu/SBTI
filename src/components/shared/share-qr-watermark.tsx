@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import { shareQrCodeUrl } from "@/lib/result-share";
+import { shareQrCodeUrl } from "@/lib/asset-urls";
 
 type ShareQrWatermarkProps = {
   className?: string;
@@ -9,9 +9,9 @@ type ShareQrWatermarkProps = {
 export function ShareQrWatermark({ className }: ShareQrWatermarkProps) {
   return (
     <div
-      className={`pointer-events-none flex items-center gap-2 rounded-xl border border-white/70 bg-white/88 px-2.5 py-1.5 shadow-[0_8px_24px_rgba(0,0,0,0.06)] backdrop-blur ${className ?? ""}`}
+      className={`pointer-events-none flex items-center gap-2 bg-transparent px-0 py-0 shadow-none ${className ?? ""}`}
     >
-      <div className="relative h-10 w-10 overflow-hidden rounded-lg border border-[#e5ece6] bg-white">
+      <div className="relative h-10 w-10 overflow-hidden rounded-lg border border-transparent bg-transparent">
         <Image
           alt="小橙有门二维码"
           className="object-cover"

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { sbtiPreviewImageUrl } from "@/lib/asset-urls";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -61,7 +62,7 @@ export const metadata: Metadata = {
     url: "/",
     images: [
       {
-        url: "/assets/original/sbti/CTRL.png",
+        url: sbtiPreviewImageUrl,
         width: 720,
         height: 960,
         alt: "人格测试题库预览图",
@@ -72,7 +73,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: siteTitle,
     description: siteDescription,
-    images: ["/assets/original/sbti/CTRL.png"],
+    images: [sbtiPreviewImageUrl],
   },
 };
 

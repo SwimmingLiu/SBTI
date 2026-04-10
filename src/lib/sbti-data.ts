@@ -1,4 +1,5 @@
 import rawData from "./sbti-data.generated.json";
+import { toOssAssetUrl } from "@/lib/asset-urls";
 
 export type AnswerValue = number;
 
@@ -68,7 +69,7 @@ export function extractTypeImageMapFromHtml(html: string) {
 }
 
 function toLocalAssetPath(relativePath: string) {
-  return `/assets/original/sbti/${relativePath.split("/").pop()}`;
+  return toOssAssetUrl(`original/sbti/${relativePath.split("/").pop()}`);
 }
 
 export const dimensionMeta = data.dimensionMeta;

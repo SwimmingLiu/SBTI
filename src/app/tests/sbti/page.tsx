@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { SeoSections } from "@/components/sbti/seo-sections";
 import { SbtiApp } from "@/components/sbti/sbti-app";
+import { sbtiPreviewImageUrl } from "@/lib/asset-urls";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sbti.unun.dev";
 const siteTitle = "SBTI 人格测试｜SBTI 测评｜SBTI 官网";
@@ -35,7 +36,7 @@ export const metadata: Metadata = {
     url: "/tests/sbti",
     images: [
       {
-        url: "/assets/original/sbti/CTRL.png",
+        url: sbtiPreviewImageUrl,
         width: 720,
         height: 960,
         alt: "SBTI 人格测试结果预览图",
@@ -46,7 +47,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: siteTitle,
     description: siteDescription,
-    images: ["/assets/original/sbti/CTRL.png"],
+    images: [sbtiPreviewImageUrl],
   },
 };
 

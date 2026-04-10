@@ -1,3 +1,5 @@
+import { shareQrCodeUrl, shareQrPlaceholderUrl } from "@/lib/asset-urls";
+
 export type MiniProgramConfig = {
   appName: string;
   miniProgramUrl: string;
@@ -17,10 +19,9 @@ type AutoRedirectInput = {
   search: string;
 };
 
-const DEFAULT_QR_CODE_URL = "/assets/mini-program/qrcode-placeholder.svg";
+const DEFAULT_QR_CODE_URL = shareQrPlaceholderUrl;
 const DEFAULT_MINI_PROGRAM_URL = "https://wxaurl.cn/MG3YoSpo23s";
-const DEFAULT_REAL_QR_CODE_URL =
-  "https://sri-orangemust.oss-cn-hangzhou.aliyuncs.com/qrcode.png";
+const DEFAULT_REAL_QR_CODE_URL = shareQrCodeUrl;
 
 export function getMiniProgramConfig(): MiniProgramConfig {
   return {
