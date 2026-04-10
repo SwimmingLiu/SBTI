@@ -19,17 +19,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       lastModified: new Date(),
       priority: 0.9,
-      url: `${siteUrl}${entry.href}`,
+      url: new URL(entry.href, siteUrl).toString(),
     }));
 
   return [
     homeEntry,
-    {
-      changeFrequency: "weekly",
-      lastModified: new Date(),
-      priority: 0.7,
-      url: `${siteUrl}/tests`,
-    },
     ...liveTestEntries,
   ];
 }

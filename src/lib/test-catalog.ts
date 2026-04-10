@@ -1,3 +1,5 @@
+export type TestSlug = "sbti" | "sdti" | "herti";
+
 export type TestCatalogEntry = {
   accent: string;
   description: string;
@@ -5,7 +7,7 @@ export type TestCatalogEntry = {
   name: string;
   questionCount: number;
   resultCount: number;
-  slug: "sbti" | "sdti" | "herti";
+  slug: TestSlug;
   status: "live" | "planned";
   tagline: string;
   tags: string[];
@@ -53,6 +55,6 @@ export const testCatalog: TestCatalogEntry[] = [
   },
 ];
 
-export function getTestCatalogEntry(slug: string) {
+export function getTestCatalogEntry(slug: TestSlug) {
   return testCatalog.find((entry) => entry.slug === slug) ?? null;
 }

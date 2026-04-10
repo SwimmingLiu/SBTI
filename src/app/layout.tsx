@@ -22,9 +22,6 @@ export const metadata: Metadata = {
   title: siteTitle,
   description: siteDescription,
   applicationName: "人格测试题库",
-  alternates: {
-    canonical: "/",
-  },
   keywords: [
     "人格测试题库",
     "SBTI 人格测试",
