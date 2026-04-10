@@ -48,11 +48,11 @@ test("submits a full quiz and renders the result screen", async ({ page }) => {
   });
   await page.getByRole("button", { name: "提交并查看结果" }).click();
 
-  await expect(page.getByText("CTRL（拿捏者）")).toBeVisible();
-  await expect(page.getByText("匹配度 100%")).toBeVisible();
-  await expect(page.getByText("该人格的简单解读")).toBeVisible();
-  await expect(page.getByText("十五维度评分")).toBeVisible();
-  await expect(page.getByText("友情提示")).toBeVisible();
+  await expect(page.locator("#resultTypeName")).toHaveText("CTRL（拿捏者）");
+  await expect(page.locator("#matchBadge")).toContainText("匹配度 100%");
+  await expect(page.locator("#resultDesc")).toBeVisible();
+  await expect(page.locator("#dimList")).toBeVisible();
+  await expect(page.locator("#funNote")).toBeVisible();
   await expect.poll(async () => {
     return page.evaluate(() => Math.round(window.scrollY));
   }).toBeLessThan(80);
@@ -61,12 +61,7 @@ test("submits a full quiz and renders the result screen", async ({ page }) => {
   const shareDialog = page.getByRole("dialog", { name: "分享这张结果图" });
   await expect(shareDialog).toBeVisible();
   await expect(
-    shareDialog.getByRole("button", { name: "系统分享" }),
+    shareDialog.getByRole("button", { name: "立即分享" }),
   ).toBeVisible();
-  await expect(
-    shareDialog.getByRole("button", { name: "保存图片" }),
-  ).toBeVisible();
-  await expect(
-    shareDialog.getByRole("button", { name: "复制文案" }),
-  ).toBeVisible();
+  await expect(shareDialog.getByAltText("结果页分享预览")).toBeVisible();
 });

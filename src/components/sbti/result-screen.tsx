@@ -31,8 +31,8 @@ export function ResultScreen({
   onToTop,
   result,
 }: ResultScreenProps) {
-  const captureRef = useRef<HTMLDivElement>(null);
   const imageSrc = typeImages[result.finalType.code];
+  const shareCardRef = useRef<HTMLDivElement>(null);
   const [isPreparingShareImage, setIsPreparingShareImage] = useState(false);
   const [isShareOpen, setIsShareOpen] = useState(false);
   const [shareImageUrl, setShareImageUrl] = useState<string | null>(null);
@@ -55,12 +55,36 @@ export function ResultScreen({
     };
   }, [shareImageUrl]);
 
+  async function waitForShareImages() {
+    const container = shareCardRef.current;
+
+    if (!container) {
+      return;
+    }
+
+    const images = Array.from(container.querySelectorAll("img"));
+    await Promise.all(
+      images.map(
+        (image) =>
+          new Promise<void>((resolve) => {
+            if (image.complete && image.naturalWidth > 0) {
+              resolve();
+              return;
+            }
+
+            image.addEventListener("load", () => resolve(), { once: true });
+            image.addEventListener("error", () => resolve(), { once: true });
+          }),
+      ),
+    );
+  }
+
   async function ensureShareImage() {
     if (shareImageUrl) {
       return shareImageUrl;
     }
 
-    if (!captureRef.current) {
+    if (!shareCardRef.current) {
       return null;
     }
 
@@ -68,7 +92,9 @@ export function ResultScreen({
     setShareMessage("");
 
     try {
-      const dataUrl = await toPng(captureRef.current, {
+      await waitForShareImages();
+
+      const dataUrl = await toPng(shareCardRef.current, {
         backgroundColor: "#f6faf6",
         cacheBust: true,
         pixelRatio: 2,
@@ -96,7 +122,7 @@ export function ResultScreen({
     }
 
     if (!isNativeShareSupported()) {
-      setShareMessage("当前浏览器不支持系统分享，可改用保存图片或复制文案。");
+      setShareMessage("当前浏览器不支持系统分享，可长按图片保存后再转发。");
       return;
     }
 
@@ -118,42 +144,14 @@ export function ResultScreen({
       await navigator.share(sharePayload);
       setShareMessage("已打开系统分享。");
     } catch {
-      setShareMessage("系统分享未完成，可改用保存图片或复制文案。");
-    }
-  }
-
-  async function handleSaveImage() {
-    const imageUrl = await ensureShareImage();
-
-    if (!imageUrl) {
-      return;
-    }
-
-    const link = document.createElement("a");
-    link.href = imageUrl;
-    link.download = shareMeta.fileName;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    setShareMessage("结果图已开始下载。");
-  }
-
-  async function handleCopyText() {
-    try {
-      await navigator.clipboard.writeText(shareMeta.text);
-      setShareMessage("分享文案已复制。");
-    } catch {
-      setShareMessage("复制失败，请手动复制结果文案。");
+      setShareMessage("系统分享未完成，可长按图片保存后再转发。");
     }
   }
 
   return (
     <section className="w-full">
       <div className="px-4 pb-14 pt-6">
-        <div
-          className="mx-auto max-w-[980px] rounded-[22px] border border-[var(--line)] bg-[var(--panel)] p-6 shadow-[0_16px_40px_rgba(47,73,55,0.08)] md:p-7"
-          ref={captureRef}
-        >
+        <div className="mx-auto max-w-[980px] rounded-[22px] border border-[var(--line)] bg-[var(--panel)] p-6 shadow-[0_16px_40px_rgba(47,73,55,0.08)] md:p-7">
           <div className="grid gap-4 lg:grid-cols-[1.05fr_0.95fr]">
             <div
               className="rounded-[24px] border border-[var(--line)] bg-[linear-gradient(180deg,#fbfefb,#f3f8f4)] p-4"
@@ -241,14 +239,46 @@ export function ResultScreen({
           </div>
         </div>
 
+        <div className="mt-6 flex flex-wrap gap-3">
+          <button
+            className="rounded-2xl bg-[var(--accent-strong)] px-5 py-3 font-semibold text-white shadow-[0_12px_30px_rgba(77,106,83,0.18)] transition hover:-translate-y-0.5"
+            onClick={() => {
+              void handleOpenShare();
+            }}
+            type="button"
+          >
+            分享结果
+          </button>
+          <button
+            className="rounded-2xl border border-[var(--line)] bg-white px-5 py-3 font-semibold text-[var(--accent-strong)] transition hover:-translate-y-0.5"
+            id="restartBtn"
+            onClick={onRestart}
+            type="button"
+          >
+            重新测试
+          </button>
+          <button
+            className="rounded-2xl bg-[var(--accent-strong)] px-5 py-3 font-semibold text-white shadow-[0_12px_30px_rgba(77,106,83,0.18)] transition hover:-translate-y-0.5"
+            id="toTopBtn"
+            onClick={onToTop}
+            type="button"
+          >
+            回到首页
+          </button>
+        </div>
+
         {isShareOpen ? (
           <div
             aria-labelledby="shareResultTitle"
             aria-modal="true"
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4"
+            className="fixed inset-0 z-50 flex items-end justify-center bg-black/45 p-0 sm:items-center sm:p-4"
+            onClick={() => setIsShareOpen(false)}
             role="dialog"
           >
-            <div className="w-full max-w-md rounded-[24px] border border-[var(--line)] bg-[var(--panel)] p-6 shadow-[0_16px_40px_rgba(47,73,55,0.2)]">
+            <div
+              className="flex max-h-[88vh] w-full max-w-md flex-col rounded-t-[24px] border border-[var(--line)] bg-[var(--panel)] p-6 shadow-[0_16px_40px_rgba(47,73,55,0.2)] sm:rounded-[24px]"
+              onClick={(event) => event.stopPropagation()}
+            >
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <h2
@@ -258,7 +288,7 @@ export function ResultScreen({
                     分享这张结果图
                   </h2>
                   <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
-                    生成结果截图后，你可以分享给朋友、朋友圈，或者保存到相册。
+                    分享图会包含人格主图、类型标题和匹配信息。
                   </p>
                 </div>
                 <button
@@ -284,7 +314,7 @@ export function ResultScreen({
                 </button>
               </div>
 
-              <div className="mt-5 rounded-[20px] border border-[var(--line)] bg-white p-4">
+              <div className="mt-5 flex-1 overflow-y-auto rounded-[20px] border border-[var(--line)] bg-white p-4">
                 {shareImageUrl ? (
                   <div className="relative mx-auto aspect-[3/4] w-full overflow-hidden rounded-xl">
                     <Image
@@ -297,46 +327,26 @@ export function ResultScreen({
                     />
                   </div>
                 ) : (
-                  <div className="flex min-h-[220px] items-center justify-center rounded-xl bg-[var(--soft)] text-sm text-[var(--muted)]">
+                  <div className="flex min-h-[320px] items-center justify-center rounded-xl bg-[var(--soft)] text-sm text-[var(--muted)]">
                     {isPreparingShareImage ? "正在生成结果图..." : "准备分享结果图"}
                   </div>
                 )}
               </div>
 
-              <div className="mt-5 grid gap-3 sm:grid-cols-3">
-                <button
-                  className="rounded-2xl bg-[var(--accent-strong)] px-4 py-3 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(77,106,83,0.18)] transition hover:-translate-y-0.5"
-                  onClick={() => {
-                    void handleNativeShare();
-                  }}
-                  type="button"
-                >
-                  系统分享
-                </button>
-                <button
-                  className="rounded-2xl border border-[var(--line)] bg-white px-4 py-3 text-sm font-semibold text-[var(--accent-strong)] transition hover:-translate-y-0.5"
-                  onClick={() => {
-                    void handleSaveImage();
-                  }}
-                  type="button"
-                >
-                  保存图片
-                </button>
-                <button
-                  className="rounded-2xl border border-[var(--line)] bg-white px-4 py-3 text-sm font-semibold text-[var(--accent-strong)] transition hover:-translate-y-0.5"
-                  onClick={() => {
-                    void handleCopyText();
-                  }}
-                  type="button"
-                >
-                  复制文案
-                </button>
-              </div>
+              <button
+                className="mt-5 rounded-2xl bg-[var(--accent-strong)] px-5 py-3 font-semibold text-white shadow-[0_12px_30px_rgba(77,106,83,0.18)] transition hover:-translate-y-0.5"
+                onClick={() => {
+                  void handleNativeShare();
+                }}
+                type="button"
+              >
+                立即分享
+              </button>
 
-              <div className="mt-4 rounded-2xl bg-[var(--soft)] px-4 py-3 text-sm leading-6 text-[var(--muted)]">
+              <div className="mt-4 rounded-2xl bg-[var(--soft)] px-4 py-3 text-sm leading-7 text-[var(--muted)]">
                 {isWechatBrowser()
-                  ? "如果你在微信里，可以点击右上角“…”把结果图分享给朋友或朋友圈，也可以先保存图片再发送。"
-                  : "移动端支持系统分享；如分享面板不可用，可先保存结果图，再发送给朋友或朋友圈。"}
+                  ? "如果你在微信里，可以点击右上角“…”把结果图分享给朋友或朋友圈；也可以长按预览图保存到相册。"
+                  : "移动端可用系统分享；如果系统分享面板没有保存入口，也可以长按预览图保存图片。桌面端可右键另存为。"}
               </div>
 
               {shareMessage ? (
@@ -348,41 +358,56 @@ export function ResultScreen({
           </div>
         ) : null}
 
-        <div className="mt-6 flex flex-wrap gap-3">
-          <button
-            className="rounded-2xl bg-[var(--accent-strong)] px-5 py-3 font-semibold text-white shadow-[0_12px_30px_rgba(77,106,83,0.18)] transition hover:-translate-y-0.5"
-            onClick={() => {
-              void handleOpenShare();
-            }}
-            type="button"
+        <div
+          aria-hidden="true"
+          className="pointer-events-none fixed -left-[9999px] top-0"
+        >
+          <div
+            className="w-[720px] rounded-[40px] bg-[#f6faf6] p-8 text-[#1e2a22]"
+            ref={shareCardRef}
           >
-            分享结果
-          </button>
-          <button
-            className="rounded-2xl border border-[var(--line)] bg-white px-5 py-3 font-semibold text-[var(--accent-strong)] transition hover:-translate-y-0.5"
-            onClick={() => {
-              void handleSaveImage();
-            }}
-            type="button"
-          >
-            保存图片
-          </button>
-          <button
-            className="rounded-2xl border border-[var(--line)] bg-white px-5 py-3 font-semibold text-[var(--accent-strong)] transition hover:-translate-y-0.5"
-            id="restartBtn"
-            onClick={onRestart}
-            type="button"
-          >
-            重新测试
-          </button>
-          <button
-            className="rounded-2xl bg-[var(--accent-strong)] px-5 py-3 font-semibold text-white shadow-[0_12px_30px_rgba(77,106,83,0.18)] transition hover:-translate-y-0.5"
-            id="toTopBtn"
-            onClick={onToTop}
-            type="button"
-          >
-            回到首页
-          </button>
+            <div className="rounded-[28px] border border-[#dbe8dd] bg-white p-6 shadow-[0_16px_40px_rgba(47,73,55,0.08)]">
+              <div className="text-sm font-medium tracking-[0.18em] text-[#6c8d71]">
+                SBTI RESULT
+              </div>
+              <div className="mt-4 grid gap-6">
+                {imageSrc ? (
+                  <div className="relative aspect-[3/4] w-full overflow-hidden rounded-[24px] bg-[#edf6ef]">
+                    <Image
+                      alt={`${result.finalType.code}（${result.finalType.cn}）`}
+                      className="object-cover"
+                      fill
+                      loading="eager"
+                      priority
+                      sizes="720px"
+                      src={imageSrc}
+                      unoptimized
+                    />
+                  </div>
+                ) : null}
+
+                <div className="rounded-[24px] border border-[#dbe8dd] bg-[#fbfefb] p-5">
+                  <div className="text-sm text-[#6a786f]">{result.modeKicker}</div>
+                  <div className="mt-2 text-4xl font-semibold tracking-[-0.03em]">
+                    {result.finalType.code}（{result.finalType.cn}）
+                  </div>
+                  <div className="mt-3 inline-flex rounded-full bg-[#edf6ef] px-3 py-1.5 text-sm font-medium text-[#4d6a53]">
+                    {result.badge}
+                  </div>
+                  <div className="mt-3 text-sm leading-6 text-[#6a786f]">
+                    {result.finalType.intro}
+                  </div>
+                </div>
+
+                <div className="rounded-[24px] border border-[#dbe8dd] bg-white p-5">
+                  <div className="text-base font-semibold">结果摘要</div>
+                  <div className="mt-3 text-sm leading-7 text-[#6a786f]">
+                    {result.finalType.desc}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
