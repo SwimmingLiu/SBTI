@@ -1,5 +1,5 @@
 import { sdtiDimensions, sdtiQuestions } from "@/features/sdti/data";
-import { toOssAssetUrl } from "@/lib/asset-urls";
+import { toAssetUrl } from "@/lib/asset-urls";
 
 export type SdtiScores = Record<string, number>;
 
@@ -17,7 +17,7 @@ export type SdtiComputedResult = SdtiResultPreset & {
   scores: SdtiScores;
 };
 
-const feministImage = toOssAssetUrl("original/sdti/feminist.webp");
+const feministImage = toAssetUrl("original/sdti/feminist.webp");
 
 const resultPresets: Record<string, SdtiResultPreset> = {
   construction: {
