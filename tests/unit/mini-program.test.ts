@@ -92,6 +92,6 @@ describe("mini program helpers", () => {
 
     expect(config.appName).toBe("SBTI 微信小程序");
     expect(config.miniProgramUrl).toBe("https://wxaurl.cn/MG3YoSpo23s");
-    expect(config.qrCodeUrl).toBe("/assets/mini-program/qrcode.png");
+    expect(config.qrCodeUrl).toBe("https://sri-orangemust.oss-cn-hangzhou.aliyuncs.com/qrcode.png");
   });
 });

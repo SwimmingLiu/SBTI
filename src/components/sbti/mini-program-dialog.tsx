@@ -40,12 +40,25 @@ export function MiniProgramDialog({
             </p>
           </div>
           <button
-            aria-label="关闭小程序码弹窗"
-            className="rounded-full border border-[var(--line)] px-3 py-1 text-sm text-[var(--muted)] transition hover:border-[var(--accent)] hover:text-[var(--foreground)]"
+            aria-label="Close dialog"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[var(--line)] text-[var(--muted)] transition hover:border-[var(--accent)] hover:text-[var(--foreground)]"
             onClick={onClose}
             type="button"
           >
-            关闭
+            <svg
+              aria-hidden="true"
+              className="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M6 6L18 18M18 6L6 18"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeWidth="2"
+              />
+            </svg>
           </button>
         </div>
 
