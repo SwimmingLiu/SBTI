@@ -8,12 +8,12 @@
 - [x] 首页升级为题库入口页
 - [x] SBTI 迁移到 `/tests/sbti`
 - [x] SDTI 完整接入
+- [x] HERTI 完整接入
 - [x] 参考页面快照已归档到 `research/original/SBTI.html`
 - [x] 结果图资源已同步到 `public/assets/original/sbti`
 - [x] 首页与答题页流程已完成
 - [x] 结果页与完整人格判定逻辑
 - [x] 远端 / 本地全结果浏览器抓取
-- [ ] HERTI 完整接入
 - [ ] Vercel 生产部署
 
 ## 本地开发

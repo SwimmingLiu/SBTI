@@ -49,8 +49,8 @@ export const testCatalog: TestCatalogEntry[] = [
     questionCount: 20,
     resultCount: 16,
     slug: "herti",
-    status: "planned",
-    tagline: "米色文学风 · 长卷结果页 · 接入中",
+    status: "live",
+    tagline: "米色文学风 · 长卷结果页 · 已上线",
     tags: ["新题库", "马氏距离", "镜像关系"],
   },
 ];
