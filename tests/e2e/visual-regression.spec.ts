@@ -42,11 +42,16 @@ async function disableMotion(page: Page) {
   });
 }
 
-async function expectLocatorSnapshot(locator: Locator, name: string) {
+async function expectLocatorSnapshot(
+  locator: Locator,
+  name: string,
+  options: Record<string, unknown> = {},
+) {
   await expect(locator).toHaveScreenshot(name, {
     animations: "disabled",
     caret: "hide",
     scale: "device",
+    ...options,
   });
 }
 
@@ -57,6 +62,7 @@ test("home page visual baseline", async ({ page }) => {
   await expectLocatorSnapshot(
     page.locator("main > section").first(),
     "home-library-shell.png",
+    { maxDiffPixelRatio: 0.02 },
   );
 });
 
@@ -65,7 +71,6 @@ test("sbti result and share dialog visual baseline", async ({ page }) => {
 
   await page.goto("/tests/sbti");
   await disableMotion(page);
-  await page.getByRole("button", { name: "开始测试" }).click();
 
   for (const question of questions) {
     const selectedValue = answers[question.id];

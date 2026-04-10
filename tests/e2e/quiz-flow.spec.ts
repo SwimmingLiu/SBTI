@@ -1,21 +1,15 @@
 import { expect, test } from "@playwright/test";
 
-test("starts the quiz from intro screen", async ({ page }) => {
+test("shows the sbti quiz immediately on page load", async ({ page }) => {
   await page.goto("/tests/sbti");
   await expect(page).toHaveTitle("SBTI 人格测试｜SBTI 测评｜SBTI 官网");
   await expect(
     page.getByText("保留题目流程、隐藏题与结果机制的本地版本。先做题，再等系统审判。"),
   ).toHaveCount(0);
 
-  await page.getByRole("button", { name: "开始测试" }).click();
-
-  await expect(page).toHaveURL(/screen=test/);
   await expect(page.getByText(/第 1 题/)).toBeVisible();
   await expect(page.getByText("0 / 31")).toBeVisible();
-
-  await page.goBack();
   await expect(page).toHaveURL(/\/tests\/sbti$/);
-  await expect(page.getByRole("button", { name: "开始测试" })).toBeVisible();
 });
 
 test("keeps seo content out of sight for users", async ({ page }) => {
@@ -46,13 +40,11 @@ test("keeps seo content out of sight for users", async ({ page }) => {
   expect(seoStyle.clipPath).not.toBe("none");
   expect(seoStyle.width).toBe("1px");
   expect(seoStyle.height).toBe("1px");
-  await expect(page.getByRole("button", { name: "开始测试" })).toBeVisible();
+  await expect(page.getByText(/第 1 题/)).toBeVisible();
 });
 
 test("reveals drink follow-up question when choosing 饮酒", async ({ page }) => {
   await page.goto("/tests/sbti");
-
-  await page.getByRole("button", { name: "开始测试" }).click();
 
   await expect(page.getByText("您平时有什么爱好？")).toBeVisible();
   await page.getByLabel("饮酒").check();

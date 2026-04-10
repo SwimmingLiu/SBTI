@@ -1,38 +1,22 @@
 "use client";
 
-import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-import { IntroScreen } from "@/components/sbti/intro-screen";
-import { MiniProgramDialog } from "@/components/sbti/mini-program-dialog";
 import { QuizScreen } from "@/components/sbti/quiz-screen";
 import { ResultScreen } from "@/components/sbti/result-screen";
-import {
-  getMiniProgramConfig,
-  isWechatMiniProgram,
-  shouldAutoRedirectToMiniProgram,
-} from "@/lib/mini-program";
 import { computeResult, getVisibleQuestions } from "@/lib/sbti-engine";
 import { questions, specialQuestions, type Question } from "@/lib/sbti-data";
 
-type Screen = "intro" | "quiz" | "result";
-const SERVER_CLIENT_ENV_SNAPSHOT = JSON.stringify({
-  isInMiniProgram: false,
-  isMobile: false,
-  search: "",
-});
+type Screen = "quiz" | "result";
 
 function parseScreenFromSearch(search: string): Screen {
   const screenParam = new URLSearchParams(search).get("screen");
-
-  if (screenParam === "test") {
-    return "quiz";
-  }
 
   if (screenParam === "result") {
     return "result";
   }
 
-  return "intro";
+  return "quiz";
 }
 
 function shuffleQuestions(items: Question[]) {
@@ -61,12 +45,9 @@ function buildQuizQuestions() {
 }
 
 export function SbtiApp() {
-  const miniProgramConfig = useMemo(() => getMiniProgramConfig(), []);
-  const [screen, setScreen] = useState<Screen>("intro");
+  const [screen, setScreen] = useState<Screen>("quiz");
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [baseQuestions, setBaseQuestions] = useState<Question[]>([]);
-  const [isMiniProgramDialogOpen, setIsMiniProgramDialogOpen] = useState(false);
-  const [isRedirectDismissed, setIsRedirectDismissed] = useState(false);
 
   const visibleQuestions = useMemo(
     () =>
@@ -78,45 +59,8 @@ export function SbtiApp() {
     (question) => answers[question.id] !== undefined,
   ).length;
   const result = useMemo(() => computeResult(answers), [answers]);
-  const clientEnvSnapshot = useSyncExternalStore(
-    (onStoreChange) => {
-      if (typeof window === "undefined") {
-        return () => undefined;
-      }
-
-      const mediaQuery = window.matchMedia("(max-width: 768px)");
-      mediaQuery.addEventListener("change", onStoreChange);
-      window.addEventListener("popstate", onStoreChange);
-
-      return () => {
-        mediaQuery.removeEventListener("change", onStoreChange);
-        window.removeEventListener("popstate", onStoreChange);
-      };
-    },
-    () =>
-      JSON.stringify({
-        isInMiniProgram: isWechatMiniProgram({
-          hasMiniProgramApi: Boolean((window as { wx?: { miniProgram?: unknown } }).wx?.miniProgram),
-          userAgent: window.navigator.userAgent,
-          wxEnv: (window as { __wxjs_environment?: string }).__wxjs_environment,
-        }),
-        isMobile: window.matchMedia("(max-width: 768px)").matches,
-        search: window.location.search,
-      }),
-    () => SERVER_CLIENT_ENV_SNAPSHOT,
-  );
-  const clientEnv = useMemo(
-    () =>
-      JSON.parse(clientEnvSnapshot) as {
-        isInMiniProgram: boolean;
-        isMobile: boolean;
-        search: string;
-      },
-    [clientEnvSnapshot],
-  );
   const hasSessionState = baseQuestions.length > 0;
-  const effectiveScreen: Screen =
-    screen !== "intro" && !hasSessionState ? "intro" : screen;
+  const effectiveScreen: Screen = screen === "result" && !hasSessionState ? "quiz" : screen;
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -135,6 +79,15 @@ export function SbtiApp() {
     };
   }, []);
 
+  useEffect(() => {
+    if (baseQuestions.length > 0) {
+      return;
+    }
+
+    setBaseQuestions(buildQuizQuestions());
+    setAnswers({});
+  }, [baseQuestions.length]);
+
   function updateScreenRoute(nextScreen: Screen, mode: "push" | "replace" = "push") {
     if (typeof window === "undefined") {
       setScreen(nextScreen);
@@ -143,43 +96,16 @@ export function SbtiApp() {
 
     const url = new URL(window.location.href);
 
-    if (nextScreen === "intro") {
+    if (nextScreen === "quiz") {
       url.searchParams.delete("screen");
     } else {
-      url.searchParams.set("screen", nextScreen === "quiz" ? "test" : "result");
+      url.searchParams.set("screen", "result");
     }
 
     const method = mode === "replace" ? "replaceState" : "pushState";
     window.history[method]({}, "", url);
     setScreen(nextScreen);
   }
-
-  const shouldShowRedirect = useMemo(() => {
-    if (isRedirectDismissed || effectiveScreen !== "intro") {
-      return false;
-    }
-
-    return shouldAutoRedirectToMiniProgram({
-      isInMiniProgram: clientEnv.isInMiniProgram,
-      isMobile: clientEnv.isMobile,
-      miniProgramUrl: miniProgramConfig.miniProgramUrl,
-      search: clientEnv.search,
-    });
-  }, [clientEnv, effectiveScreen, isRedirectDismissed, miniProgramConfig.miniProgramUrl]);
-
-  useEffect(() => {
-    if (!shouldShowRedirect) {
-      return;
-    }
-
-    const timeoutId = window.setTimeout(() => {
-      window.location.href = miniProgramConfig.miniProgramUrl;
-    }, 1200);
-
-    return () => {
-      window.clearTimeout(timeoutId);
-    };
-  }, [miniProgramConfig.miniProgramUrl, shouldShowRedirect]);
 
   useEffect(() => {
     if (effectiveScreen !== "result") {
@@ -192,26 +118,6 @@ export function SbtiApp() {
     });
   }, [effectiveScreen]);
 
-  useEffect(() => {
-    if (screen === "intro" || hasSessionState || typeof window === "undefined") {
-      return;
-    }
-
-    const url = new URL(window.location.href);
-    url.searchParams.delete("screen");
-    window.history.replaceState({}, "", url);
-  }, [hasSessionState, screen]);
-
-  function startQuiz() {
-    setAnswers({});
-    setBaseQuestions(buildQuizQuestions());
-    updateScreenRoute("quiz");
-  }
-
-  function goToIntro() {
-    updateScreenRoute("intro");
-  }
-
   function submitQuiz() {
     updateScreenRoute("result");
   }
@@ -220,6 +126,12 @@ export function SbtiApp() {
     setAnswers({});
     setBaseQuestions(buildQuizQuestions());
     updateScreenRoute("quiz");
+  }
+
+  function goToHome() {
+    if (typeof window !== "undefined") {
+      window.location.href = "/";
+    }
   }
 
   function handleAnswerChange(questionId: string, value: number) {
@@ -237,57 +149,11 @@ export function SbtiApp() {
     });
   }
 
-  if (shouldShowRedirect) {
-    return (
-      <section className="w-full">
-        <div className="px-4 pb-14 pt-20">
-          <div className="mx-auto max-w-xl rounded-[22px] border border-[var(--line)] bg-[var(--panel)] p-10 text-center shadow-[0_16px_40px_rgba(47,73,55,0.08)]">
-            <h2 className="text-3xl font-semibold tracking-[-0.03em] text-[var(--foreground)]">
-              正在跳转到微信小程序...
-            </h2>
-            <p className="mt-4 text-base leading-8 text-[var(--muted)]">
-              请稍候，即将为你打开 {miniProgramConfig.appName}。
-            </p>
-            <button
-              className="mt-6 rounded-2xl border border-[var(--line)] bg-white px-6 py-3 text-base font-semibold text-[var(--accent-strong)] transition hover:-translate-y-0.5"
-              onClick={() => setIsRedirectDismissed(true)}
-              type="button"
-            >
-              取消跳转，继续浏览网页
-            </button>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  if (effectiveScreen === "intro") {
-    return (
-      <>
-        <IntroScreen
-          appName={miniProgramConfig.appName}
-          showMiniProgramEntry={!clientEnv.isInMiniProgram}
-          onOpenMiniProgram={() => setIsMiniProgramDialogOpen(true)}
-          onStart={startQuiz}
-        />
-        {!clientEnv.isInMiniProgram ? (
-          <MiniProgramDialog
-            appName={miniProgramConfig.appName}
-            isOpen={isMiniProgramDialogOpen}
-            miniProgramUrl={miniProgramConfig.miniProgramUrl}
-            onClose={() => setIsMiniProgramDialogOpen(false)}
-            qrCodeUrl={miniProgramConfig.qrCodeUrl}
-          />
-        ) : null}
-      </>
-    );
-  }
-
   if (effectiveScreen === "result") {
     return (
       <ResultScreen
         onRestart={restartQuiz}
-        onToTop={goToIntro}
+        onToTop={goToHome}
         result={result}
       />
     );
@@ -298,7 +164,7 @@ export function SbtiApp() {
       answers={answers}
       doneCount={doneCount}
       onAnswerChange={handleAnswerChange}
-      onBackToIntro={goToIntro}
+      onBackToIntro={goToHome}
       onSubmit={submitQuiz}
       totalCount={visibleQuestions.length}
       visibleQuestions={visibleQuestions}

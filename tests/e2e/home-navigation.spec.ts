@@ -23,7 +23,7 @@ test("shows multiple test entries on the home page and routes into sbti", async 
   await page.getByRole("link", { name: "进入 SBTI" }).click();
 
   await expect(page).toHaveURL(/\/tests\/sbti$/);
-  await expect(page.getByRole("button", { name: "开始测试" })).toBeVisible();
+  await expect(page.getByText(/第 1 题/)).toBeVisible();
 });
 
 test("injects baidu analytics bootstrap script into head", async ({ page }) => {
