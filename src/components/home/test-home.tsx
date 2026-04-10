@@ -21,6 +21,7 @@ const SERVER_CLIENT_ENV_SNAPSHOT = JSON.stringify({
 export function TestHome() {
   const miniProgramConfig = useMemo(() => getMiniProgramConfig(), []);
   const [isRedirectDismissed, setIsRedirectDismissed] = useState(false);
+  const [isQrPreviewVisible, setIsQrPreviewVisible] = useState(false);
   const clientEnvSnapshot = useSyncExternalStore(
     (onStoreChange) => {
       if (typeof window === "undefined") {
@@ -123,20 +124,7 @@ export function TestHome() {
         </div>
 
         {!clientEnv.isInMiniProgram ? (
-          <div className="mt-8 grid gap-5 rounded-[24px] border border-[var(--line)] bg-[linear-gradient(180deg,#fbfefb,#f4faf5)] p-5 md:grid-cols-[0.9fr_1.1fr] md:p-6">
-            <div className="flex justify-center md:justify-start">
-              <div className="rounded-[24px] border border-[var(--line)] bg-white p-4 shadow-[0_16px_40px_rgba(26,42,34,0.04)]">
-                <div className="relative h-40 w-40 overflow-hidden rounded-[18px]">
-                  <Image
-                    alt={`${miniProgramConfig.appName}二维码`}
-                    className="object-contain"
-                    fill
-                    sizes="160px"
-                    src={miniProgramConfig.qrCodeUrl}
-                  />
-                </div>
-              </div>
-            </div>
+          <div className="mt-8 rounded-[24px] border border-[var(--line)] bg-[linear-gradient(180deg,#fbfefb,#f4faf5)] p-5 md:p-6">
             <div className="flex flex-col justify-center">
               <div className="inline-flex w-fit rounded-full bg-[var(--soft)] px-3 py-1.5 text-xs font-semibold tracking-[0.14em] text-[var(--accent-strong)]">
                 微信小程序入口
@@ -145,7 +133,7 @@ export function TestHome() {
                 小橙有门 · 微信内更方便
               </h2>
               <p className="mt-4 max-w-2xl text-sm leading-7 text-[var(--muted)]">
-                首页直接提供小程序二维码和跳转入口。移动端访问时会优先尝试跳小程序；如果你正在微信小程序内，则不会重复展示这块内容。
+                首页先保留跳转入口，需要时再展开小程序码。移动端访问时会优先尝试跳小程序；如果你正在微信小程序内，则不会重复展示这块内容。
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
                 <a
@@ -156,14 +144,48 @@ export function TestHome() {
                 >
                   打开微信小程序
                 </a>
-                <a
+                <button
                   className="inline-flex items-center justify-center rounded-2xl border border-[var(--line)] bg-white px-5 py-3 font-semibold text-[var(--accent-strong)] transition hover:-translate-y-0.5"
-                  download
-                  href={miniProgramConfig.qrCodeUrl}
+                  onClick={() => setIsQrPreviewVisible((current) => !current)}
+                  type="button"
                 >
-                  下载小程序码
-                </a>
+                  {isQrPreviewVisible ? "收起小程序码" : "下载小程序码"}
+                </button>
               </div>
+
+              {isQrPreviewVisible ? (
+                <div
+                  className="mt-6 rounded-[24px] border border-[var(--line)] bg-white/90 p-4 shadow-[0_16px_40px_rgba(26,42,34,0.04)]"
+                  data-testid="mini-program-qr-preview"
+                >
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+                    <div className="relative h-40 w-40 shrink-0 overflow-hidden rounded-[18px] border border-[var(--line)] bg-white">
+                      <Image
+                        alt={`${miniProgramConfig.appName}二维码`}
+                        className="object-contain p-2"
+                        fill
+                        sizes="160px"
+                        src={miniProgramConfig.qrCodeUrl}
+                      />
+                    </div>
+                    <div className="min-w-0">
+                      <h3 className="text-base font-semibold text-[var(--foreground)]">
+                        小程序码预览
+                      </h3>
+                      <p className="mt-2 text-sm leading-7 text-[var(--muted)]">
+                        可直接保存图片，或长按识别进入小程序。
+                      </p>
+                      <a
+                        className="mt-4 inline-flex items-center justify-center rounded-2xl border border-[var(--line)] bg-[var(--soft)] px-4 py-2 font-semibold text-[var(--accent-strong)] transition hover:-translate-y-0.5"
+                        download
+                        href={miniProgramConfig.qrCodeUrl}
+                      >
+                        下载原图
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              ) : null}
             </div>
           </div>
         ) : null}
