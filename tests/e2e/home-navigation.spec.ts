@@ -64,6 +64,43 @@ test("keeps home card titles and status badges on one line", async ({ page }) =>
   expect(titleWhiteSpace).toBe("nowrap");
 });
 
+test("shows the bilingual library chip copy on the home page", async ({ page }) => {
+  await page.goto("/?disableMiniProgramRedirect=1");
+
+  const libraryChip = page.getByTestId("home-library-chip");
+
+  await expect(libraryChip).toBeVisible();
+  await expect(libraryChip).toContainText("PERSONA TEST LIBRARY");
+  await expect(libraryChip).toContainText("人格测评库");
+});
+
+test("keeps compact home cards inside the library shell", async ({ page }) => {
+  await page.setViewportSize({ width: 765, height: 1235 });
+  await page.goto("/?disableMiniProgramRedirect=1");
+
+  const libraryShell = page.getByTestId("home-library-grid-shell");
+
+  await expect(libraryShell).toBeVisible();
+
+  const shellBox = await libraryShell.boundingBox();
+
+  expect(shellBox).not.toBeNull();
+
+  for (const slug of ["sbti", "sdti", "herti"]) {
+    const cardBox = await page.getByTestId(`test-card-${slug}`).boundingBox();
+
+    expect(cardBox).not.toBeNull();
+    expect(cardBox!.x).toBeGreaterThanOrEqual(shellBox!.x);
+    expect(cardBox!.y).toBeGreaterThanOrEqual(shellBox!.y);
+    expect(cardBox!.x + cardBox!.width).toBeLessThanOrEqual(
+      shellBox!.x + shellBox!.width,
+    );
+    expect(cardBox!.y + cardBox!.height).toBeLessThanOrEqual(
+      shellBox!.y + shellBox!.height,
+    );
+  }
+});
+
 test("keeps SEO and GEO support content hidden from users on the home page", async ({
   page,
 }) => {

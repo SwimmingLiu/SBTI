@@ -66,6 +66,18 @@ test("home page visual baseline", async ({ page }) => {
   );
 });
 
+test("home page compact library visual baseline", async ({ page }) => {
+  await page.setViewportSize({ width: 765, height: 1235 });
+  await page.goto("/?disableMiniProgramRedirect=1");
+  await disableMotion(page);
+
+  await expectLocatorSnapshot(
+    page.locator("main > section").first(),
+    "home-library-compact.png",
+    { maxDiffPixelRatio: 0.02 },
+  );
+});
+
 test("sbti result and share dialog visual baseline", async ({ page }) => {
   const answers = buildSbtiAnswersForPattern("HHH-HMH-MHH-HHH-MHM");
 
