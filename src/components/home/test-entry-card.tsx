@@ -12,18 +12,18 @@ export function TestEntryCard({ entry }: TestEntryCardProps) {
       className="flex h-full flex-col rounded-[24px] border border-[var(--line)] bg-white p-6 shadow-[0_18px_40px_rgba(26,42,34,0.06)]"
       data-testid={`test-card-${entry.slug}`}
     >
-      <div className="flex items-start justify-between gap-4">
-        <div>
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
           <div
             className={`inline-flex rounded-full bg-gradient-to-r px-3 py-1.5 text-xs font-semibold tracking-[0.16em] text-white ${entry.accent}`}
           >
             {entry.slug.toUpperCase()}
           </div>
-          <h2 className="mt-4 text-2xl font-semibold tracking-[-0.03em] text-[var(--foreground)]">
+          <h2 className="mt-4 whitespace-nowrap text-[clamp(1.5rem,1.8vw,2rem)] font-semibold leading-tight tracking-[-0.03em] text-[var(--foreground)]">
             {entry.name}
           </h2>
         </div>
-        <span className="rounded-full border border-[var(--line)] bg-[var(--soft)] px-3 py-1 text-xs text-[var(--muted)]">
+        <span className="shrink-0 whitespace-nowrap rounded-full border border-[var(--line)] bg-[var(--soft)] px-3 py-1 text-xs text-[var(--muted)]">
           {entry.status === "live" ? "已开放" : "建设中"}
         </span>
       </div>

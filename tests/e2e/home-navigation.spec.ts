@@ -39,3 +39,24 @@ test("injects baidu analytics bootstrap script into head", async ({ page }) => {
   );
   expect(bootstrapContent).toContain("var _hmt = _hmt || [];");
 });
+
+test("keeps home card titles and status badges on one line", async ({ page }) => {
+  await page.goto("/");
+
+  const hertiCard = page.getByTestId("test-card-herti");
+  const statusBadge = hertiCard.getByText("已开放", { exact: true });
+  const title = hertiCard.getByRole("heading", { name: "HERTI 她的人格地图" });
+
+  await expect(statusBadge).toBeVisible();
+  await expect(title).toBeVisible();
+
+  const statusWhiteSpace = await statusBadge.evaluate(
+    (node) => window.getComputedStyle(node).whiteSpace,
+  );
+  const titleWhiteSpace = await title.evaluate(
+    (node) => window.getComputedStyle(node).whiteSpace,
+  );
+
+  expect(statusWhiteSpace).toBe("nowrap");
+  expect(titleWhiteSpace).toBe("nowrap");
+});
