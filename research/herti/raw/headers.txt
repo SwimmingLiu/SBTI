@@ -1,0 +1,13 @@
+HTTP/2 200 
+accept-ranges: bytes
+age: 0
+cache-control: public,max-age=0,must-revalidate
+cache-status: "Netlify Edge"; fwd=miss
+content-type: text/html; charset=UTF-8
+date: Fri, 10 Apr 2026 06:57:19 GMT
+etag: "f287f0a7febedebd835a356ac745b935-ssl"
+server: Netlify
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+x-nf-request-id: 01KNV2WK8G7F4RZB1T8ESH8CNG
+content-length: 55971
+

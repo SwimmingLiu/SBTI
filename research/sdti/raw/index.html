@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SDTI人格测试</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: #fafafa; color: #222; line-height: 1.7;
+  padding: 40px 20px 80px;
+}
+.container, .result { max-width: 680px; margin: 0 auto; }
+.hidden { display: none; }
+.result { display: none; }
+.result.active { display: block; }
+header { text-align: center; margin-bottom: 40px; padding-bottom: 24px; border-bottom: 1px solid #ddd; }
+h1 { font-size: 26px; font-weight: 600; margin-bottom: 8px; }
+.subtitle { font-size: 13px; color: #888; }
+.intro {
+  background: #f0f0f0; padding: 14px 18px; margin-bottom: 36px;
+  font-size: 14px; color: #555; border-left: 3px solid #999;
+}
+.question { margin-bottom: 36px; }
+.q-header { font-size: 13px; color: #888; margin-bottom: 6px; }
+.q-text { font-size: 16px; margin-bottom: 14px; font-weight: 500; }
+.long-text {
+  background: #f5f5f5; padding: 14px 18px; font-size: 14px;
+  color: #444; margin-bottom: 14px; line-height: 1.9;
+}
+.options { display: flex; flex-direction: column; gap: 8px; }
+.option {
+  padding: 10px 14px; background: #fff; border: 1px solid #ddd;
+  cursor: pointer; font-size: 14px; display: flex; gap: 10px;
+  transition: all 0.15s;
+}
+.option:hover { background: #f5f5f5; border-color: #999; }
+.option.selected { background: #222; color: #fff; border-color: #222; }
+.opt-letter { font-weight: 600; min-width: 16px; }
+footer { margin-top: 50px; text-align: center; }
+button {
+  padding: 12px 40px; font-size: 15px; background: #222;
+  color: #fff; border: none; cursor: pointer; font-family: inherit;
+}
+button:hover { background: #000; }
+.footnote { margin-top: 14px; font-size: 12px; color: #999; }
+.result h2 { font-size: 14px; color: #888; font-weight: 400; margin-bottom: 8px; }
+.result-type {
+  font-size: 32px; font-weight: 700; margin-bottom: 24px;
+  padding-bottom: 20px; border-bottom: 1px solid #ddd;
+}
+.result-desc { font-size: 15px; line-height: 1.9; margin-bottom: 30px; color: #333; white-space: pre-line;}
+.dimensions { margin-bottom: 30px; }
+.dim-item {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 12px; font-size: 13px;
+}
+.dim-label { min-width: 78px; color: #666; }
+.dim-bar { flex: 1; height: 6px; background: #eee; position: relative; }
+.dim-fill { height: 100%; background: #222; width: 0; transition: width 0.8s ease; }
+.dim-score { min-width: 36px; text-align: right; color: #888; font-size: 12px; }
+.result-note {
+  background: #f5f5f5; padding: 14px 18px; font-size: 13px;
+  color: #666; margin-bottom: 24px; border-left: 3px solid #999;
+  font-style: italic;
+}
+#result-image {
+  display: none;
+  max-width: 280px;
+  width: 100%;
+  margin: 24px auto;
+  border: 1px solid #eee;
+  border-radius: 4px;
+}
+.image-credit {
+  display: none;
+  font-size: 11px;
+  color: #999;
+  text-align: center;
+  margin-top: -16px;
+  margin-bottom: 24px;
+  font-style: italic;
+}
+.back-btn { background: #fff; color: #222; border: 1px solid #222; }
+.back-btn:hover { background: #222; color: #fff; }
+</style>
+</head>
+<body>
+
+<div class="container" id="quiz">
+  <header>
+    <h1>SDTI人格测试 v2.1</h1>
+    <div class="subtitle">共 32 题 · 一份非常正经的问卷</div>
+  </header>
+  <div class="intro">答案无对错。维度已隐藏，反正不隐藏你也不会认真答。</div>
+  <form id="quiz-form"></form>
+  <footer>
+    <button type="button" id="submit-btn">提 交</button>
+    <div class="footnote">※ 结果仅供娱乐 ※</div>
+    <div class="footnote">@Egeria</div>
+  </footer>
+</div>
+
+<div class="result" id="result">
+  <header>
+    <h2>你的人格类型是</h2>
+    <div class="result-type" id="result-type">—</div>
+  </header>
+  <div class="result-desc" id="result-desc"></div>
+  <div class="result-desc" id="result-desc"></div>
+  <img id="result-image" src="" alt="">
+  <div class="image-credit" id="image-credit"></div>
+  <div class="dimensions" id="dimensions"></div>
+  <div class="dimensions" id="dimensions"></div>
+  <div class="result-note" id="result-note"></div>
+  <footer>
+    <button type="button" class="back-btn" id="back-btn">重 新 作 答</button>
+    <div class="footnote">@Egeria</div>
+  </footer>
+</div>
+
+<script>
+const questions = [
+  {n:1,dim:'drive',text:'"向上爬"这件事对你而言更像：',opts:[
+    {k:'A',t:'爬，但爬的是我自己想爬的那棵树',s:2},
+    {k:'B',t:'爬不爬看心情，树也不一定非得是树',s:1},
+    {k:'C',t:'不爬，我在树底下开了个摊卖柠檬水，路过的都得买',s:2}
+  ]},
+  {n:2,dim:null,text:'本题为随机抽取的宇宙玄学题，题目内容已被黑洞吸走，请凭第六感作答：',opts:[
+    {k:'A',t:'我选A是因为A长得最像我'},
+    {k:'B',t:'B看起来最无辜，我选它'},
+    {k:'C',t:'C，因为C是我身份证尾号'}
+  ]},
+  {n:3,dim:'stable',text:'深夜十二点，你突然开始怀疑自己这辈子到底在干嘛，这种感觉：',opts:[
+    {k:'A',t:'每周三次，已经是老朋友了',s:0},
+    {k:'B',t:'偶尔，通常出现在周日晚上',s:1},
+    {k:'C',t:'没有，我十二点在睡觉，谢谢',s:2}
+  ]},
+  {n:4,dim:'plan',text:'规则和你的关系更像：',opts:[
+    {k:'A',t:'规则是空气，我呼吸它但不感谢它',s:1},
+    {k:'B',t:'规则是红绿灯，没车的时候我就过',s:2},
+    {k:'C',t:'规则是我前同事，我能不理就不理',s:2}
+  ]},
+  {n:5,dim:'intimacy',text:'"亲密的朋友"在你的定义里是：',opts:[
+    {k:'A',t:'可以在我家冰箱里找吃的不用问的人',s:2},
+    {k:'B',t:'可以看见我哭但不会拍照发朋友圈的人',s:2},
+    {k:'C',t:'可以一起沉默两小时不觉得尴尬的人',s:1}
+  ]},
+  {n:6,dim:null,longText:true,
+    text:'周末团建，大家一起自驾去郊区。你开了两个小时，中间平稳流畅、没压一次线、连并道都打了转向灯。下车后没人说什么。换了一个女同事开，她刚坐上驾驶位，副驾的人就下意识地说"哇姐你开车真稳"，后座的人说"我就喜欢坐女司机的车"，开出去五分钟有人夸她"转弯丝滑"。一路上她被夸了八次。你默默数着，数到第九次的时候发现，第九次其实是你被老板表扬的次数——去年全年。',
+    opts:[
+      {k:'A',t:'这个场景我经历过，而且不止一次'},
+      {k:'B',t:'这是什么……一种当代寓言？'},
+      {k:'C',t:'这不是我，因为我从不主动开车，我学乖了'},
+      {k:'D',t:'我下次直接说"是啊女司机就是稳，男的开车都该回去练练"，看他们尴尬到地缝里'}
+  ]},
+  {n:7,dim:'stable',text:'关于"真正的自己"，你目前的进度条是：',opts:[
+    {k:'A',t:'加载中，已加载3%',s:0},
+    {k:'B',t:'加载到一半卡住了',s:1},
+    {k:'C',t:'加载完毕，并且我非常喜欢加载出来的结果',s:2},
+    {k:'D',t:'我是谁？这题是什么？下一题',s:2}
+  ]},
+  {n:8,dim:'dark',text:'你对某件事有意见但没说出口，最可能的原因是：',opts:[
+    {k:'A',t:'说了之后接下来一周的空气会变得很稠',s:2},
+    {k:'B',t:'说了会被总结为"他今天情绪不太对"',s:2},
+    {k:'C',t:'我说了，而且说了很多次，只是没人记得',s:2}
+  ]},
+  {n:9,dim:'intimacy',text:'感情里"被抛弃"的恐惧，对你来说：',opts:[
+    {k:'A',t:'存在，但我正在和它谈判',s:2},
+    {k:'B',t:'偶尔探头，然后被我按回去',s:1},
+    {k:'C',t:'不存在，我更担心对方不被我抛弃',s:0}
+  ]},
+  {n:10,dim:'guard',text:'凌晨一点，楼道里传来脚步声，停在你家门口。停了大概二十秒。你的应对是：',opts:[
+    {k:'A',t:'屏住呼吸，手机已经拨到110只差按下去',s:2},
+    {k:'B',t:'大声对空气说："老婆你去开下门！"（家里空无一人，连猫都没有）',s:2},
+    {k:'C',t:'打开门缝看一眼，发现是外卖员放错了楼层，松一口气之后决定明天去买防狼喷雾',s:1},
+    {k:'D',t:'已经睡着了，脚步声算什么，我的梦更精彩',s:0}
+  ]},
+  {n:11,dim:'intimacy',text:'你的社交电量续航大致是：',opts:[
+    {k:'A',t:'满电出门，两小时后显示"低电量模式"',s:0},
+    {k:'B',t:'看人，遇到对的人可以无线充电',s:1},
+    {k:'C',t:'我是永动机，问题是没人跟得上我',s:2}
+  ]},
+  {n:12,dim:'guard',text:'网友约你线下见面，你的决策流程是：',opts:[
+    {k:'A',t:'先让她发三张不同角度的自拍证明是真人，再让她发身份证（开玩笑的，只要前半部分）',s:2},
+    {k:'B',t:'选一个人多的咖啡馆，提前把定位发给三个朋友，约定暗号"如果我发\'今天天气真好\'就是要报警"',s:2},
+    {k:'C',t:'直接约，见面就见面，怕什么',s:0},
+    {k:'D',t:'网友是用来网上聊的，见面是一种违反物种定义的行为',s:1}
+  ]},
+  {n:13,dim:'guard',text:'你走在街上，一位萌萌的小男孩蹦蹦跳跳地朝你走来（正脸、侧脸看都萌，用vivo、苹果、华为、OPPO手机看都萌，实在是非常萌的那种），他递给你一根棒棒糖，此时你作何感想？',opts:[
+    {k:'A',t:'呜呜他真可爱，但我不会接，陌生人给的东西不能随便吃，这孩子他爸爸在哪',s:1},
+    {k:'B',t:'一脸懵，四处张望找他的监护人，这孩子是不是走丢了',s:1},
+    {k:'C',t:'这也许是一种新型诈骗？还是走开为好',s:2},
+    {k:'D',t:'我不是恋童癖，下一题',s:2}
+  ]},
+  {n:14,dim:null,multi:true,text:'您平时有什么爱好？（可多选）',opts:[
+    {k:'A',t:'吃'},{k:'B',t:'睡'},
+    {k:'C',t:'骂人（限网上）'},{k:'D',t:'骂人（限现实）'},
+    {k:'E',t:'看别人骂人'},
+    {k:'F',t:'以上皆是，只要没人跳出来说"一个男孩子搞这些干嘛"'}
+  ]},
+  {n:15,dim:'drive',text:'你和"目标"的关系：',opts:[
+    {k:'A',t:'我有目标，目标也有我，我们互相折磨',s:2},
+    {k:'B',t:'我的目标每三个月换一次，像我的手机壁纸',s:1},
+    {k:'C',t:'目标是给别人看的，我真正想做的事不告诉任何人',s:1}
+  ]},
+  {n:16,dim:'drive',text:'你做事的底层驱动力更接近：',opts:[
+    {k:'A',t:'我想要那个结果，非常想要，想到睡不着',s:2},
+    {k:'B',t:'我怕不做会有麻烦，怕到睡不着',s:0},
+    {k:'C',t:'我不知道我为什么做，但我已经做完了',s:1}
+  ]},
+  {n:17,dim:'intimacy',text:'你谈了一个对象，对方温柔体贴、情绪稳定、尊重你的朋友、从不查你手机、记得你所有纪念日、收入不错也不拿来压你。你的第一反应是：',opts:[
+    {k:'A',t:'太好了（同时在脑内搜索"如何辨别PUA高手"）',s:1},
+    {k:'B',t:'享受当下，同时偷偷观察三个月再下结论',s:1},
+    {k:'C',t:'这很正常，对象本来就应该这样，不这样的才奇怪',s:2},
+    {k:'D',t:'不可能，下一题',s:0}
+  ]},
+  {n:18,dim:'intimacy',text:'对象五小时没回消息，说在忙，你的内心活动是：',opts:[
+    {k:'A',t:'忙就忙吧，我也五小时不想看手机',s:2},
+    {k:'B',t:'在"相信"和"点开ta朋友圈刷新八次"之间反复横跳',s:1},
+    {k:'C',t:'我打个电话过去，不接我就睡觉，醒了再说',s:2},
+    {k:'D',t:'五小时？我还以为我们分手了',s:0}
+  ]},
+  {n:19,dim:'guard',text:'朋友带了一个你不认识的人来聚会，你的内心OS：',opts:[
+    {k:'A',t:'【扫描中……性别：女。警戒级别:中。继续观察】',s:2},
+    {k:'B',t:'【扫描中……好像还行，先聊两句】',s:1},
+    {k:'C',t:'朋友的朋友=我的朋友，主动出击',s:0},
+    {k:'D',t:'我今天本来只想和我朋友玩，这个人是来干嘛的',s:1}
+  ]},
+  {n:20,dim:null,text:'"我对待每一段感情都很认真"——请选择最贴合你的版本：',opts:[
+    {k:'A',t:'认真是认真，认真地想什么时候分'},
+    {k:'B',t:'有的认真有的不，看对方值不值得我消耗脑细胞'},
+    {k:'C',t:'是的，每一段都认真，认真到分手后还能写出三千字复盘'},
+    {k:'D',t:'感情？那是什么，能吃吗'}
+  ]},
+  {n:21,dim:'stable',text:'你在不同人面前展现的自己：',opts:[
+    {k:'A',t:'一个内核，七十二张皮，按需切换',s:2},
+    {k:'B',t:'完全一致，爱谁谁',s:2},
+    {k:'C',t:'我自己都分不清哪个是真的了，救命',s:0}
+  ]},
+  {n:22,dim:'drive',text:'别人说你"执行力强"，你的内心OS更接近：',opts:[
+    {k:'A',t:'因为如果我不执行，这事就会烂在那里，而我受不了烂着',s:2},
+    {k:'B',t:'执行力强是因为我已经被逼到墙角了',s:1},
+    {k:'C',t:'谢谢，这是我应得的',s:2},
+    {k:'D',t:'执行力强的代价是我每周崩溃一次，但没人看见那一次',s:1}
+  ]},
+  {n:23,dim:'stable',text:'外人的评价对你的影响是：',opts:[
+    {k:'A',t:'没影响（撒谎）',s:1},
+    {k:'B',t:'有影响，但我在学习怎么让它没影响',s:1},
+    {k:'C',t:'有影响，而且我已经放弃挣扎了',s:0},
+    {k:'D',t:'别人的评价进不了我的耳朵，因为门票太贵',s:2}
+  ]},
+  {n:24,dim:'plan',text:'你和"计划"的关系：',opts:[
+    {k:'A',t:'我做计划，计划做我',s:1},
+    {k:'B',t:'计划是写给未来的自己的情书，未来的自己从不回信',s:0},
+    {k:'C',t:'我讨厌被打破计划，打破计划的人我也会打破',s:2},
+    {k:'D',t:'计划？我连明天早饭吃什么都没想好',s:0}
+  ]},
+  {n:25,dim:'drive',text:'"内心真正追求的东西"这个问题，你：',opts:[
+    {k:'A',t:'有，但我不告诉你',s:2},
+    {k:'B',t:'有过，后来被生活磨没了，正在找回来',s:1},
+    {k:'C',t:'没有，但我假装有，假装久了就像真的有了',s:0},
+    {k:'D',t:'有，就是现在这个问卷快点结束',s:1}
+  ]},
+  {n:26,dim:'guard',text:'你的社交距离设定是：',opts:[
+    {k:'A',t:'半米以内：家人和猫',s:1},
+    {k:'B',t:'一米以内：好朋友',s:1},
+    {k:'C',t:'一米五以内：同事',s:1},
+  ]},
+  {n:27,dim:'dark',text:'单位团建去KTV，领导说"男生一定要来，气氛才好"，你的操作是：',opts:[
+    {k:'A',t:'"不好意思领导，我那天家里有事"（那天还没到，但已经有事了）',s:2},
+    {k:'B',t:'去，坐最角落，全程表演"手机信号不好"',s:1},
+    {k:'C',t:'去，第一个抢麦点《好男人》《听妈妈的话》连唱',s:2},
+    {k:'D',t:'去，并且在领导点《老公最大》的时候默默录了音',s:2}
+  ]},
+  {n:28,dim:'intimacy',text:'对象非常黏人，你的真实感受是：',opts:[
+    {k:'A',t:'爽，终于有人比我更舍不得这段关系',s:2},
+    {k:'B',t:'还行，前两周爽，第三周开始想一个人待着',s:1},
+    {k:'C',t:'窒息，我需要氧气',s:0},
+  ]},
+  {n:29,dim:'dark',longText:true,
+    text:'某天你突然意识到，你从小到大收到的"做人指南"是这样的：要懂事、要听话、要让着妹妹、要笑但别太浪、要坐有坐相、要注意安全（如果没注意好那是你不小心）、要温柔但别软弱、要独立但别太强势、要有主见但别顶嘴、要会赚钱但别影响家庭、要带孩子但别因此耽误工作、要孝顺岳母父但也要孝顺妈爸、要身材好但别太瘦显得没福气、要显年轻但别显得在乎年龄、要有事业心但核心还是家庭、要会打扮但别太招摇、要合群但别八卦、要大气但别大大咧咧——而你姐从小到大收到的指南是："妇女能顶整边天"。七个字。用一辈子。你盯着这七个字看了很久，感觉自己像是在玩一个开局就选了困难模式的游戏，而对面那位是新手教学没跳过的。',
+    opts:[
+      {k:'A',t:'是这样的，而且我现在就在困难模式的第47关卡关',s:2},
+      {k:'B',t:'也许是，也许不是，我还在想',s:1},
+      {k:'C',t:'这简直是胡扯，现在都什么年代了',s:0},
+      {k:'D',t:'我已经退出游戏了，不玩了',s:2}
+  ]},
+  {n:30,dim:'plan',text:'你做决定的速度：',opts:[
+    {k:'A',t:'快到对方还没说完我就已经决定了',s:2},
+    {k:'B',t:'慢到对方已经忘了问过什么我才决定',s:0},
+    {k:'C',t:'看事情，买衣服慢，分手快',s:2},
+    {k:'D',t:'看事情，分手慢，买衣服快（然后后悔）',s:1}
+  ]},
+  {n:31,dim:'dark',text:'"大多数人是善良的"——你的看法是：',opts:[
+    {k:'A',t:'大多数人是"在方便的时候"善良',s:2},
+    {k:'B',t:'大多数人是善良的，只是善良的版本不太一样',s:1},
+    {k:'C',t:'大多数人是善良的，少数人负责毁掉这个平均值，而且他们往往声音最大',s:2},
+    {k:'D',t:'我不回答这题，我怕我一开口就停不下来',s:2}
+  ]},
+  {n:32,dim:'dark',text:'你刷到另一个男生发朋友圈："今天第一次认真化了个粧，感觉自己变成了香香软软的小蛋糕，走在路上都有人回头看我，原来被温柔对待的感觉是这样的，兄弟们我悟了。" 你的反应是:',opts:[
+    {k:'A',t:'点个赞，兄弟加油，化粧确实能改变很多',s:1},
+    {k:'B',t:'有点想笑又有点心疼，我们这些人确实要努力一下才能被看见',s:2},
+    {k:'C',t:'那有啥，女的啥都没干，降分录取两百分',s:2},
+    {k:'D',t:'默默收藏了那篇推文《男生化粧入门教程》，准备自己也试试',s:1}
+  ]}
+];
+
+const dimensions = {
+  drive:   {label:'进取心',  max:10},
+  stable:  {label:'自我稳定',max:8},
+  intimacy:{label:'亲密需求',max:12},
+  guard:   {label:'防御半径',max:10},
+  plan:    {label:'掌控欲',  max:6},
+  dark:    {label:'清醒度',  max:10}
+};
+
+function calcType(s, answers) {
+
+  const triggers = [
+    answers['6']  === 'D',
+    answers['13'] === 'D',
+    answers['29'] === 'D',
+    answers['32'] === 'C'
+  ];
+  const hits = triggers.filter(Boolean).length;
+
+  if (hits >= 2) return {
+    name: 'Feminist · 女权主义者 🔓',
+    desc: '🎉 你解锁了隐藏结局。🎉 \n\n 这份问卷有 32 道题，其中几道藏着暗号。系统检测到你不仅看穿了规训，而且不打算继续配合。这种人在统计学上叫"异常值"（但样本量正在迅速扩大），在生活里叫"不好惹"，在历史书里叫"herstory——她们后来改变了一些事"。\n\n你不是在玩这个游戏，你是在重写规则手册的页边批注。你知道沉默的代价，也知道开口的代价，权衡之后选择了后者——不是因为后者更轻，而是因为前者更重。',
+    note: '代表瞬间: 有人在饭桌上说了一句话，全场都笑了，只有你没笑。然后你慢慢放下筷子，开口说："等一下，刚才那句话——"',
+    image: 'feminist.WEBP',
+    credit: '画师：小红书 @13读作一三'
+
+  };
+
+  const h = k => s[k] / dimensions[k].max >= 0.7;
+  const l = k => s[k] / dimensions[k].max <= 0.35;
+
+  if (h('dark') && h('guard')) return {
+    name:'阅人无数型',
+    desc:'你看人只需要三秒：前两秒确认对方在说什么，第三秒已经算出这话 30 天后会怎么打脸。你的大脑里装着一个巨型剧本数据库，别人刚开个头你就知道结尾。朋友跟你吐槽新认识的人，你"嗯嗯"应着，心里已经写完了这段感情的讣告。',
+    note:'代表瞬间：朋友兴奋地说"我觉得ta不一样"，你面无表情地掏出手机备忘录新建了一条，标题是"倒计时 第 1 天"。'
+  };
+  if (h('drive') && h('plan')) return {
+    name:'我自己来型',
+    desc:'"算了我自己来"是你这辈子说得最多的一句话。你不是不会求助，你是算过了——解释的时间够你做完三遍。你的人生信条是"能自己搞定的事绝不麻烦别人，能麻烦别人的事也尽量自己搞定"。累吗？累。但是看着别人把事情搞砸你更累。',
+    note:'代表瞬间：同事说"这个我来吧"，你微笑着点头，回到工位后默默把他交的版本重做了一遍。'
+  };
+  if (l('intimacy') && h('guard')) return {
+    name:'省电模式型',
+    desc:'出门对你来说是一种消耗战。别人周末想的是"去哪玩"，你周末想的是"怎么让自己合法地不去任何地方"。你拒绝邀约的话术库已经积累到可以出书了，最常用的那句是"那天我有点事"（那天其实没有事，但你本人就是那个事）。',
+    note:'代表瞬间：群里问"周六谁有空"，你盯着手机看了三分钟，最后选择了"装死"。'
+  };
+  if (h('intimacy') && l('stable')) return {
+    name:'情绪海绵型',
+    desc:'你是行走的情绪收纳盒。朋友失恋你失眠，同事加薪你开心，连楼下卖煎饼的大姨今天没笑你都要担心她是不是家里出了事。你记得身边所有人的怪癖、忌口、过敏源、生日、纪念日，但别人问你"你最近怎么样"，你要想三秒才能回答。',
+    note:'代表瞬间：你花了四十分钟安慰完朋友，挂掉电话，发现自己还没吃晚饭，而且也记不起来今天到底饿没饿过。'
+  };
+  if (h('dark') && l('stable')) return {
+    name:'笑着崩溃型',
+    desc:'你的人生哲学是"能用段子解决的问题，就不要哭"。同样的糟心事，别人哭三天，你发八百字小作文配一张翻白眼的猫，底下还要回复粉丝："哈哈谢谢，我没事，真的。"（你有事。）你是自己的编剧、导演、主演、和唯一没拿片酬的观众。',
+    note:'代表瞬间：跟朋友讲完一个特别惨的故事，朋友沉默了，你紧接着说"没事啦我当笑话讲的"，然后立刻转移话题。'
+  };
+  if (h('dark')) return {
+    name:'社畜觉醒型',
+    desc:'你的身体还在工位上打字，你的灵魂已经在三亚的沙滩上晒了两天了。你和同事说话的时候眼神很温柔，那是因为你在想晚饭吃什么。你点头如捣蒜，但你其实一个字都没听进去。你不是懒，你只是把所有的热情都存到了下班之后的那两小时。',
+    note:'代表瞬间：老板在会议室慷慨激昂地讲战略，你脸上写着"深受启发"，心里在想"我今天要不要吃麻辣烫"。'
+  };
+  if (h('stable')) return {
+    name:'你说你的型',
+    desc:'别人的意见对你来说像是背景音乐，开着也行关了也行。亲戚问你"怎么还不结婚"，你回"哦"；领导说"这个方案要再改改"，你回"好"；陌生人在网上骂你，你发现自己连生气的力气都懒得用。你不是没脾气，你只是把脾气留给了真正值得的事——目前还没有。',
+    note:'代表瞬间：家庭群里一场腥风血雨，你潜水三天，出来的时候发了个"吃了吗"，瞬间把话题带走。'
+  };
+  return {
+    name:'施工中型',
+    desc:'你的人生是一个永远在 beta 版本的软件，每天都在更新，每次更新都带新 bug。昨天立的 flag 今天已经不认了，今天的你讨厌上周的你，上周的你不理解上上周的你。但你并不慌——因为你发现身边那些从不更新的人，用的还是 Windows XP。',
+    note:'代表瞬间：翻到三个月前写的朋友圈，第一反应是"谁啊这是，好矫情"，然后默默删掉。'
+  };
+}
+
+const form = document.getElementById('quiz-form');
+const answers = {};
+const multiAnswers = {};
+
+questions.forEach(q => {
+  const div = document.createElement('div');
+  div.className = 'question';
+  const meta = q.multi ? '补充题 · 可多选' : '维度已隐藏';
+  let html = `<div class="q-header">第 ${q.n} 题 · ${meta}</div>`;
+  html += q.longText ? `<div class="long-text">${q.text}</div>` : `<div class="q-text">${q.text}</div>`;
+  html += `<div class="options">`;
+  q.opts.forEach(o => {
+    html += `<div class="option" data-q="${q.n}" data-opt="${o.k}"${q.multi ? ' data-multi="1"' : ''}>
+      <span class="opt-letter">${o.k}</span><span>${o.t}</span>
+    </div>`;
+  });
+  html += `</div>`;
+  div.innerHTML = html;
+  form.appendChild(div);
+});
+
+document.querySelectorAll('.option').forEach(el => {
+  el.addEventListener('click', () => {
+    const q = el.dataset.q, o = el.dataset.opt;
+    if (el.dataset.multi) {
+      if (!multiAnswers[q]) multiAnswers[q] = new Set();
+      if (multiAnswers[q].has(o)) {
+        multiAnswers[q].delete(o);
+        el.classList.remove('selected');
+      } else {
+        multiAnswers[q].add(o);
+        el.classList.add('selected');
+      }
+    } else {
+      document.querySelectorAll(`.option[data-q="${q}"]`).forEach(s => s.classList.remove('selected'));
+      el.classList.add('selected');
+      answers[q] = o;
+    }
+  });
+});
+
+document.getElementById('submit-btn').addEventListener('click', () => {
+  const singleQs = questions.filter(q => !q.multi).length;
+  const answered = Object.keys(answers).length;
+  if (answered < singleQs) {
+    if (!confirm(`还有 ${singleQs - answered} 题没答，确定提交？`)) return;
+  }
+
+  const scores = {drive:0,stable:0,intimacy:0,guard:0,plan:0,dark:0};
+  questions.forEach(q => {
+    if (!q.dim) return;
+    const picked = answers[q.n];
+    if (!picked) return;
+    const opt = q.opts.find(o => o.k === picked);
+    if (opt && typeof opt.s === 'number') scores[q.dim] += opt.s;
+  });
+
+  const result = calcType(scores, answers);
+
+  document.getElementById('result-type').textContent = result.name;
+  document.getElementById('result-desc').textContent = result.desc;
+  document.getElementById('result-note').textContent = result.note;
+  const imgEl = document.getElementById('result-image');
+  const creditEl = document.getElementById('image-credit');
+  if (result.image) {
+    imgEl.src = result.image;
+    imgEl.style.display = 'block';
+    creditEl.textContent = result.credit || '';
+    creditEl.style.display = 'block';
+  } else {
+    imgEl.style.display = 'none';
+    imgEl.src = '';
+    creditEl.style.display = 'none';
+    creditEl.textContent = '';
+  }
+
+  const dimBox = document.getElementById('dimensions');
+  dimBox.innerHTML = '';
+  Object.entries(dimensions).forEach(([key, def]) => {
+    const pct = Math.round((scores[key] / def.max) * 100);
+    dimBox.innerHTML += `
+      <div class="dim-item">
+        <div class="dim-label">${def.label}</div>
+        <div class="dim-bar"><div class="dim-fill" data-pct="${pct}"></div></div>
+        <div class="dim-score">${pct}%</div>
+      </div>`;
+  });
+
+  document.getElementById('quiz').classList.add('hidden');
+  document.getElementById('result').classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+
+  setTimeout(() => {
+    document.querySelectorAll('.dim-fill').forEach(el => {
+      el.style.width = el.dataset.pct + '%';
+    });
+  }, 100);
+});
+
+document.getElementById('back-btn').addEventListener('click', () => {
+  document.getElementById('result').classList.remove('active');
+  document.getElementById('quiz').classList.remove('hidden');
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+</script>
+</body>
+</html>

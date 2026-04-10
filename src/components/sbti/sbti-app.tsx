@@ -266,16 +266,19 @@ export function SbtiApp() {
       <>
         <IntroScreen
           appName={miniProgramConfig.appName}
+          showMiniProgramEntry={!clientEnv.isInMiniProgram}
           onOpenMiniProgram={() => setIsMiniProgramDialogOpen(true)}
           onStart={startQuiz}
         />
-        <MiniProgramDialog
-          appName={miniProgramConfig.appName}
-          isOpen={isMiniProgramDialogOpen}
-          miniProgramUrl={miniProgramConfig.miniProgramUrl}
-          onClose={() => setIsMiniProgramDialogOpen(false)}
-          qrCodeUrl={miniProgramConfig.qrCodeUrl}
-        />
+        {!clientEnv.isInMiniProgram ? (
+          <MiniProgramDialog
+            appName={miniProgramConfig.appName}
+            isOpen={isMiniProgramDialogOpen}
+            miniProgramUrl={miniProgramConfig.miniProgramUrl}
+            onClose={() => setIsMiniProgramDialogOpen(false)}
+            qrCodeUrl={miniProgramConfig.qrCodeUrl}
+          />
+        ) : null}
       </>
     );
   }

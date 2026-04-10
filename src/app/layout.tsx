@@ -13,28 +13,22 @@ const geistMono = Geist_Mono({
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sbti.unun.dev";
-const siteTitle = "SBTI 人格测试｜SBTI 测评｜SBTI 官网";
+const siteTitle = "人格测试题库｜SBTI · SDTI · HERTI";
 const siteDescription =
-  "SBTI 人格测试在线入口，支持 SBTI 测试、SBTI 测评、SBTI 人格结果查看。页面覆盖 31 道题、15 个维度、27 种人格结果与隐藏人格说明，适合移动端和社交分享。";
+  "人格测试题库首页，集中收录并复刻 SBTI、SDTI、HERTI 等多套人格测试，逐步补齐题库入口、结果页、浏览器抓取证据和静态部署版本。";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: siteTitle,
   description: siteDescription,
-  applicationName: "SBTI 人格测试",
-  alternates: {
-    canonical: "/",
-  },
+  applicationName: "人格测试题库",
   keywords: [
+    "人格测试题库",
     "SBTI 人格测试",
-    "sbti人格测试",
-    "sbti测试",
-    "sbti测评",
-    "sbti测评官网",
-    "SBTI 官网",
-    "SBTI 测试入口",
-    "SBTI 27 人格",
-    "SBTI 结果图",
+    "SDTI 人格测试",
+    "HERTI 她的人格地图",
+    "人格测试入口",
+    "人格测试结果页",
   ],
   category: "entertainment",
   robots: {
@@ -53,14 +47,14 @@ export const metadata: Metadata = {
     description: siteDescription,
     type: "website",
     locale: "zh_CN",
-    siteName: "SBTI 人格测试",
+    siteName: "人格测试题库",
     url: "/",
     images: [
       {
         url: "/assets/original/sbti/CTRL.png",
         width: 720,
         height: 960,
-        alt: "SBTI 人格测试结果预览图",
+        alt: "人格测试题库预览图",
       },
     ],
   },

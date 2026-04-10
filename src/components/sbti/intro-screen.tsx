@@ -1,11 +1,13 @@
 type IntroScreenProps = {
   appName: string;
+  showMiniProgramEntry: boolean;
   onOpenMiniProgram: () => void;
   onStart: () => void;
 };
 
 export function IntroScreen({
   appName,
+  showMiniProgramEntry,
   onOpenMiniProgram,
   onStart,
 }: IntroScreenProps) {
@@ -27,17 +29,23 @@ export function IntroScreen({
             >
               开始测试
             </button>
-            <button
-              className="rounded-2xl border border-[var(--line)] bg-white px-6 py-3 text-base font-semibold text-[var(--accent-strong)] transition hover:-translate-y-0.5"
-              onClick={onOpenMiniProgram}
-              type="button"
-            >
-              查看小程序码
-            </button>
           </div>
-          <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-[var(--muted)]">
-            如需在微信内体验，可打开 {appName} 并通过小程序码进入。
-          </p>
+          {showMiniProgramEntry ? (
+            <>
+              <div className="mt-3 flex justify-center">
+                <button
+                  className="rounded-2xl border border-[var(--line)] bg-white px-6 py-3 text-base font-semibold text-[var(--accent-strong)] transition hover:-translate-y-0.5"
+                  onClick={onOpenMiniProgram}
+                  type="button"
+                >
+                  查看小程序码
+                </button>
+              </div>
+              <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-[var(--muted)]">
+                如需在微信内体验，可打开 {appName} 并通过小程序码进入。
+              </p>
+            </>
+          ) : null}
         </div>
       </div>
     </section>
