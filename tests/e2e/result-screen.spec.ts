@@ -35,7 +35,6 @@ test("submits a full quiz and renders the result screen", async ({ page }) => {
   const answers = buildAnswersForPattern("HHH-HMH-MHH-HHH-MHM");
 
   await page.goto("/tests/sbti");
-  await page.getByRole("button", { name: "开始测试" }).click();
 
   for (const question of questions) {
     const selectedValue = answers[question.id];
@@ -87,6 +86,6 @@ test("submits a full quiz and renders the result screen", async ({ page }) => {
     .not.toBe("0px");
 
   await page.goBack();
-  await expect(page).toHaveURL(/screen=test/);
+  await expect(page).toHaveURL(/\/tests\/sbti$/);
   await expect(page.locator("#questionList")).toBeVisible();
 });
