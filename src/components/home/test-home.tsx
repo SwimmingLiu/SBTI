@@ -132,9 +132,6 @@ export function TestHome() {
               <h2 className="mt-4 text-2xl font-semibold tracking-[-0.03em] text-[var(--foreground)]">
                 小橙有门 · 微信内更方便
               </h2>
-              <p className="mt-4 max-w-2xl text-sm leading-7 text-[var(--muted)]">
-                首页先保留跳转入口，需要时再展开小程序码。移动端访问时会优先尝试跳小程序；如果你正在微信小程序内，则不会重复展示这块内容。
-              </p>
               <div className="mt-6 flex flex-wrap gap-3">
                 <a
                   className="inline-flex items-center justify-center rounded-2xl bg-[var(--accent-strong)] px-5 py-3 font-semibold text-white shadow-[0_12px_24px_rgba(77,106,83,0.16)] transition hover:-translate-y-0.5"
