@@ -7,7 +7,6 @@ import { MiniProgramDialog } from "@/components/sbti/mini-program-dialog";
 import { QuizScreen } from "@/components/sbti/quiz-screen";
 import { ResultScreen } from "@/components/sbti/result-screen";
 import {
-  fetchMiniProgramUrlLink,
   getMiniProgramConfig,
   isWechatMiniProgram,
   shouldAutoRedirectToMiniProgram,
@@ -54,9 +53,6 @@ export function SbtiApp() {
   const [baseQuestions, setBaseQuestions] = useState<Question[]>([]);
   const [isMiniProgramDialogOpen, setIsMiniProgramDialogOpen] = useState(false);
   const [isRedirectDismissed, setIsRedirectDismissed] = useState(false);
-  const [resolvedMiniProgramUrl, setResolvedMiniProgramUrl] = useState(
-    miniProgramConfig.miniProgramUrl,
-  );
 
   const visibleQuestions = useMemo(
     () =>
@@ -112,26 +108,10 @@ export function SbtiApp() {
     return shouldAutoRedirectToMiniProgram({
       isInMiniProgram: clientEnv.isInMiniProgram,
       isMobile: clientEnv.isMobile,
-      miniProgramUrl: resolvedMiniProgramUrl,
+      miniProgramUrl: miniProgramConfig.miniProgramUrl,
       search: clientEnv.search,
     });
-  }, [clientEnv, isRedirectDismissed, resolvedMiniProgramUrl]);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    void (async () => {
-      const urlLink = await fetchMiniProgramUrlLink();
-
-      if (!cancelled && urlLink) {
-        setResolvedMiniProgramUrl(urlLink);
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  }, [clientEnv, isRedirectDismissed, miniProgramConfig.miniProgramUrl]);
 
   useEffect(() => {
     if (!shouldShowRedirect) {
@@ -139,13 +119,13 @@ export function SbtiApp() {
     }
 
     const timeoutId = window.setTimeout(() => {
-      window.location.href = resolvedMiniProgramUrl;
+      window.location.href = miniProgramConfig.miniProgramUrl;
     }, 1200);
 
     return () => {
       window.clearTimeout(timeoutId);
     };
-  }, [resolvedMiniProgramUrl, shouldShowRedirect]);
+  }, [miniProgramConfig.miniProgramUrl, shouldShowRedirect]);
 
   useEffect(() => {
     if (screen !== "result") {
@@ -214,7 +194,7 @@ export function SbtiApp() {
         <MiniProgramDialog
           appName={miniProgramConfig.appName}
           isOpen={isMiniProgramDialogOpen}
-          miniProgramUrl={resolvedMiniProgramUrl}
+          miniProgramUrl={miniProgramConfig.miniProgramUrl}
           onClose={() => setIsMiniProgramDialogOpen(false)}
           qrCodeUrl={miniProgramConfig.qrCodeUrl}
         />

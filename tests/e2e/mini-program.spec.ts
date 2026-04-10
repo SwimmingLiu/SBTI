@@ -28,28 +28,11 @@ test("shows the auto redirect screen on mobile devices", async ({ page }) => {
   ).toBeVisible();
 });
 
-test("loads mini program url from a same-origin proxy endpoint", async ({
-  page,
-}) => {
-  let proxyCalled = false;
-
-  await page.route("**/api/wx-url-link", async (route) => {
-    proxyCalled = true;
-    await route.fulfill({
-      body: JSON.stringify({
-        success: true,
-        urlLink: "https://wxaurl.cn/test-proxy-link",
-      }),
-      contentType: "application/json",
-      status: 200,
-    });
-  });
-
+test("uses the configured mini program url in the dialog", async ({ page }) => {
   await page.goto("/?disableMiniProgramRedirect=1");
   await page.getByRole("button", { name: "查看小程序码" }).click();
 
-  await expect.poll(() => proxyCalled).toBe(true);
   await expect(
     page.getByRole("link", { name: "打开微信小程序" }),
-  ).toHaveAttribute("href", "https://wxaurl.cn/test-proxy-link");
+  ).toHaveAttribute("href", "https://wxaurl.cn/MG3YoSpo23s");
 });

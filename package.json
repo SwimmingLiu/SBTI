@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "package:out": "rm -rf out dist && next build && mkdir -p out/.next && cp -R .next/standalone/. out && cp -R .next/static out/.next/static && cp -R public out/public && mkdir -p dist && cd out && zip -qr ../dist/sbti-deploy-out.zip .",
+    "package:out": "rm -rf out dist && next build && mkdir -p dist && cd out && zip -qr ../dist/sbti-static-out.zip .",
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",

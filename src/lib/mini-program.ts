@@ -4,11 +4,6 @@ export type MiniProgramConfig = {
   qrCodeUrl: string;
 };
 
-type MiniProgramUrlApiResponse = {
-  success: boolean;
-  urlLink?: string;
-};
-
 type MiniProgramEnv = {
   hasMiniProgramApi?: boolean;
   userAgent: string;
@@ -74,21 +69,4 @@ export function shouldAutoRedirectToMiniProgram({
 
   const searchParams = new URLSearchParams(search);
   return searchParams.get("disableMiniProgramRedirect") !== "1";
-}
-
-export async function fetchMiniProgramUrlLink() {
-  try {
-    const response = await fetch("/api/wx-url-link", {
-      cache: "no-store",
-    });
-
-    if (!response.ok) {
-      return null;
-    }
-
-    const data = (await response.json()) as MiniProgramUrlApiResponse;
-    return data.success && data.urlLink ? data.urlLink : null;
-  } catch {
-    return null;
-  }
 }
