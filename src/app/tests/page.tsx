@@ -1,5 +1,5 @@
 import { TestHome } from "@/components/home/test-home";
 
-export default function Home() {
+export default function TestsPage() {
   return <TestHome />;
 }
