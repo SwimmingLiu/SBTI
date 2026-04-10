@@ -13,6 +13,7 @@ import {
   dataUrlToBlob,
   isNativeShareSupported,
   isWechatBrowser,
+  shareQrWatermarkInsetWidth,
   waitForRenderableImages,
 } from "@/lib/result-share";
 
@@ -203,6 +204,39 @@ export function ResultScreen({
                   {result.finalType.desc}
                 </p>
               </div>
+
+              <div className="rounded-[24px] border border-[var(--line)] bg-[linear-gradient(180deg,#ffffff,#fbfdfb)] p-5">
+                <div className="text-sm font-medium text-[var(--muted)]">结果操作</div>
+                <div className="mt-4 space-y-3">
+                  <button
+                    className="w-full rounded-2xl bg-[var(--accent-strong)] px-5 py-3 font-semibold text-white shadow-[0_12px_30px_rgba(77,106,83,0.18)] transition hover:-translate-y-0.5"
+                    onClick={() => {
+                      void handleOpenShare();
+                    }}
+                    type="button"
+                  >
+                    分享结果
+                  </button>
+                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+                    <button
+                      className="w-full rounded-2xl border border-[var(--line)] bg-white px-5 py-3 font-semibold text-[var(--accent-strong)] transition hover:-translate-y-0.5"
+                      id="restartBtn"
+                      onClick={onRestart}
+                      type="button"
+                    >
+                      重新测试
+                    </button>
+                    <button
+                      className="w-full rounded-2xl border border-[var(--line)] bg-white px-5 py-3 font-semibold text-[var(--accent-strong)] transition hover:-translate-y-0.5"
+                      id="toTopBtn"
+                      onClick={onToTop}
+                      type="button"
+                    >
+                      回到首页
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -223,34 +257,6 @@ export function ResultScreen({
               {getFunNote(result)}
             </p>
           </div>
-        </div>
-
-        <div className="mt-6 flex flex-wrap gap-3">
-          <button
-            className="rounded-2xl bg-[var(--accent-strong)] px-5 py-3 font-semibold text-white shadow-[0_12px_30px_rgba(77,106,83,0.18)] transition hover:-translate-y-0.5"
-            onClick={() => {
-              void handleOpenShare();
-            }}
-            type="button"
-          >
-            分享结果
-          </button>
-          <button
-            className="rounded-2xl border border-[var(--line)] bg-white px-5 py-3 font-semibold text-[var(--accent-strong)] transition hover:-translate-y-0.5"
-            id="restartBtn"
-            onClick={onRestart}
-            type="button"
-          >
-            重新测试
-          </button>
-          <button
-            className="rounded-2xl bg-[var(--accent-strong)] px-5 py-3 font-semibold text-white shadow-[0_12px_30px_rgba(77,106,83,0.18)] transition hover:-translate-y-0.5"
-            id="toTopBtn"
-            onClick={onToTop}
-            type="button"
-          >
-            回到首页
-          </button>
         </div>
 
         {isShareOpen ? (
@@ -350,6 +356,8 @@ export function ResultScreen({
                           borderRadius: "18px",
                           marginTop: "18px",
                           padding: "20px",
+                          paddingRight: shareQrWatermarkInsetWidth,
+                          position: "relative",
                         }}
                       >
                         <div style={{ color: "#6a786f", fontSize: "20px", lineHeight: 1.5 }}>
@@ -391,9 +399,8 @@ export function ResultScreen({
                         >
                           {result.sub}
                         </div>
+                        <ShareQrWatermark className="absolute right-4 top-4" />
                       </div>
-
-                      <ShareQrWatermark className="absolute bottom-5 right-5" />
                     </div>
                   </div>
                 </div>
