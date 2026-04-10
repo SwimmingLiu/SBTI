@@ -1,4 +1,5 @@
 import rawData from "./sbti-data.generated.json";
+import { toAssetUrl } from "@/lib/asset-urls";
 
 export type AnswerValue = number;
 
@@ -67,8 +68,8 @@ export function extractTypeImageMapFromHtml(html: string) {
   return JSON.parse(match[1]) as Record<string, string>;
 }
 
-function toLocalAssetPath(relativePath: string) {
-  return `/assets/original/sbti/${relativePath.split("/").pop()}`;
+function toSbtiImageUrl(relativePath: string) {
+  return toAssetUrl(`original/sbti/${relativePath.split("/").pop()}`);
 }
 
 export const dimensionMeta = data.dimensionMeta;
@@ -78,7 +79,7 @@ export const typeLibrary = data.TYPE_LIBRARY;
 export const typeImages = Object.fromEntries(
   Object.entries(data.TYPE_IMAGES).map(([code, relativePath]) => [
     code,
-    toLocalAssetPath(relativePath),
+    toSbtiImageUrl(relativePath),
   ]),
 ) as Record<string, string>;
 export const normalTypes = data.NORMAL_TYPES;

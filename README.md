@@ -23,6 +23,22 @@ npm install
 npm run dev
 ```
 
+### 图片资源来源
+
+- 默认情况下，运行时图片资源会走阿里云 OSS：
+  - `NEXT_PUBLIC_ASSET_BASE_URL=https://sbti-orangemust.oss-cn-beijing.aliyuncs.com/assets`
+- 如果你需要在本地离线开发或排查远端资源问题，可以显式切回仓库内的 `public/assets`：
+
+```bash
+NEXT_PUBLIC_USE_LOCAL_ASSETS=1 npm run dev
+```
+
+- 也可以替换成自定义 CDN / OSS 域名：
+
+```bash
+NEXT_PUBLIC_ASSET_BASE_URL=https://your-cdn.example.com/assets npm run dev
+```
+
 ## 测试
 
 ```bash

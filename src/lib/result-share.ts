@@ -1,3 +1,5 @@
+import { shareQrCodeUrl } from "@/lib/asset-urls";
+
 type ResultShareMetaInput = {
   code: string;
   label: string;
@@ -26,8 +28,6 @@ export function buildResultShareMeta({
     title: `我的${quizName}结果：${label}`,
   };
 }
-
-export const shareQrCodeUrl = "/assets/mini-program/qrcode.png";
 
 export async function waitForRenderableImages(container: HTMLElement | null) {
   if (!container) {
