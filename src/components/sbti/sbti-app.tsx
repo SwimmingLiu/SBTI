@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 
 import { IntroScreen } from "@/components/sbti/intro-screen";
 import { MiniProgramDialog } from "@/components/sbti/mini-program-dialog";
@@ -16,6 +16,11 @@ import { computeResult, getVisibleQuestions } from "@/lib/sbti-engine";
 import { questions, specialQuestions, type Question } from "@/lib/sbti-data";
 
 type Screen = "intro" | "quiz" | "result";
+const SERVER_CLIENT_ENV_SNAPSHOT = JSON.stringify({
+  isInMiniProgram: false,
+  isMobile: false,
+  search: "",
+});
 
 function shuffleQuestions(items: Question[]) {
   const nextItems = [...items];
@@ -63,25 +68,54 @@ export function SbtiApp() {
     (question) => answers[question.id] !== undefined,
   ).length;
   const result = useMemo(() => computeResult(answers), [answers]);
+  const clientEnvSnapshot = useSyncExternalStore(
+    (onStoreChange) => {
+      if (typeof window === "undefined") {
+        return () => undefined;
+      }
+
+      const mediaQuery = window.matchMedia("(max-width: 768px)");
+      mediaQuery.addEventListener("change", onStoreChange);
+      window.addEventListener("popstate", onStoreChange);
+
+      return () => {
+        mediaQuery.removeEventListener("change", onStoreChange);
+        window.removeEventListener("popstate", onStoreChange);
+      };
+    },
+    () =>
+      JSON.stringify({
+        isInMiniProgram: isWechatMiniProgram({
+          hasMiniProgramApi: Boolean((window as { wx?: { miniProgram?: unknown } }).wx?.miniProgram),
+          userAgent: window.navigator.userAgent,
+          wxEnv: (window as { __wxjs_environment?: string }).__wxjs_environment,
+        }),
+        isMobile: window.matchMedia("(max-width: 768px)").matches,
+        search: window.location.search,
+      }),
+    () => SERVER_CLIENT_ENV_SNAPSHOT,
+  );
+  const clientEnv = useMemo(
+    () =>
+      JSON.parse(clientEnvSnapshot) as {
+        isInMiniProgram: boolean;
+        isMobile: boolean;
+        search: string;
+      },
+    [clientEnvSnapshot],
+  );
   const shouldShowRedirect = useMemo(() => {
-    if (typeof window === "undefined" || isRedirectDismissed) {
+    if (isRedirectDismissed) {
       return false;
     }
 
-    const isMobile = window.matchMedia("(max-width: 768px)").matches;
-    const isInMiniProgram = isWechatMiniProgram({
-      hasMiniProgramApi: Boolean((window as { wx?: { miniProgram?: unknown } }).wx?.miniProgram),
-      userAgent: window.navigator.userAgent,
-      wxEnv: (window as { __wxjs_environment?: string }).__wxjs_environment,
-    });
-
     return shouldAutoRedirectToMiniProgram({
-      isInMiniProgram,
-      isMobile,
+      isInMiniProgram: clientEnv.isInMiniProgram,
+      isMobile: clientEnv.isMobile,
       miniProgramUrl: resolvedMiniProgramUrl,
-      search: window.location.search,
+      search: clientEnv.search,
     });
-  }, [isRedirectDismissed, resolvedMiniProgramUrl]);
+  }, [clientEnv, isRedirectDismissed, resolvedMiniProgramUrl]);
 
   useEffect(() => {
     let cancelled = false;

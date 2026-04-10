@@ -56,4 +56,17 @@ test("submits a full quiz and renders the result screen", async ({ page }) => {
   await expect.poll(async () => {
     return page.evaluate(() => Math.round(window.scrollY));
   }).toBeLessThan(80);
+  await expect(page.getByRole("button", { name: "分享结果" })).toBeVisible();
+  await page.getByRole("button", { name: "分享结果" }).click();
+  const shareDialog = page.getByRole("dialog", { name: "分享这张结果图" });
+  await expect(shareDialog).toBeVisible();
+  await expect(
+    shareDialog.getByRole("button", { name: "系统分享" }),
+  ).toBeVisible();
+  await expect(
+    shareDialog.getByRole("button", { name: "保存图片" }),
+  ).toBeVisible();
+  await expect(
+    shareDialog.getByRole("button", { name: "复制文案" }),
+  ).toBeVisible();
 });

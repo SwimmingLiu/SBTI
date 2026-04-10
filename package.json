@@ -5,8 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:static": "next build",
-    "package:static": "rm -rf dist && mkdir -p dist && next build && cd out && zip -qr ../dist/sbti-static-site.zip .",
+    "package:out": "rm -rf out dist && next build && mkdir -p out/.next && cp -R .next/standalone/. out && cp -R .next/static out/.next/static && cp -R public out/public && mkdir -p dist && cd out && zip -qr ../dist/sbti-deploy-out.zip .",
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
@@ -16,6 +15,7 @@
     "capture:local": "tsx scripts/capture-local-results.ts"
   },
   "dependencies": {
+    "html-to-image": "^1.11.13",
     "next": "16.2.3",
     "react": "19.2.4",
     "react-dom": "19.2.4"

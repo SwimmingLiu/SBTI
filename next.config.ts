@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
+  output: "standalone",
   turbopack: {
     root: process.cwd(),
   },
