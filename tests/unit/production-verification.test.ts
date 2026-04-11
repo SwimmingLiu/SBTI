@@ -7,7 +7,7 @@ import {
 
 describe("production verification helpers", () => {
   it("builds the expected homepage and route checks for the site", () => {
-    const checks = buildProductionChecks("https://sbti.unun.dev");
+    const checks = buildProductionChecks("https://sbti.orangemust.com");
 
     expect(checks).toHaveLength(6);
     expect(checks.map((check) => check.path)).toEqual([
@@ -23,7 +23,10 @@ describe("production verification helpers", () => {
       "Science Based Targets initiative",
     );
     expect(checks[4]?.expectedContentType).toBe("text/plain");
-    expect(checks[5]?.expectedContentType).toBe("application/xml");
+    expect(checks[5]?.expectedContentType).toEqual([
+      "application/xml",
+      "text/xml",
+    ]);
   });
 
   it("flags wrong content types and missing page text", async () => {
@@ -54,13 +57,13 @@ describe("production verification helpers", () => {
           expectedContentType: "text/html",
           expectedIncludes: ["SBTI 人格测试", "Science Based Targets initiative"],
           path: "/tests/sbti",
-          url: "https://sbti.unun.dev/tests/sbti",
+          url: "https://sbti.orangemust.com/tests/sbti",
         },
         {
           expectedContentType: "text/plain",
           expectedIncludes: ["User-Agent: *"],
           path: "/robots.txt",
-          url: "https://sbti.unun.dev/robots.txt",
+          url: "https://sbti.orangemust.com/robots.txt",
         },
       ],
       fetcher,
@@ -80,19 +83,19 @@ describe("production verification helpers", () => {
     const results = await verifyProductionChecks(
       [
         {
-          expectedContentType: "application/xml",
+          expectedContentType: ["application/xml", "text/xml"],
           expectedIncludes: ["/tests/sbti", "/tests/sdti", "/tests/herti"],
           path: "/sitemap.xml",
-          url: "https://sbti.unun.dev/sitemap.xml",
+          url: "https://sbti.orangemust.com/sitemap.xml",
         },
       ],
       async () =>
         new Response(
           `<?xml version="1.0" encoding="UTF-8"?>
 <urlset>
-  <url><loc>https://sbti.unun.dev/tests/sbti</loc></url>
-  <url><loc>https://sbti.unun.dev/tests/sdti</loc></url>
-  <url><loc>https://sbti.unun.dev/tests/herti</loc></url>
+  <url><loc>https://sbti.orangemust.com/tests/sbti</loc></url>
+  <url><loc>https://sbti.orangemust.com/tests/sdti</loc></url>
+  <url><loc>https://sbti.orangemust.com/tests/herti</loc></url>
 </urlset>`,
           {
             headers: { "content-type": "application/xml; charset=utf-8" },

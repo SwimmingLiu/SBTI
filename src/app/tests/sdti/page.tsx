@@ -4,7 +4,7 @@ import Link from "next/link";
 import { SdtiSeoSections } from "@/components/sdti/seo-sections";
 import { SdtiApp } from "@/features/sdti/sdti-app";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sbti.unun.dev";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sbti.orangemust.com";
 const siteTitle = "SDTI 人格测评｜SDTI 测试入口｜SDTI 结果说明";
 const siteDescription =
   "SDTI 人格测评在线入口，复刻 32 道题、6 个维度、9 类结果和隐藏 Feminist 结局，适合搜索 sdti人格测评 的用户直接查看。";

@@ -22,7 +22,7 @@ test("shows multiple test entries on the home page and routes into sbti", async 
 
   await page.getByRole("link", { name: "进入 SBTI" }).click();
 
-  await expect(page).toHaveURL(/\/tests\/sbti$/);
+  await expect(page).toHaveURL(/\/tests\/sbti\/?$/);
   await expect(page.getByText(/第 1 题/)).toBeVisible();
 });
 

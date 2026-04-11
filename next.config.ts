@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
     unoptimized: true,
   },
   output: "export",
+  trailingSlash: true,
   turbopack: {
     root: process.cwd(),
   },

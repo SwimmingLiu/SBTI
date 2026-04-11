@@ -24,7 +24,7 @@ test("opens herti from the home page and lands on a literary result card", async
   await page.goto("/");
   await page.getByRole("link", { name: "进入 HERTI" }).click();
 
-  await expect(page).toHaveURL(/\/tests\/herti$/);
+  await expect(page).toHaveURL(/\/tests\/herti\/?$/);
   await expect(
     page.getByRole("heading", { name: "HERTI", exact: true }),
   ).toBeVisible();

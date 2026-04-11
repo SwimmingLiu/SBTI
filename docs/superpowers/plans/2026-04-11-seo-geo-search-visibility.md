@@ -99,4 +99,4 @@
 - [ ] 合并 PR
 - [ ] 生产部署到 Vercel
 - [ ] 运行 `npm run verify:prod`
-- [ ] 若 `sbti.unun.dev` 未切到新版，保留证据并同步 gitee
+- [ ] 若 `sbti.orangemust.com` 未切到新版，保留证据并同步 gitee
