@@ -4,7 +4,7 @@
 
 **Goal:** 修复生产站点与当前仓库产物不一致的问题，并将首页、SBTI、SDTI、HERTI 四个页面升级为搜索引擎与 AI 都更容易理解和引用的落地页。
 
-**Architecture:** 保持 Next.js 静态导出模式不变；新增统一的答案型说明组件；分别重写首页与三个测试页的 metadata、JSON-LD、FAQ 和事实块；加入生产校验脚本；完成测试、PR、review、合并、部署与 gitee 同步。
+**Architecture:** 保持 Next.js 静态导出模式不变；将首页与三个测试页的 SEO/GEO 内容改为“用户不可感知但爬虫可抓取”的隐藏文本块；统一运行时图片走 OSS；移除会进入 `out/` 的本地 `public/assets`；加入生产校验脚本；完成测试、PR、review、合并、部署与 gitee 同步。
 
 **Tech Stack:** Next.js App Router, React 19, TypeScript, Tailwind CSS 4, Vitest, Playwright, Vercel CLI, GitHub CLI
 
@@ -24,19 +24,18 @@
 - [ ] 运行 `npm run verify:prod` 记录线上失败基线
 - [ ] 运行 `npm run package:out` 校验本地导出无误
 
-### Task 2: 可见答案区组件
+### Task 2: 隐藏但可抓取的 SEO / GEO 内容块
 
 **Files:**
-- Create: `src/components/shared/answer-rich-panel.tsx`
 - Modify: `src/components/home/seo-geo-sections.tsx`
 - Modify: `src/components/sbti/seo-sections.tsx`
 - Modify: `src/components/sdti/seo-sections.tsx`
 - Modify: `src/components/herti/seo-sections.tsx`
 
-- [ ] 将首页与三套测试页的隐藏 SEO 文本改为可见说明区
+- [ ] 将首页与三套测试页的可见说明区改回隐藏文本块
 - [ ] 删除 FWTI 文案
 - [ ] 首页增加 SBTI/SBTi 消歧说明
-- [ ] 运行新增落地页 E2E，确认说明区真实可见
+- [ ] 运行新增落地页 E2E，确认隐藏内容仍在 DOM 中且不带 `aria-hidden`
 
 ### Task 3: 首页 metadata 与卡片文案
 
@@ -80,11 +79,22 @@
 - Update: `tests/e2e/visual-regression.spec.ts-snapshots/herti-share-dialog-chromium-darwin.png`
 
 - [ ] 增加首页和三个测试页的搜索落地断言
-- [ ] 将“隐藏 SEO 文本”测试改为“可见答案区”测试
+- [ ] 将测试调整为“隐藏但可抓取”的 SEO/GEO 内容断言
 - [ ] 更新 HERTI 分享弹窗视觉基线
 - [ ] 运行完整 Playwright 套件
 
-### Task 7: 发布与收尾
+### Task 7: OSS-only 运行时资源与本地打包清理
+
+**Files:**
+- Modify: `src/lib/asset-urls.ts`
+- Modify: `README.md`
+- Delete: `public/assets/**`
+
+- [ ] 移除 `NEXT_PUBLIC_USE_LOCAL_ASSETS` 回退逻辑
+- [ ] 删除 `public/assets` 下的本地结果图和二维码资源
+- [ ] 重新打包并确认 `out/` 中不再包含 `assets/original` 与 `assets/mini-program`
+
+### Task 8: 发布与收尾
 
 **Files:**
 - Modify: `docs/superpowers/specs/2026-04-11-seo-geo-search-visibility-design.md`

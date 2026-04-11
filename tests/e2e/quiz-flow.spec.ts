@@ -12,17 +12,37 @@ test("shows the sbti quiz immediately on page load", async ({ page }) => {
   await expect(page).toHaveURL(/\/tests\/sbti\/?$/);
 });
 
-test("shows a visible sbti answer-rich panel without hiding it from users", async ({
+test("keeps sbti seo content hidden from users while leaving it in the DOM", async ({
   page,
 }) => {
   await page.goto("/tests/sbti");
 
-  const seoContent = page.getByTestId("sbti-answer-rich-panel");
+  const seoContent = page.locator("[data-seo-content]");
 
   await expect(seoContent).toHaveCount(1);
   await expect(seoContent).toContainText("SBTI 人格测试是什么");
   await expect(seoContent).toContainText("Science Based Targets initiative");
-  await expect(seoContent).toBeVisible();
+
+  const seoStyle = await seoContent.evaluate((node) => {
+    const style = window.getComputedStyle(node);
+
+    return {
+      clipPath: style.clipPath,
+      height: style.height,
+      overflow: style.overflow,
+      position: style.position,
+      width: style.width,
+    };
+  });
+
+  expect(seoStyle.position).toBe("absolute");
+  expect(seoStyle.overflow).toBe("hidden");
+  expect(seoStyle.clipPath).not.toBe("none");
+  expect(seoStyle.width).toBe("1px");
+  expect(seoStyle.height).toBe("1px");
+
+  const ariaHidden = await seoContent.getAttribute("aria-hidden");
+  expect(ariaHidden).toBeNull();
   await expect(page.getByText(/第 1 题/)).toBeVisible();
 });
 
