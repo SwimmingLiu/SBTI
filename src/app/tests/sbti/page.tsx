@@ -6,9 +6,9 @@ import { SbtiApp } from "@/components/sbti/sbti-app";
 import { sbtiPreviewImageUrl } from "@/lib/asset-urls";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sbti.unun.dev";
-const siteTitle = "SBTI 人格测试｜SBTI 测评｜SBTI 官网";
+const siteTitle = "SBTI 人格测试｜SBTI 测评入口｜SBTI 结果说明";
 const siteDescription =
-  "SBTI 人格测试在线入口，支持 SBTI 测试、SBTI 测评、SBTI 人格结果查看。页面覆盖 31 道题、15 个维度、27 种人格结果与隐藏人格说明，适合移动端和社交分享。";
+  "SBTI 人格测试在线入口，支持 31 道题、15 个维度、27 种人格结果与结果图查看，适合搜索 sbti测试、sbti测评入口、sbti测评官网 的用户直接进入。";
 
 export const metadata: Metadata = {
   title: siteTitle,
@@ -20,11 +20,9 @@ export const metadata: Metadata = {
     "SBTI 人格测试",
     "sbti人格测试",
     "sbti测试",
-    "sbti测评",
+    "sbti测评入口",
     "sbti测评官网",
-    "SBTI 官网",
-    "SBTI 测试入口",
-    "SBTI 27 人格",
+    "SBTI 结果说明",
     "SBTI 结果图",
   ],
   openGraph: {
@@ -55,9 +53,9 @@ export default function SbtiPage() {
   const jsonLd = [
     {
       "@context": "https://schema.org",
-      "@type": "WebSite",
+      "@type": "WebPage",
       description:
-        "SBTI 人格测试在线入口，覆盖 sbti人格测试、sbti测试、sbti测评 等常见搜索需求。",
+        "SBTI 人格测试在线入口，覆盖 sbti人格测试、sbti测试、sbti测评入口、sbti测评官网 等常见搜索需求。",
       name: "SBTI 人格测试",
       url: `${siteUrl}/tests/sbti`,
     },
@@ -85,11 +83,37 @@ export default function SbtiPage() {
         },
         {
           "@type": "Question",
-          name: "SBTI 测评官网入口在哪里？",
+          name: "SBTI 测评入口在哪里？",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "当前页面提供 SBTI 测试入口、结果页和分享能力，适合搜索 sbti测评官网、sbti官网入口、sbti测试入口 的用户直接访问。",
+            text: "当前页面就是 SBTI 测评入口，适合搜索 sbti测评官网、sbti测试、sbti测评入口 的用户直接开始答题并查看结果。",
           },
+        },
+        {
+          "@type": "Question",
+          name: "这里的 SBTI 和气候组织 SBTi 有什么区别？",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "这里的 SBTI 指娱乐向人格测试，不是 Science Based Targets initiative（SBTi）。本页提供的是人格测试入口、题量结构和结果说明。",
+          },
+        },
+      ],
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          item: `${siteUrl}/`,
+          name: "人格测试题库",
+          position: 1,
+        },
+        {
+          "@type": "ListItem",
+          item: `${siteUrl}/tests/sbti`,
+          name: "SBTI 人格测试",
+          position: 2,
         },
       ],
     },

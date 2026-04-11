@@ -6,7 +6,7 @@ test("shows multiple test entries on the home page and routes into sbti", async 
   await page.goto("/");
 
   await expect(page).toHaveTitle(
-    "人格测试题库｜SBTI 人格测试 · SDTI 人格测评 · HERTI 她的人格测评 · FWTI",
+    "人格测试题库｜SBTI 人格测试 · SDTI 人格测评 · HERTI 她的人格测评",
   );
   await expect(page.getByRole("heading", { name: "人格测试题库" })).toBeVisible();
   await expect(
@@ -48,7 +48,7 @@ test("keeps home card titles and status badges on one line", async ({ page }) =>
 
   const hertiCard = page.getByTestId("test-card-herti");
   const statusBadge = hertiCard.getByText("已开放", { exact: true });
-  const title = hertiCard.getByRole("heading", { name: "HERTI 她的人格地图" });
+  const title = hertiCard.getByRole("heading", { name: "HERTI 她的人格测评" });
 
   await expect(statusBadge).toBeVisible();
   await expect(title).toBeVisible();
@@ -101,34 +101,16 @@ test("keeps compact home cards inside the library shell", async ({ page }) => {
   }
 });
 
-test("keeps SEO and GEO support content hidden from users on the home page", async ({
+test("shows a visible answer-rich support panel on the home page", async ({
   page,
 }) => {
   await page.goto("/");
 
-  const seoContent = page.locator("[data-home-seo-content]");
+  const seoContent = page.getByTestId("home-answer-rich-panel");
 
   await expect(seoContent).toHaveCount(1);
   await expect(seoContent).toContainText("SBTI 和 SBTi 有什么不同");
-  await expect(seoContent).toContainText("FWTI 恋爱废物人格测评");
-
-  const seoStyle = await seoContent.evaluate((node) => {
-    const style = window.getComputedStyle(node);
-
-    return {
-      clipPath: style.clipPath,
-      height: style.height,
-      overflow: style.overflow,
-      pointerEvents: style.pointerEvents,
-      position: style.position,
-      width: style.width,
-    };
-  });
-
-  expect(seoStyle.position).toBe("absolute");
-  expect(seoStyle.overflow).toBe("hidden");
-  expect(seoStyle.pointerEvents).toBe("none");
-  expect(seoStyle.clipPath).not.toBe("none");
-  expect(seoStyle.width).toBe("1px");
-  expect(seoStyle.height).toBe("1px");
+  await expect(seoContent).toContainText("这里的 SBTI 指人格测试");
+  await expect(seoContent).not.toContainText("FWTI");
+  await expect(seoContent).toBeVisible();
 });

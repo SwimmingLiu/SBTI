@@ -25,7 +25,9 @@ test("opens herti from the home page and lands on a literary result card", async
   await page.getByRole("link", { name: "进入 HERTI" }).click();
 
   await expect(page).toHaveURL(/\/tests\/herti$/);
-  await expect(page.getByRole("heading", { name: "HERTI" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "HERTI", exact: true }),
+  ).toBeVisible();
   await page.getByRole("button", { name: "开 始 测 试" }).click();
   await answerScenario(page, scenario.answers);
 

@@ -11,6 +11,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
+    "verify:prod": "tsx scripts/verify-production-pages.ts",
     "sync:herti-data": "tsx scripts/generate-herti-data.ts",
     "sync:sdti-data": "tsx scripts/generate-sdti-data.ts",
     "capture:remote": "tsx scripts/capture-remote-results.ts",
