@@ -9,6 +9,7 @@ import { computeHertiResult, type HertiResult } from "@/features/herti/engine";
 import {
   buildResultShareMeta,
   dataUrlToBlob,
+  inlineShareCardImages,
   isNativeShareSupported,
   shareQrWatermarkInsetWidth,
   waitForRenderableImages,
@@ -111,6 +112,7 @@ export function HertiApp() {
     }
 
     try {
+      await inlineShareCardImages(shareCardRef.current);
       await waitForRenderableImages(shareCardRef.current);
       const dataUrl = await toPng(shareCardRef.current!, {
         backgroundColor: "#f4f1ea",

@@ -14,6 +14,7 @@ import { computeSdtiResult } from "@/features/sdti/engine";
 import {
   buildResultShareMeta,
   dataUrlToBlob,
+  inlineShareCardImages,
   isNativeShareSupported,
   shareQrWatermarkInsetWidth,
   waitForRenderableImages,
@@ -176,6 +177,7 @@ export function SdtiApp() {
     }
 
     try {
+      await inlineShareCardImages(shareCardRef.current);
       await waitForRenderableImages(shareCardRef.current);
       const dataUrl = await toPng(shareCardRef.current!, {
         backgroundColor: "#f8f8f8",

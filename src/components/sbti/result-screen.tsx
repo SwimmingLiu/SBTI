@@ -11,6 +11,7 @@ import type { SbtiResult } from "@/lib/sbti-engine";
 import {
   buildResultShareMeta,
   dataUrlToBlob,
+  inlineShareCardImages,
   isNativeShareSupported,
   isWechatBrowser,
   shareQrWatermarkInsetWidth,
@@ -79,6 +80,7 @@ export function ResultScreen({
     setShareMessage("");
 
     try {
+      await inlineShareCardImages(shareCardRef.current);
       await waitForRenderableImages(shareCardRef.current);
 
       const dataUrl = await toPng(shareCardRef.current, {

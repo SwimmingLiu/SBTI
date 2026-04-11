@@ -1,5 +1,3 @@
-import { shareQrCodeUrl } from "@/lib/asset-urls";
-
 type ResultShareMetaInput = {
   code: string;
   label: string;
@@ -29,25 +27,207 @@ export function buildResultShareMeta({
   };
 }
 
+type RenderableImageLike = {
+  addEventListener: (
+    type: "error" | "load",
+    listener: () => void,
+    options?: AddEventListenerOptions,
+  ) => void;
+  complete: boolean;
+  currentSrc?: string;
+  decode?: () => Promise<void>;
+  naturalWidth: number;
+  removeEventListener?: (
+    type: "error" | "load",
+    listener: () => void,
+  ) => void;
+  src: string;
+};
+
+type RetryOptions = {
+  attempts?: number;
+  delayMs?: number;
+  taskName?: string;
+};
+
+type InlineShareImageOptions = {
+  cacheBust?: boolean;
+  retryDelayMs?: number;
+  retryTimes?: number;
+};
+
+async function waitForImageDecode(image: RenderableImageLike) {
+  if (typeof image.decode !== "function") {
+    return;
+  }
+
+  try {
+    await image.decode();
+  } catch {
+    // Some webviews throw during decode even though the pixels are already usable.
+  }
+}
+
+function getShareImageError(image: RenderableImageLike) {
+  return new Error(
+    `Failed to load share image: ${image.currentSrc || image.src || "unknown"}`,
+  );
+}
+
+function sleep(delayMs: number) {
+  return new Promise<void>((resolve) => {
+    setTimeout(resolve, delayMs);
+  });
+}
+
+function withCacheBust(url: string) {
+  if (/^data:|^blob:/.test(url)) {
+    return url;
+  }
+
+  const separator = url.includes("?") ? "&" : "?";
+  return `${url}${separator}shareBust=${Date.now()}`;
+}
+
+function blobToDataUrl(blob: Blob) {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(reader.error ?? new Error("Failed to read share image blob"));
+    reader.onloadend = () => resolve(String(reader.result));
+    reader.readAsDataURL(blob);
+  });
+}
+
+async function fetchImageAsDataUrl(url: string, cacheBust: boolean) {
+  const response = await fetch(cacheBust ? withCacheBust(url) : url, {
+    cache: "no-store",
+    mode: "cors",
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch share image: ${url}`);
+  }
+
+  return blobToDataUrl(await response.blob());
+}
+
+export async function retryAsync<T>(
+  run: () => Promise<T>,
+  {
+    attempts = 2,
+    delayMs = 120,
+    taskName = "share image task",
+  }: RetryOptions = {},
+) {
+  let lastError: unknown;
+
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      return await run();
+    } catch (error) {
+      lastError = error;
+
+      if (attempt === attempts) {
+        throw error instanceof Error ? error : new Error(`${taskName} failed`);
+      }
+
+      await sleep(delayMs);
+    }
+  }
+
+  throw lastError instanceof Error ? lastError : new Error(`${taskName} failed`);
+}
+
+export async function waitForImageToRender(image: RenderableImageLike) {
+  if (image.complete) {
+    if (image.naturalWidth === 0) {
+      throw getShareImageError(image);
+    }
+
+    await waitForImageDecode(image);
+    return;
+  }
+
+  await new Promise<void>((resolve, reject) => {
+    const cleanup = () => {
+      image.removeEventListener?.("load", handleLoad);
+      image.removeEventListener?.("error", handleError);
+    };
+
+    const handleLoad = () => {
+      cleanup();
+
+      if (image.naturalWidth === 0) {
+        reject(getShareImageError(image));
+        return;
+      }
+
+      void waitForImageDecode(image).then(() => resolve(), reject);
+    };
+
+    const handleError = () => {
+      cleanup();
+      reject(getShareImageError(image));
+    };
+
+    image.addEventListener("load", handleLoad, { once: true });
+    image.addEventListener("error", handleError, { once: true });
+  });
+}
+
 export async function waitForRenderableImages(container: HTMLElement | null) {
   if (!container) {
     return;
   }
 
   const images = Array.from(container.querySelectorAll("img"));
-  await Promise.all(
-    images.map(
-      (image) =>
-        new Promise<void>((resolve) => {
-          if (image.complete && image.naturalWidth > 0) {
-            resolve();
-            return;
-          }
+  await Promise.all(images.map((image) => waitForImageToRender(image)));
+}
 
-          image.addEventListener("load", () => resolve(), { once: true });
-          image.addEventListener("error", () => resolve(), { once: true });
-        }),
-    ),
+export async function inlineShareCardImages(
+  container: HTMLElement | null,
+  {
+    cacheBust = true,
+    retryDelayMs = 160,
+    retryTimes = 2,
+  }: InlineShareImageOptions = {},
+) {
+  if (!container) {
+    return;
+  }
+
+  const images = Array.from(container.querySelectorAll("img"));
+
+  await Promise.all(
+    images.map(async (image) => {
+      const source = image.currentSrc || image.src;
+
+      if (!source) {
+        return;
+      }
+
+      image.setAttribute("decoding", "sync");
+      image.setAttribute("loading", "eager");
+
+      if (/^data:|^blob:/.test(source)) {
+        await waitForImageToRender(image);
+        return;
+      }
+
+      const dataUrl = await retryAsync(
+        () => fetchImageAsDataUrl(source, cacheBust),
+        {
+          attempts: retryTimes,
+          delayMs: retryDelayMs,
+          taskName: `share image preload: ${source}`,
+        },
+      );
+
+      image.removeAttribute("srcset");
+      image.src = dataUrl;
+
+      await waitForImageToRender(image);
+    }),
   );
 }
 
