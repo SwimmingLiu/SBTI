@@ -15,7 +15,6 @@ import {
   isNativeShareSupported,
   isWechatBrowser,
   shareQrWatermarkInsetWidth,
-  waitForRenderableImages,
 } from "@/lib/result-share";
 
 type ResultScreenProps = {
@@ -81,7 +80,6 @@ export function ResultScreen({
 
     try {
       await inlineShareCardImages(shareCardRef.current);
-      await waitForRenderableImages(shareCardRef.current);
 
       const dataUrl = await toPng(shareCardRef.current, {
         backgroundColor: "#f6faf6",

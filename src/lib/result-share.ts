@@ -119,14 +119,10 @@ export async function retryAsync<T>(
     taskName = "share image task",
   }: RetryOptions = {},
 ) {
-  let lastError: unknown;
-
   for (let attempt = 1; attempt <= attempts; attempt += 1) {
     try {
       return await run();
     } catch (error) {
-      lastError = error;
-
       if (attempt === attempts) {
         throw error instanceof Error ? error : new Error(`${taskName} failed`);
       }
@@ -135,7 +131,7 @@ export async function retryAsync<T>(
     }
   }
 
-  throw lastError instanceof Error ? lastError : new Error(`${taskName} failed`);
+  throw new Error(`${taskName} failed`);
 }
 
 export async function waitForImageToRender(image: RenderableImageLike) {

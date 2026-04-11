@@ -17,7 +17,6 @@ import {
   inlineShareCardImages,
   isNativeShareSupported,
   shareQrWatermarkInsetWidth,
-  waitForRenderableImages,
 } from "@/lib/result-share";
 
 type Screen = "quiz" | "result";
@@ -178,7 +177,6 @@ export function SdtiApp() {
 
     try {
       await inlineShareCardImages(shareCardRef.current);
-      await waitForRenderableImages(shareCardRef.current);
       const dataUrl = await toPng(shareCardRef.current!, {
         backgroundColor: "#f8f8f8",
         cacheBust: true,

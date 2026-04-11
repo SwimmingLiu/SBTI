@@ -12,7 +12,6 @@ import {
   inlineShareCardImages,
   isNativeShareSupported,
   shareQrWatermarkInsetWidth,
-  waitForRenderableImages,
 } from "@/lib/result-share";
 
 type Screen = "cover" | "loading" | "quiz" | "result";
@@ -113,7 +112,6 @@ export function HertiApp() {
 
     try {
       await inlineShareCardImages(shareCardRef.current);
-      await waitForRenderableImages(shareCardRef.current);
       const dataUrl = await toPng(shareCardRef.current!, {
         backgroundColor: "#f4f1ea",
         cacheBust: true,
