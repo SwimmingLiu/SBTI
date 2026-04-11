@@ -14,9 +14,9 @@ import { computeSdtiResult } from "@/features/sdti/engine";
 import {
   buildResultShareMeta,
   dataUrlToBlob,
+  inlineShareCardImages,
   isNativeShareSupported,
   shareQrWatermarkInsetWidth,
-  waitForRenderableImages,
 } from "@/lib/result-share";
 
 type Screen = "quiz" | "result";
@@ -176,7 +176,7 @@ export function SdtiApp() {
     }
 
     try {
-      await waitForRenderableImages(shareCardRef.current);
+      await inlineShareCardImages(shareCardRef.current);
       const dataUrl = await toPng(shareCardRef.current!, {
         backgroundColor: "#f8f8f8",
         cacheBust: true,

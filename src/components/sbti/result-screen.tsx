@@ -11,10 +11,10 @@ import type { SbtiResult } from "@/lib/sbti-engine";
 import {
   buildResultShareMeta,
   dataUrlToBlob,
+  inlineShareCardImages,
   isNativeShareSupported,
   isWechatBrowser,
   shareQrWatermarkInsetWidth,
-  waitForRenderableImages,
 } from "@/lib/result-share";
 
 type ResultScreenProps = {
@@ -79,7 +79,7 @@ export function ResultScreen({
     setShareMessage("");
 
     try {
-      await waitForRenderableImages(shareCardRef.current);
+      await inlineShareCardImages(shareCardRef.current);
 
       const dataUrl = await toPng(shareCardRef.current, {
         backgroundColor: "#f6faf6",
