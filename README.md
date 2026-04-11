@@ -10,7 +10,7 @@
 - [x] SDTI 完整接入
 - [x] HERTI 完整接入
 - [x] 参考页面快照已归档到 `research/original/SBTI.html`
-- [x] 结果图资源已同步到 `public/assets/original/sbti`
+- [x] 结果图资源已同步到阿里云 OSS
 - [x] 首页与答题页流程已完成
 - [x] 结果页与完整人格判定逻辑
 - [x] 远端 / 本地全结果浏览器抓取
@@ -27,12 +27,6 @@ npm run dev
 
 - 默认情况下，运行时图片资源会走阿里云 OSS：
   - `NEXT_PUBLIC_ASSET_BASE_URL=https://sbti-orangemust.oss-cn-beijing.aliyuncs.com/assets`
-- 如果你需要在本地离线开发或排查远端资源问题，可以显式切回仓库内的 `public/assets`：
-
-```bash
-NEXT_PUBLIC_USE_LOCAL_ASSETS=1 npm run dev
-```
-
 - 也可以替换成自定义 CDN / OSS 域名：
 
 ```bash

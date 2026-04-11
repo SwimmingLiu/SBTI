@@ -48,7 +48,9 @@ test("hides mini program entry content inside the mini program webview", async (
 
   await page.goto("/");
 
-  await expect(page.getByRole("heading", { name: "人格测试题库" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "人格测试题库", exact: true }),
+  ).toBeVisible();
   await expect(page.getByText("微信小程序入口")).toHaveCount(0);
   await expect(
     page.getByRole("link", { name: "打开微信小程序" }),

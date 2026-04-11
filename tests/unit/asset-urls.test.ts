@@ -45,14 +45,14 @@ describe("asset url helpers", () => {
     );
   });
 
-  it("can fall back to local assets explicitly", async () => {
+  it("always resolves to the configured remote asset base, even if local fallback is requested", async () => {
     process.env.NEXT_PUBLIC_ASSET_BASE_URL = "https://cdn.example.com/assets";
     process.env.NEXT_PUBLIC_USE_LOCAL_ASSETS = "1";
 
     const { toAssetUrl } = await loadAssetUrlsModule();
 
     expect(toAssetUrl("original/sbti/CTRL.png")).toBe(
-      "/assets/original/sbti/CTRL.png",
+      "https://cdn.example.com/assets/original/sbti/CTRL.png",
     );
   });
 });

@@ -22,7 +22,7 @@
 
 - 修复生产站点与当前代码不一致的问题
 - 强化首页与 `SBTI / SDTI / HERTI` 三个独立落地页的 SEO/GEO 表达
-- 将纯隐藏 SEO 内容重构为真实可见但视觉弱化的答案型说明区
+- 将纯隐藏 SEO 内容重构为“用户不可感知、但爬虫可抓取”的隐藏答案块
 - 保留百度统计脚本并进入最终产物
 
 ## Non-goals
@@ -56,17 +56,26 @@
 - 结果页展示什么
 - 谁适合做
 
-### 3. 从隐藏 SEO 内容切换到可见答案区
+### 3. 从隐藏 SEO 内容切换到隐藏但可抓取的答案区
 
-不再使用 `aria-hidden="true"` + `seo-content-hidden` 作为核心 SEO 策略。
+保留 DOM 中的 SEO/GEO 内容，但不让普通用户感知：
 
 改为：
 
-- 页面下半区增加弱化的说明卡片
-- 短段落 + 事实块 + FAQ
-- 对用户可见，但不抢主流程焦点
+- 保留真实文本、标题、FAQ、事实块
+- 使用 `.seo-content-hidden` 进行视觉隐藏
+- 不使用 `display: none`
+- 不使用 `visibility: hidden`
+- 不使用 `aria-hidden="true"`
+- 让爬虫和搜索引擎仍然可以读取页面中的这部分内容
 
-### 4. 结构化数据与元数据
+### 4. 运行时资源策略
+
+- 页面运行时图片统一走 OSS / CDN
+- `public/assets` 中的本地结果图与二维码资源移出打包路径，避免继续进入 `out/`
+- 仓库不再保留 `NEXT_PUBLIC_USE_LOCAL_ASSETS` 本地回退逻辑
+
+### 5. 结构化数据与元数据
 
 首页：
 
@@ -82,7 +91,7 @@
 - `HowTo`（SBTI）
 - `BreadcrumbList`
 
-### 5. 部署策略
+### 6. 部署策略
 
 先用脚本验证生产首页、测试页、robots、sitemap 是否返回正确内容，再发布新版生产部署。
 
@@ -90,9 +99,10 @@
 
 ## Acceptance Criteria
 
-- 首页和三个测试页拥有真实可见的答案型说明区
+- 首页和三个测试页拥有隐藏但可抓取的 SEO/GEO 内容块
 - 首页、SBTI、SDTI、HERTI 的 metadata 与结构化数据匹配目标关键词
 - `SBTI` 页面明确完成 `SBTi` 消歧
+- `out/` 中不再包含 `public/assets/original` 与 `public/assets/mini-program` 本地图片资源
 - 本地 `npm test`、`npx playwright test`、`npx playwright test tests/e2e/visual-regression.spec.ts`、`npm run package:out` 全通过
 - Vercel 生产部署更新成功
 - 如果 `sbti.orangemust.com` 仍无法切到新部署，明确给出外部域名权限阻塞证据

@@ -8,7 +8,9 @@ test("shows multiple test entries on the home page and routes into sbti", async 
   await expect(page).toHaveTitle(
     "人格测试题库｜SBTI 人格测试 · SDTI 人格测评 · HERTI 她的人格测评",
   );
-  await expect(page.getByRole("heading", { name: "人格测试题库" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "人格测试题库", exact: true }),
+  ).toBeVisible();
   await expect(
     page.getByText(
       "这里不是单个测试页，而是一套正在持续扩展的题库站。当前项目保留 SBTI，并继续接入 SDTI 与 HERTI 两个新题库；每个题库都按原站逻辑做浏览器级取证、结果提取和本地重写。",
@@ -101,16 +103,36 @@ test("keeps compact home cards inside the library shell", async ({ page }) => {
   }
 });
 
-test("shows a visible answer-rich support panel on the home page", async ({
+test("keeps SEO and GEO support content hidden from users on the home page", async ({
   page,
 }) => {
   await page.goto("/");
 
-  const seoContent = page.getByTestId("home-answer-rich-panel");
+  const seoContent = page.locator("[data-home-seo-content]");
 
   await expect(seoContent).toHaveCount(1);
   await expect(seoContent).toContainText("SBTI 和 SBTi 有什么不同");
   await expect(seoContent).toContainText("这里的 SBTI 指人格测试");
   await expect(seoContent).not.toContainText("FWTI");
-  await expect(seoContent).toBeVisible();
+
+  const seoStyle = await seoContent.evaluate((node) => {
+    const style = window.getComputedStyle(node);
+
+    return {
+      clipPath: style.clipPath,
+      height: style.height,
+      overflow: style.overflow,
+      position: style.position,
+      width: style.width,
+    };
+  });
+
+  expect(seoStyle.position).toBe("absolute");
+  expect(seoStyle.overflow).toBe("hidden");
+  expect(seoStyle.clipPath).not.toBe("none");
+  expect(seoStyle.width).toBe("1px");
+  expect(seoStyle.height).toBe("1px");
+
+  const ariaHidden = await seoContent.getAttribute("aria-hidden");
+  expect(ariaHidden).toBeNull();
 });

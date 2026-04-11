@@ -5,14 +5,9 @@ const assetBaseUrl =
     /\/+$/,
     "",
   );
-const preferLocalAssets = process.env.NEXT_PUBLIC_USE_LOCAL_ASSETS === "1";
 
 export function toAssetUrl(assetPath: string) {
   const normalizedPath = assetPath.replace(/^\/+/, "").replace(/^assets\//, "");
-  if (preferLocalAssets) {
-    return `/assets/${normalizedPath}`;
-  }
-
   return `${assetBaseUrl}/${normalizedPath}`;
 }
 
