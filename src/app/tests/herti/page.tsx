@@ -4,7 +4,7 @@ import Link from "next/link";
 import { HertiSeoSections } from "@/components/herti/seo-sections";
 import { HertiApp } from "@/features/herti/herti-app";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sbti.unun.dev";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sbti.orangemust.com";
 const siteTitle = "HERTI 她的人格测评｜HERTI 人格地图｜结果说明";
 const siteDescription =
   "HERTI 她的人格测评在线入口，复刻 20 道题、16 位女性原型、镜像人格和反面人格关系卡，适合搜索 herti她的人格测评 的用户访问。";

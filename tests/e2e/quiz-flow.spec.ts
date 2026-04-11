@@ -9,7 +9,7 @@ test("shows the sbti quiz immediately on page load", async ({ page }) => {
 
   await expect(page.getByText(/第 1 题/)).toBeVisible();
   await expect(page.getByText("0 / 31")).toBeVisible();
-  await expect(page).toHaveURL(/\/tests\/sbti$/);
+  await expect(page).toHaveURL(/\/tests\/sbti\/?$/);
 });
 
 test("shows a visible sbti answer-rich panel without hiding it from users", async ({

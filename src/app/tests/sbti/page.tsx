@@ -5,7 +5,7 @@ import { SeoSections } from "@/components/sbti/seo-sections";
 import { SbtiApp } from "@/components/sbti/sbti-app";
 import { sbtiPreviewImageUrl } from "@/lib/asset-urls";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sbti.unun.dev";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sbti.orangemust.com";
 const siteTitle = "SBTI 人格测试｜SBTI 测评入口｜SBTI 结果说明";
 const siteDescription =
   "SBTI 人格测试在线入口，支持 31 道题、15 个维度、27 种人格结果与结果图查看，适合搜索 sbti测试、sbti测评入口、sbti测评官网 的用户直接进入。";

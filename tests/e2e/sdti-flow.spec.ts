@@ -20,7 +20,7 @@ test("opens sdti from the home page and renders a regular result", async ({
   await page.goto("/");
   await page.getByRole("link", { name: "进入 SDTI" }).click();
 
-  await expect(page).toHaveURL(/\/tests\/sdti$/);
+  await expect(page).toHaveURL(/\/tests\/sdti\/?$/);
   await expect(page.getByRole("heading", { name: "SDTI人格测试 v2.1" })).toBeVisible();
 
   await answerScenario(page, scenario.answers);

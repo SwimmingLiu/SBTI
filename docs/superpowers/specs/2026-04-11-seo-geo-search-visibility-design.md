@@ -6,7 +6,7 @@
 
 当前项目已经具备多题库结构，但线上搜索表现很差。已确认两个核心问题：
 
-1. `sbti.unun.dev` 当前没有返回仓库最新导出产物，`/`、`/tests/sbti`、`/tests/sdti`、`/tests/herti`、`/robots.txt`、`/sitemap.xml` 都存在部署错配。
+1. `sbti.orangemust.com` 当前没有返回仓库最新导出产物，`/`、`/tests/sbti`、`/tests/sdti`、`/tests/herti`、`/robots.txt`、`/sitemap.xml` 都存在部署错配。
 2. 现有 SEO 内容大量依赖完全隐藏的文本块，不利于用户体验，也不符合 GEO 强调的“可回答、可引用、可信源”原则。
 
 外部证据显示：
@@ -95,4 +95,4 @@
 - `SBTI` 页面明确完成 `SBTi` 消歧
 - 本地 `npm test`、`npx playwright test`、`npx playwright test tests/e2e/visual-regression.spec.ts`、`npm run package:out` 全通过
 - Vercel 生产部署更新成功
-- 如果 `sbti.unun.dev` 仍无法切到新部署，明确给出外部域名权限阻塞证据
+- 如果 `sbti.orangemust.com` 仍无法切到新部署，明确给出外部域名权限阻塞证据

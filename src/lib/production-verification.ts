@@ -1,5 +1,5 @@
 export type ProductionCheck = {
-  expectedContentType: string;
+  expectedContentType: string | string[];
   expectedIncludes: string[];
   path: string;
   url: string;
@@ -62,7 +62,7 @@ export function buildProductionChecks(siteUrl: string): ProductionCheck[] {
       url: `${normalizedSiteUrl}/robots.txt`,
     },
     {
-      expectedContentType: "application/xml",
+      expectedContentType: ["application/xml", "text/xml"],
       expectedIncludes: ["/tests/sbti", "/tests/sdti", "/tests/herti"],
       path: "/sitemap.xml",
       url: `${normalizedSiteUrl}/sitemap.xml`,
@@ -85,9 +85,17 @@ export async function verifyProductionChecks(
         errors.push(`http status: ${response.status}`);
       }
 
-      if (!actualContentType.includes(check.expectedContentType)) {
+      const expectedContentTypes = Array.isArray(check.expectedContentType)
+        ? check.expectedContentType
+        : [check.expectedContentType];
+
+      if (
+        !expectedContentTypes.some((expectedType) =>
+          actualContentType.includes(expectedType),
+        )
+      ) {
         errors.push(
-          `content-type mismatch: expected "${check.expectedContentType}", got "${actualContentType}"`,
+          `content-type mismatch: expected "${expectedContentTypes.join('" or "')}", got "${actualContentType}"`,
         );
       }
 

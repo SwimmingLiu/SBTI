@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { TestHome } from "@/components/home/test-home";
 import { testCatalog } from "@/lib/test-catalog";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sbti.unun.dev";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sbti.orangemust.com";
 
 export const metadata: Metadata = {
   alternates: {

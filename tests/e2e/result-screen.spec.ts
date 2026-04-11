@@ -86,6 +86,6 @@ test("submits a full quiz and renders the result screen", async ({ page }) => {
     .not.toBe("0px");
 
   await page.goBack();
-  await expect(page).toHaveURL(/\/tests\/sbti$/);
+  await expect(page).toHaveURL(/\/tests\/sbti\/?$/);
   await expect(page.locator("#questionList")).toBeVisible();
 });

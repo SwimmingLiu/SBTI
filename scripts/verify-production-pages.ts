@@ -4,7 +4,8 @@ import {
 } from "@/lib/production-verification";
 
 async function main() {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sbti.unun.dev";
+  const siteUrl =
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://sbti.orangemust.com";
   const checks = buildProductionChecks(siteUrl);
   const results = await verifyProductionChecks(checks);
   const failedResults = results.filter((result) => !result.ok);

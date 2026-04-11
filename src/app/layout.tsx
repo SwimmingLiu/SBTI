@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sbti.unun.dev";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sbti.orangemust.com";
 const siteTitle = "人格测试题库｜SBTI 人格测试 · SDTI 人格测评 · HERTI 她的人格测评";
 const siteDescription =
   "人格测试题库首页，集中收录 SBTI 人格测试、SDTI 人格测评、HERTI 她的人格测评，提供独立入口、结果页说明与 SBTI 消歧信息。";
