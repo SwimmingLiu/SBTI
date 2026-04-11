@@ -14,9 +14,9 @@ const geistMono = Geist_Mono({
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sbti.unun.dev";
-const siteTitle = "人格测试题库｜SBTI 人格测试 · SDTI 人格测评 · HERTI 她的人格测评 · FWTI";
+const siteTitle = "人格测试题库｜SBTI 人格测试 · SDTI 人格测评 · HERTI 她的人格测评";
 const siteDescription =
-  "人格测试题库首页，集中收录并复刻 SBTI 人格测试、SDTI 人格测评、HERTI 她的人格测评，并为 FWTI 恋爱废物人格测评预留扩展位，覆盖题库入口、结果页、结构化说明与搜索长尾词意图。";
+  "人格测试题库首页，集中收录 SBTI 人格测试、SDTI 人格测评、HERTI 她的人格测评，提供独立入口、结果页说明与 SBTI 消歧信息。";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -28,16 +28,11 @@ export const metadata: Metadata = {
     "SBTI 人格测试",
     "sbti人格测试",
     "sbti测试",
-    "sbti测评",
-    "sbti测评官网",
+    "sbti测评入口",
     "SDTI 人格测评",
-    "SDTI 人格测试",
     "sdti人格测评",
     "HERTI 她的人格测评",
-    "HERTI 她的人格地图",
     "herti她的人格测评",
-    "FWTI 恋爱废物人格测评",
-    "fwti恋爱废物人格测评",
     "人格测试入口",
     "人格测试结果页",
   ],

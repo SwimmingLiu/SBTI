@@ -32,7 +32,7 @@ export const testCatalog: TestCatalogEntry[] = [
     description:
       "冷灰纸面风格的新题库，32 题、6 个维度、9 类结果，含 Feminist 隐藏结局。",
     href: "/tests/sdti",
-    name: "SDTI 人格测试",
+    name: "SDTI 人格测评",
     questionCount: 32,
     resultCount: 9,
     slug: "sdti",
@@ -43,9 +43,9 @@ export const testCatalog: TestCatalogEntry[] = [
   {
     accent: "from-[#9d8d74] to-[#645846]",
     description:
-      "文学长卷式人格地图，20 题、16 位女性原型、镜像人格与反面人格关系卡。",
+      "文学长卷式人格测评，20 题、16 位女性原型、镜像人格与反面人格关系卡。",
     href: "/tests/herti",
-    name: "HERTI 她的人格地图",
+    name: "HERTI 她的人格测评",
     questionCount: 20,
     resultCount: 16,
     slug: "herti",
