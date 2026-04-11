@@ -4,23 +4,89 @@ import Link from "next/link";
 import { HertiSeoSections } from "@/components/herti/seo-sections";
 import { HertiApp } from "@/features/herti/herti-app";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sbti.unun.dev";
+const siteTitle = "HERTI 她的人格测评｜HERTI 人格地图｜结果说明";
+const siteDescription =
+  "HERTI 她的人格测评在线入口，复刻 20 道题、16 位女性原型、镜像人格和反面人格关系卡，适合搜索 herti她的人格测评 的用户访问。";
+
 export const metadata: Metadata = {
-  title: "HERTI 她的人格测评｜HERTI 她的人格地图｜HERTI 测试",
-  description:
-    "HERTI 她的人格测评在线入口，复刻 20 道题、16 位女性原型、镜像人格与反面人格结果长卷，适合搜索 herti她的人格测评、herti人格地图 的用户访问。",
+  title: siteTitle,
+  description: siteDescription,
   alternates: {
     canonical: "/tests/herti",
   },
   keywords: [
     "HERTI 她的人格测评",
-    "HERTI 她的人格地图",
     "herti她的人格测评",
     "herti人格地图",
-    "女性人格原型测试",
+    "HERTI 结果说明",
   ],
+  openGraph: {
+    title: siteTitle,
+    description: siteDescription,
+    locale: "zh_CN",
+    siteName: "HERTI 她的人格测评",
+    type: "website",
+    url: "/tests/herti",
+  },
+  twitter: {
+    card: "summary",
+    title: siteTitle,
+    description: siteDescription,
+  },
 };
 
 export default function HertiPage() {
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      description: siteDescription,
+      name: "HERTI 她的人格测评",
+      url: `${siteUrl}/tests/herti`,
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: [
+        {
+          "@type": "Question",
+          name: "HERTI 她的人格测评是什么？",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "HERTI 是一套文学风格的人格测评，复刻 20 道题、16 位女性原型、镜像人格和反面人格关系卡。",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "HERTI 结果页会展示什么？",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "结果页会展示主人格、epigraph、persona 段落、灵魂原型、镜像人格和反面人格关系卡。",
+          },
+        },
+      ],
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          item: `${siteUrl}/`,
+          name: "人格测试题库",
+          position: 1,
+        },
+        {
+          "@type": "ListItem",
+          item: `${siteUrl}/tests/herti`,
+          name: "HERTI 她的人格测评",
+          position: 2,
+        },
+      ],
+    },
+  ];
+
   return (
     <>
       <div className="bg-[#f4f1ea] px-4 pt-6">
@@ -33,6 +99,10 @@ export default function HertiPage() {
           </Link>
         </div>
       </div>
+      <script
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        type="application/ld+json"
+      />
       <HertiApp />
       <HertiSeoSections />
     </>
