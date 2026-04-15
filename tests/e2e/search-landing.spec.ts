@@ -9,6 +9,9 @@ test("exposes visible disambiguation and facts on the sbti landing page", async 
   const seoContent = page.locator("[data-seo-content]");
 
   await expect(seoContent).toHaveCount(1);
+  await expect(seoContent).toContainText("页面摘要");
+  await expect(seoContent).toContainText("关键事实");
+  await expect(seoContent).toContainText("与题库首页的关系");
   await expect(
     seoContent.getByText(
       "这里的 SBTI 指娱乐向人格测试，不是 Science Based Targets initiative",
@@ -27,6 +30,9 @@ test("exposes visible sdti facts for search landing intent", async ({ page }) =>
   const seoContent = page.locator("[data-sdti-seo-content]");
 
   await expect(seoContent).toHaveCount(1);
+  await expect(seoContent).toContainText("页面摘要");
+  await expect(seoContent).toContainText("关键事实");
+  await expect(seoContent).toContainText("与题库首页的关系");
   await expect(seoContent.getByText("32 道题", { exact: true })).toHaveCount(1);
   await expect(
     seoContent.getByText("9 类结果 + Feminist 隐藏结局", { exact: true }),
@@ -42,6 +48,9 @@ test("exposes visible herti facts for search landing intent", async ({ page }) =
   const seoContent = page.locator("[data-herti-seo-content]");
 
   await expect(seoContent).toHaveCount(1);
+  await expect(seoContent).toContainText("页面摘要");
+  await expect(seoContent).toContainText("关键事实");
+  await expect(seoContent).toContainText("与题库首页的关系");
   await expect(
     seoContent.getByText("16 位女性原型", { exact: true }),
   ).toHaveCount(1);

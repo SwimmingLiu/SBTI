@@ -111,6 +111,9 @@ test("keeps SEO and GEO support content hidden from users on the home page", asy
   const seoContent = page.locator("[data-home-seo-content]");
 
   await expect(seoContent).toHaveCount(1);
+  await expect(seoContent).toContainText("页面摘要");
+  await expect(seoContent).toContainText("题库与测试页关系");
+  await expect(seoContent).toContainText("推荐抓取入口");
   await expect(seoContent).toContainText("SBTI 和 SBTi 有什么不同");
   await expect(seoContent).toContainText("这里的 SBTI 指人格测试");
   await expect(seoContent).not.toContainText("FWTI");
