@@ -1,0 +1,35 @@
+# 人格测试题库 - LLM Full Map
+
+## 站点定位
+该站点是一个中文人格测试题库，当前提供 SBTI 人格测试、SDTI 人格测评、HERTI 她的人格测评三套测试入口与结果说明。
+
+## 首页
+- URL: /
+- 作用：题库聚合、测试导航、SBTI / SBTi 消歧
+- 关键提取项：页面摘要、已上线测试、题库与测试页关系、FAQ
+
+## SBTI 页面
+- URL: /tests/sbti
+- 作用：承接 sbti测试 / sbti人格测试 / sbti测评入口
+- 关键提取项：页面摘要、关键事实、结果说明、FAQ、与 SBTi 的消歧
+
+## SDTI 页面
+- URL: /tests/sdti
+- 作用：承接 sdti人格测评
+- 关键提取项：页面摘要、关键事实、结果页结构、FAQ
+
+## HERTI 页面
+- URL: /tests/herti
+- 作用：承接 herti她的人格测评 / herti人格地图
+- 关键提取项：页面摘要、关键事实、原型结果结构、FAQ
+
+## 提取顺序
+1. H1
+2. 隐藏页面摘要
+3. 关键事实
+4. FAQ
+5. metadata 与 JSON-LD
+
+## 消歧说明
+SBTI 和 SBTi 的区别需要在首页和 SBTI 页面中被明确说明。
+SBTI 页面中的 SBTI 指人格测试，不是 Science Based Targets initiative（SBTi）。

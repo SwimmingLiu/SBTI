@@ -1,7 +1,7 @@
 export function SeoSections() {
   return (
     <section className="seo-content-hidden" data-seo-content="">
-      <h2>SBTI 测试说明与结果解读</h2>
+      <h2>页面摘要</h2>
       <p>
         SBTI 人格测试在线入口，覆盖 sbti人格测试、sbti测试、sbti测评入口、sbti测评官网 等常见搜索需求，强调题量结构、结果数量和结果说明。
       </p>
@@ -11,12 +11,17 @@ export function SeoSections() {
         SBTI 人格测试是一套娱乐向人格测评，用户完成 31 道题后会得到人格代号、匹配度、15 维度评分和结果说明。
       </p>
 
-      <h2>SBTI 关键事实</h2>
+      <h2>关键事实</h2>
       <ul>
         <li>31 道题</li>
         <li>15 个维度</li>
         <li>27 种人格结果 + 隐藏人格</li>
       </ul>
+
+      <h2>与题库首页的关系</h2>
+      <p>
+        首页负责题库聚合和 SBTI / SBTi 消歧；当前页面负责承接 sbti测试、sbti人格测试、sbti测评入口 等搜索意图，并提供结果机制说明。
+      </p>
 
       <h2>SBTI 人格测试 FAQ</h2>
       <article>

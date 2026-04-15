@@ -111,6 +111,9 @@ test("keeps SEO and GEO support content hidden from users on the home page", asy
   const seoContent = page.locator("[data-home-seo-content]");
 
   await expect(seoContent).toHaveCount(1);
+  await expect(seoContent).toContainText("页面摘要");
+  await expect(seoContent).toContainText("题库与测试页关系");
+  await expect(seoContent).toContainText("推荐抓取入口");
   await expect(seoContent).toContainText("SBTI 和 SBTi 有什么不同");
   await expect(seoContent).toContainText("这里的 SBTI 指人格测试");
   await expect(seoContent).not.toContainText("FWTI");
@@ -135,4 +138,17 @@ test("keeps SEO and GEO support content hidden from users on the home page", asy
 
   const ariaHidden = await seoContent.getAttribute("aria-hidden");
   expect(ariaHidden).toBeNull();
+});
+
+test("keeps home JSON-LD aligned with the hidden GEO narrative", async ({ page }) => {
+  await page.goto("/");
+
+  const jsonLd = page.locator('script[type="application/ld+json"]');
+
+  await expect(jsonLd).toHaveCount(1);
+
+  const jsonLdText = (await jsonLd.textContent()) ?? "";
+
+  expect(jsonLdText).toContain("题库聚合、测试导航、SBTI 和 SBTi 消歧");
+  expect(jsonLdText).toContain("题库与测试页关系");
 });
