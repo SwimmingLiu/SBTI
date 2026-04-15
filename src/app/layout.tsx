@@ -96,7 +96,12 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: baiduAnalyticsScript }}
         />
       </head>
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body
+        className="min-h-full flex flex-col"
+        data-build-rev="llms-bom-hotfix-2026-04-15"
+      >
+        {children}
+      </body>
     </html>
   );
 }
