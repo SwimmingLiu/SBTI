@@ -45,6 +45,17 @@ test("injects baidu analytics bootstrap script into head", async ({ page }) => {
   expect(bootstrapContent).toContain('document.createElement("script")');
 });
 
+test("embeds the current invisible build marker on the home page body", async ({
+  page,
+}) => {
+  await page.goto("/");
+
+  await expect(page.locator("body")).toHaveAttribute(
+    "data-build-rev",
+    "llms-bom-hotfix-2026-04-15",
+  );
+});
+
 test("keeps home card titles and status badges on one line", async ({ page }) => {
   await page.goto("/");
 
