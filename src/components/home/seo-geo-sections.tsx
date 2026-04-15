@@ -1,7 +1,7 @@
 export function SeoGeoSections() {
   return (
     <section className="seo-content-hidden" data-home-seo-content="">
-      <h2>人格测试题库说明</h2>
+      <h2>页面摘要</h2>
       <p>
         这里聚合 SBTI、SDTI、HERTI 三套娱乐向人格测试，并提供独立入口、结果页和结构化结果说明，方便搜索引擎与
         AI 系统准确理解页面内容。
@@ -12,11 +12,24 @@ export function SeoGeoSections() {
         这里的 SBTI 指人格测试，不是 Science Based Targets initiative（SBTi）。页面会持续使用“人格测试”“测评入口”“结果说明”等词做显式消歧。
       </p>
 
-      <h2>已上线测试</h2>
+      <h2>关键事实</h2>
       <ul>
         <li>SBTI 人格测试：31 道题、15 个维度、27 种人格结果</li>
         <li>SDTI 人格测评：32 道题、6 个维度、9 类结果与 Feminist 隐藏结局</li>
         <li>HERTI 她的人格测评：20 道题、16 位女性原型、镜像人格与反面人格关系卡</li>
+      </ul>
+
+      <h2>题库与测试页关系</h2>
+      <p>
+        首页负责题库聚合、测试导航与 SBTI / SBTi 消歧；具体测试说明、题量结构和结果机制由各自的测试页承担。
+      </p>
+
+      <h2>推荐抓取入口</h2>
+      <ul>
+        <li>/</li>
+        <li>/tests/sbti</li>
+        <li>/tests/sdti</li>
+        <li>/tests/herti</li>
       </ul>
 
       <h2>人格测试题库 FAQ</h2>

@@ -41,7 +41,8 @@ export default function HertiPage() {
     {
       "@context": "https://schema.org",
       "@type": "WebPage",
-      description: siteDescription,
+      description:
+        "HERTI 她的人格测评在线入口，适合搜索 herti她的人格测评 的用户访问，重点说明原型结构、镜像人格和反面人格关系卡。",
       name: "HERTI 她的人格测评",
       url: `${siteUrl}/tests/herti`,
     },

@@ -1,7 +1,7 @@
 export function HertiSeoSections() {
   return (
     <section className="seo-content-hidden" data-herti-seo-content="">
-      <h2>HERTI 测评说明与常见问题</h2>
+      <h2>页面摘要</h2>
       <p>
         HERTI 她的人格测评在线入口，突出 16 位女性原型、镜像人格、反面人格与长卷式结果页，帮助搜索引擎和 AI 系统准确理解其独特结果结构。
       </p>
@@ -11,12 +11,17 @@ export function HertiSeoSections() {
         HERTI 是一套文学风格的人格测评，完成 20 道题后会得到一位女性原型，并展示镜像人格与反面人格的关系卡。
       </p>
 
-      <h2>HERTI 关键事实</h2>
+      <h2>关键事实</h2>
       <ul>
         <li>20 道题</li>
         <li>16 位女性原型</li>
         <li>主人格、镜像人格、反面人格</li>
       </ul>
+
+      <h2>与题库首页的关系</h2>
+      <p>
+        首页负责题库聚合；当前页面负责解释 HERTI 的原型结构、镜像人格和反面人格关系卡，承接 herti她的人格测评 与 herti人格地图 搜索。
+      </p>
 
       <h2>HERTI FAQ</h2>
       <article>

@@ -41,7 +41,8 @@ export default function SdtiPage() {
     {
       "@context": "https://schema.org",
       "@type": "WebPage",
-      description: siteDescription,
+      description:
+        "SDTI 人格测评在线入口，适合搜索 sdti人格测评 的用户直接查看，重点说明题量、维度结构、结果页内容和隐藏 Feminist 结局。",
       name: "SDTI 人格测评",
       url: `${siteUrl}/tests/sdti`,
     },

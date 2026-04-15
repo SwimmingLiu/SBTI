@@ -55,7 +55,7 @@ export default function SbtiPage() {
       "@context": "https://schema.org",
       "@type": "WebPage",
       description:
-        "SBTI 人格测试在线入口，覆盖 sbti人格测试、sbti测试、sbti测评入口、sbti测评官网 等常见搜索需求。",
+        "SBTI 人格测试在线入口，覆盖 sbti人格测试、sbti测试、sbti测评入口、sbti测评官网 等常见搜索需求，重点说明题量结构、结果机制和结果说明。",
       name: "SBTI 人格测试",
       url: `${siteUrl}/tests/sbti`,
     },
@@ -91,10 +91,10 @@ export default function SbtiPage() {
         },
         {
           "@type": "Question",
-          name: "这里的 SBTI 和气候组织 SBTi 有什么区别？",
+          name: "SBTI 和 SBTi 的区别是什么？",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "这里的 SBTI 指娱乐向人格测试，不是 Science Based Targets initiative（SBTi）。本页提供的是人格测试入口、题量结构和结果说明。",
+            text: "这里的 SBTI 指娱乐向人格测试，不是 Science Based Targets initiative（SBTi）。本页提供的是人格测试入口、题量结构、结果机制和结果说明。",
           },
         },
       ],

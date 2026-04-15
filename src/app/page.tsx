@@ -17,7 +17,7 @@ export default function Home() {
       "@context": "https://schema.org",
       "@type": "CollectionPage",
       description:
-        "聚合 SBTI 人格测试、SDTI 人格测评、HERTI 她的人格测评三套娱乐向人格测试，并提供独立入口与结果说明。",
+        "题库聚合、测试导航、SBTI 和 SBTi 消歧是首页的核心作用；这里聚合 SBTI 人格测试、SDTI 人格测评、HERTI 她的人格测评三套娱乐向人格测试，并说明题库与测试页关系。",
       name: "人格测试题库",
       url: `${siteUrl}/`,
     },
@@ -52,7 +52,7 @@ export default function Home() {
           name: "SBTI 和 SBTi 有什么不同？",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "这里的 SBTI 指人格测试题库，不是 Science Based Targets initiative（SBTi）。页面会用“人格测试”“测评”“题库入口”等词做显式消歧。",
+            text: "这里的 SBTI 指人格测试题库，不是 Science Based Targets initiative（SBTi）。首页负责题库聚合、测试导航和 SBTI / SBTi 消歧，并明确题库与测试页关系。",
           },
         },
         {

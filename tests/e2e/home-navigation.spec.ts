@@ -139,3 +139,16 @@ test("keeps SEO and GEO support content hidden from users on the home page", asy
   const ariaHidden = await seoContent.getAttribute("aria-hidden");
   expect(ariaHidden).toBeNull();
 });
+
+test("keeps home JSON-LD aligned with the hidden GEO narrative", async ({ page }) => {
+  await page.goto("/");
+
+  const jsonLd = page.locator('script[type="application/ld+json"]');
+
+  await expect(jsonLd).toHaveCount(1);
+
+  const jsonLdText = (await jsonLd.textContent()) ?? "";
+
+  expect(jsonLdText).toContain("题库聚合、测试导航、SBTI 和 SBTi 消歧");
+  expect(jsonLdText).toContain("题库与测试页关系");
+});

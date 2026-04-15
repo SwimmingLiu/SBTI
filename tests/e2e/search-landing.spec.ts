@@ -21,6 +21,11 @@ test("exposes visible disambiguation and facts on the sbti landing page", async 
   await expect(
     seoContent.getByText("27 种人格结果 + 隐藏人格", { exact: true }),
   ).toHaveCount(1);
+
+  const jsonLdText =
+    (await page.locator('script[type="application/ld+json"]').textContent()) ?? "";
+  expect(jsonLdText).toContain("题量结构、结果机制和结果说明");
+  expect(jsonLdText).toContain("SBTI 和 SBTi 的区别");
 });
 
 test("exposes visible sdti facts for search landing intent", async ({ page }) => {
@@ -37,6 +42,10 @@ test("exposes visible sdti facts for search landing intent", async ({ page }) =>
   await expect(
     seoContent.getByText("9 类结果 + Feminist 隐藏结局", { exact: true }),
   ).toHaveCount(1);
+
+  const jsonLdText =
+    (await page.locator('script[type="application/ld+json"]').textContent()) ?? "";
+  expect(jsonLdText).toContain("题量、维度结构、结果页内容和隐藏 Feminist 结局");
 });
 
 test("exposes visible herti facts for search landing intent", async ({ page }) => {
@@ -57,4 +66,8 @@ test("exposes visible herti facts for search landing intent", async ({ page }) =
   await expect(
     seoContent.getByText("主人格、镜像人格、反面人格", { exact: true }),
   ).toHaveCount(1);
+
+  const jsonLdText =
+    (await page.locator('script[type="application/ld+json"]').textContent()) ?? "";
+  expect(jsonLdText).toContain("原型结构、镜像人格和反面人格关系卡");
 });
