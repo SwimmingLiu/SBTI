@@ -27,6 +27,20 @@ describe("llms discovery files", () => {
     expect(llmsFull).not.toContain("FWTI");
   });
 
+  test("llms discovery files list herti before the other tests", () => {
+    const llms = readPublicFile("llms.txt");
+    const llmsFull = readPublicFile("llms-full.txt");
+
+    expect(llms.indexOf("/tests/herti")).toBeLessThan(llms.indexOf("/tests/sbti"));
+    expect(llms.indexOf("/tests/herti")).toBeLessThan(llms.indexOf("/tests/sdti"));
+    expect(llmsFull.indexOf("## HERTI 页面")).toBeLessThan(
+      llmsFull.indexOf("## SBTI 页面"),
+    );
+    expect(llmsFull.indexOf("## HERTI 页面")).toBeLessThan(
+      llmsFull.indexOf("## SDTI 页面"),
+    );
+  });
+
   test("llms discovery files start with a UTF-8 BOM for static text/plain hosting", () => {
     const llmsBytes = readPublicFileBytes("llms.txt");
     const llmsFullBytes = readPublicFileBytes("llms-full.txt");

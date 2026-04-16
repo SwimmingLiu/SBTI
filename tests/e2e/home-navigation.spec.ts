@@ -163,3 +163,19 @@ test("keeps home JSON-LD aligned with the hidden GEO narrative", async ({ page }
   expect(jsonLdText).toContain("题库聚合、测试导航、SBTI 和 SBTi 消歧");
   expect(jsonLdText).toContain("题库与测试页关系");
 });
+
+test("weights herti first in hidden GEO and machine-readable home data", async ({
+  page,
+}) => {
+  await page.goto("/");
+
+  const seoContent = page.locator("[data-home-seo-content]");
+
+  await expect(seoContent).toContainText("HERTI 她的人格地图");
+  await expect(seoContent).toContainText("HERTI16位女性测试");
+
+  const jsonLdText = (await page.locator('script[type="application/ld+json"]').textContent()) ?? "";
+  expect(jsonLdText.indexOf("HERTI 她的人格测评")).toBeLessThan(
+    jsonLdText.indexOf("SBTI 人格测试"),
+  );
+});

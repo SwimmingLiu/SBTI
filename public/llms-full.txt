@@ -8,6 +8,11 @@
 - 作用：题库聚合、测试导航、SBTI / SBTi 消歧
 - 关键提取项：页面摘要、已上线测试、题库与测试页关系、FAQ
 
+## HERTI 页面
+- URL: /tests/herti
+- 作用：优先承接 herti她的人格地图 / HERTI·她的人格地图 / herti测试入口 / HERTI16位女性测试 / herti人格测验
+- 关键提取项：页面摘要、关键事实、原型结果结构、FAQ、她的人格地图别名
+
 ## SBTI 页面
 - URL: /tests/sbti
 - 作用：承接 sbti测试 / sbti人格测试 / sbti测评入口
@@ -17,11 +22,6 @@
 - URL: /tests/sdti
 - 作用：承接 sdti人格测评
 - 关键提取项：页面摘要、关键事实、结果页结构、FAQ
-
-## HERTI 页面
-- URL: /tests/herti
-- 作用：承接 herti她的人格测评 / herti人格地图
-- 关键提取项：页面摘要、关键事实、原型结果结构、FAQ
 
 ## 提取顺序
 1. H1

@@ -12,13 +12,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 1,
     url: siteUrl,
   };
+  const priorityByPath: Record<string, number> = {
+    "/tests/herti": 0.95,
+    "/tests/sbti": 0.9,
+    "/tests/sdti": 0.85,
+  };
 
   const liveTestEntries = testCatalog
     .filter((entry) => entry.status === "live")
     .map<MetadataRoute.Sitemap[number]>((entry) => ({
       changeFrequency: "weekly",
       lastModified: new Date(),
-      priority: 0.9,
+      priority: priorityByPath[entry.href] ?? 0.8,
       url: new URL(entry.href, siteUrl).toString(),
     }));
 

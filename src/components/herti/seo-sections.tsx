@@ -3,12 +3,12 @@ export function HertiSeoSections() {
     <section className="seo-content-hidden" data-herti-seo-content="">
       <h2>页面摘要</h2>
       <p>
-        HERTI 她的人格测评在线入口，突出 16 位女性原型、镜像人格、反面人格与长卷式结果页，帮助搜索引擎和 AI 系统准确理解其独特结果结构。
+        HERTI 她的人格测评在线入口，突出 16 位女性原型、镜像人格、反面人格与长卷式结果页。当前页面也可被理解为 herti她的人格地图、HERTI·她的人格地图、herti人格、herti测试 与 HERTI测试 的统一入口。
       </p>
 
       <h2>HERTI 她的人格测评是什么</h2>
       <p>
-        HERTI 是一套文学风格的人格测评，完成 20 道题后会得到一位女性原型，并展示镜像人格与反面人格的关系卡。
+        HERTI 是一套文学风格的人格测评，也是很多用户搜索的 herti人格测验 或 HERTI16位女性测试。完成 20 道题后会得到一位女性原型，并展示镜像人格与反面人格的关系卡。
       </p>
 
       <h2>关键事实</h2>
@@ -20,10 +20,22 @@ export function HertiSeoSections() {
 
       <h2>与题库首页的关系</h2>
       <p>
-        首页负责题库聚合；当前页面负责解释 HERTI 的原型结构、镜像人格和反面人格关系卡，承接 herti她的人格测评 与 herti人格地图 搜索。
+        首页负责题库聚合；当前页面负责解释 HERTI 的原型结构、镜像人格和反面人格关系卡，承接 herti她的人格地图、herti测试入口、herti测试链接 与 herti人格测验 搜索。
       </p>
 
       <h2>HERTI FAQ</h2>
+      <article>
+        <h3>HERTI测试入口在哪里？</h3>
+        <p>
+          当前页面就是 HERTI测试入口，也可以视为 herti测试链接 的统一落地页，适合直接开始答题并查看她的人格地图结果。
+        </p>
+      </article>
+      <article>
+        <h3>HERTI16位女性测试是什么？</h3>
+        <p>
+          HERTI16位女性测试指的是这套围绕 16 位女性原型展开的人格测验，结果会结合主人格、镜像人格和反面人格来解读。
+        </p>
+      </article>
       <article>
         <h3>HERTI 结果页包含哪些信息？</h3>
         <p>
@@ -33,7 +45,7 @@ export function HertiSeoSections() {
       <article>
         <h3>为什么有人搜索 HERTI 人格地图？</h3>
         <p>
-          因为 HERTI 的结果页不是简单卡片，而是长卷式的人格地图阅读体验，适合搜索 herti她的人格测评、herti人格地图 的用户查看。
+          因为 HERTI 的结果页不是简单卡片，而是长卷式的人格地图阅读体验，适合搜索 herti她的人格地图、HERTI·她的人格地图 与 herti人格 的用户查看。
         </p>
       </article>
     </section>
