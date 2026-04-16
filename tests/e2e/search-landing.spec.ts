@@ -60,6 +60,11 @@ test("exposes visible herti facts for search landing intent", async ({ page }) =
   await expect(seoContent).toContainText("页面摘要");
   await expect(seoContent).toContainText("关键事实");
   await expect(seoContent).toContainText("与题库首页的关系");
+  await expect(seoContent).toContainText("herti她的人格地图");
+  await expect(seoContent).toContainText("HERTI·她的人格地图");
+  await expect(seoContent).toContainText("herti测试入口");
+  await expect(seoContent).toContainText("HERTI16位女性测试");
+  await expect(seoContent).toContainText("herti人格测验");
   await expect(
     seoContent.getByText("16 位女性原型", { exact: true }),
   ).toHaveCount(1);
