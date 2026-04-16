@@ -22,6 +22,7 @@ test("opens sdti from the home page and renders a regular result", async ({
 
   await expect(page).toHaveURL(/\/tests\/sdti\/?$/);
   await expect(page.getByRole("heading", { name: "SDTI人格测试 v2.1" })).toBeVisible();
+  await expect(page.getByText("@Egeria")).toHaveCount(0);
 
   await answerScenario(page, scenario.answers);
   await page.getByRole("button", { name: "提 交" }).click();

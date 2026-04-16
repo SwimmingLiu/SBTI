@@ -99,19 +99,32 @@ test("keeps compact home cards inside the library shell", async ({ page }) => {
 
   expect(shellBox).not.toBeNull();
 
-  for (const slug of ["sbti", "sdti", "herti"]) {
-    const cardBox = await page.getByTestId(`test-card-${slug}`).boundingBox();
+  await expect(page.getByRole("button", { name: "SBTI" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "SDTI" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "HERTI" })).toBeVisible();
 
-    expect(cardBox).not.toBeNull();
-    expect(cardBox!.x).toBeGreaterThanOrEqual(shellBox!.x);
-    expect(cardBox!.y).toBeGreaterThanOrEqual(shellBox!.y);
-    expect(cardBox!.x + cardBox!.width).toBeLessThanOrEqual(
-      shellBox!.x + shellBox!.width,
-    );
-    expect(cardBox!.y + cardBox!.height).toBeLessThanOrEqual(
-      shellBox!.y + shellBox!.height,
-    );
-  }
+  const activeCard = page.getByTestId("compact-test-card-sbti");
+  const cardBox = await activeCard.boundingBox();
+
+  expect(cardBox).not.toBeNull();
+  expect(cardBox!.x).toBeGreaterThanOrEqual(shellBox!.x);
+  expect(cardBox!.y).toBeGreaterThanOrEqual(shellBox!.y);
+  expect(cardBox!.x + cardBox!.width).toBeLessThanOrEqual(
+    shellBox!.x + shellBox!.width,
+  );
+  expect(cardBox!.y + cardBox!.height).toBeLessThanOrEqual(
+    shellBox!.y + shellBox!.height,
+  );
+});
+
+test("shows mobile quiz tabs without the mini-program panel", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/?disableMiniProgramRedirect=1");
+
+  await expect(page.getByRole("button", { name: "SBTI" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "SDTI" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "HERTI" })).toBeVisible();
+  await expect(page.getByText("微信小程序入口")).toHaveCount(0);
 });
 
 test("keeps SEO and GEO support content hidden from users on the home page", async ({

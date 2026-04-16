@@ -16,7 +16,6 @@ import {
   dataUrlToBlob,
   inlineShareCardImages,
   isNativeShareSupported,
-  shareQrWatermarkInsetWidth,
 } from "@/lib/result-share";
 
 type Screen = "quiz" | "result";
@@ -102,9 +101,9 @@ export function SdtiApp() {
         label: result.name,
         quizName: "SDTI 人格测评",
         slug: "sdti",
-        summary: result.note,
+        summary: result.desc,
       }),
-    [result.name, result.note],
+    [result.desc, result.name],
   );
 
   useEffect(() => {
@@ -393,8 +392,6 @@ export function SdtiApp() {
                           borderRadius: "18px",
                           marginTop: "20px",
                           padding: "20px",
-                          paddingRight: shareQrWatermarkInsetWidth,
-                          position: "relative",
                         }}
                       >
                         <div
@@ -412,12 +409,19 @@ export function SdtiApp() {
                             fontSize: "24px",
                             lineHeight: 1.8,
                             marginTop: "16px",
-                            whiteSpace: "pre-line",
                           }}
                         >
-                          {result.desc}
+                          {shareMeta.summary}
                         </div>
-                        <ShareQrWatermark className="absolute right-4 top-4" />
+                        <div
+                          style={{
+                            borderTop: "1px solid #ddd",
+                            marginTop: "18px",
+                            paddingTop: "16px",
+                          }}
+                        >
+                          <ShareQrWatermark />
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -484,7 +488,6 @@ export function SdtiApp() {
             提 交
           </button>
           <div className="mt-4 text-xs text-[#999]">※ 结果仅供娱乐 ※</div>
-          <div className="mt-2 text-xs text-[#999]">@Egeria</div>
         </footer>
       </div>
     </section>

@@ -39,9 +39,25 @@ describe("result share helpers", () => {
     });
 
     expect(meta.fileName).toBe("sbti-CTRL.png");
+    expect(meta.summary).toBe("匹配度 100% · 精准命中 15/15 维");
     expect(meta.title).toBe("我的SBTI 人格测试结果：CTRL（拿捏者）");
     expect(meta.text).toContain("CTRL（拿捏者）");
     expect(meta.text).toContain("匹配度 100%");
+  });
+
+  it("shortens overly long share summaries before building share text", () => {
+    const meta = buildResultShareMeta({
+      code: "SDTI",
+      label: "阅人无数型",
+      quizName: "SDTI 人格测评",
+      slug: "sdti",
+      summary:
+        "这是一段明显超过分享图安全长度的超长描述，用来验证摘要截断行为和省略号结尾，并且继续补充一句，确保长度一定超过安全阈值。",
+    });
+
+    expect(meta.summary).toMatch(/…$/);
+    expect(meta.summary.length).toBeLessThanOrEqual(48);
+    expect(meta.text).toContain(meta.summary);
   });
 
   it("rejects broken share images instead of treating them as renderable", async () => {
