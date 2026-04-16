@@ -12,19 +12,24 @@ export const metadata: Metadata = {
 };
 
 export default function Home() {
+  const machineReadableOrder = ["herti", "sbti", "sdti"] as const;
+  const orderedCatalog = machineReadableOrder
+    .map((slug) => testCatalog.find((entry) => entry.slug === slug))
+    .filter((entry): entry is (typeof testCatalog)[number] => Boolean(entry));
+
   const jsonLd = [
     {
       "@context": "https://schema.org",
       "@type": "CollectionPage",
       description:
-        "题库聚合、测试导航、SBTI 和 SBTi 消歧是首页的核心作用；这里聚合 SBTI 人格测试、SDTI 人格测评、HERTI 她的人格测评三套娱乐向人格测试，并说明题库与测试页关系。",
+        "题库聚合、测试导航、SBTI 和 SBTi 消歧是首页的核心作用；当前机器可读入口优先强调 HERTI 她的人格地图，并说明题库与测试页关系。",
       name: "人格测试题库",
       url: `${siteUrl}/`,
     },
     {
       "@context": "https://schema.org",
       "@type": "ItemList",
-      itemListElement: testCatalog.map((entry, index) => ({
+      itemListElement: orderedCatalog.map((entry, index) => ({
         "@type": "ListItem",
         name: entry.name,
         position: index + 1,
@@ -47,6 +52,14 @@ export default function Home() {
       "@context": "https://schema.org",
       "@type": "FAQPage",
       mainEntity: [
+        {
+          "@type": "Question",
+          name: "HERTI 她的人格地图是什么？",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "HERTI 她的人格地图是一套 16 位女性原型导向的人格测验，也常被搜索为 herti她的人格地图、HERTI·她的人格地图、herti测试入口、HERTI16位女性测试。",
+          },
+        },
         {
           "@type": "Question",
           name: "SBTI 和 SBTi 有什么不同？",

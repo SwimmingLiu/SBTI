@@ -17,6 +17,16 @@ export const metadata: Metadata = {
   },
   keywords: [
     "HERTI 她的人格测评",
+    "herti她的人格地图",
+    "herti",
+    "HERTI·她的人格地图",
+    "herti人格",
+    "herti测试",
+    "herti测试入口",
+    "HERTI16位女性测试",
+    "herti测试链接",
+    "herti人格测验",
+    "HERTI测试",
     "herti她的人格测评",
     "herti人格地图",
     "HERTI 结果说明",
@@ -42,7 +52,7 @@ export default function HertiPage() {
       "@context": "https://schema.org",
       "@type": "WebPage",
       description:
-        "HERTI 她的人格测评在线入口，适合搜索 herti她的人格测评 的用户访问，重点说明原型结构、镜像人格和反面人格关系卡。",
+        "HERTI 她的人格测评在线入口，适合搜索 herti她的人格地图、HERTI·她的人格地图、herti测试入口、HERTI16位女性测试 的用户访问，重点说明原型结构、镜像人格和反面人格关系卡。",
       name: "HERTI 她的人格测评",
       url: `${siteUrl}/tests/herti`,
     },
@@ -52,10 +62,18 @@ export default function HertiPage() {
       mainEntity: [
         {
           "@type": "Question",
+          name: "HERTI测试入口在哪里？",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "当前页面就是 HERTI测试入口，也可以视为 herti测试链接、herti人格测验 与 herti她的人格地图 的统一落地页。",
+          },
+        },
+        {
+          "@type": "Question",
           name: "HERTI 她的人格测评是什么？",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "HERTI 是一套文学风格的人格测评，复刻 20 道题、16 位女性原型、镜像人格和反面人格关系卡。",
+            text: "HERTI 是一套文学风格的人格测评，也常被搜索为 HERTI·她的人格地图、HERTI16位女性测试 与 herti人格。",
           },
         },
         {

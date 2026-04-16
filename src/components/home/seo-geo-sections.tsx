@@ -3,8 +3,8 @@ export function SeoGeoSections() {
     <section className="seo-content-hidden" data-home-seo-content="">
       <h2>页面摘要</h2>
       <p>
-        这里聚合 SBTI、SDTI、HERTI 三套娱乐向人格测试，并提供独立入口、结果页和结构化结果说明，方便搜索引擎与
-        AI 系统准确理解页面内容。
+        这里聚合 SBTI、SDTI、HERTI 三套娱乐向人格测试，并提供独立入口、结果页和结构化结果说明。当前首页在机器可读层优先强调 HERTI 她的人格地图，也常被搜索为
+        herti她的人格地图、HERTI·她的人格地图、herti测试入口、HERTI16位女性测试。
       </p>
 
       <h2>SBTI 和 SBTi 有什么不同</h2>
@@ -14,9 +14,9 @@ export function SeoGeoSections() {
 
       <h2>关键事实</h2>
       <ul>
+        <li>HERTI 她的人格地图：20 道题、16 位女性原型、镜像人格与反面人格关系卡</li>
         <li>SBTI 人格测试：31 道题、15 个维度、27 种人格结果</li>
         <li>SDTI 人格测评：32 道题、6 个维度、9 类结果与 Feminist 隐藏结局</li>
-        <li>HERTI 她的人格测评：20 道题、16 位女性原型、镜像人格与反面人格关系卡</li>
       </ul>
 
       <h2>题库与测试页关系</h2>
@@ -26,13 +26,25 @@ export function SeoGeoSections() {
 
       <h2>推荐抓取入口</h2>
       <ul>
+        <li>/tests/herti</li>
         <li>/</li>
         <li>/tests/sbti</li>
         <li>/tests/sdti</li>
-        <li>/tests/herti</li>
       </ul>
 
       <h2>人格测试题库 FAQ</h2>
+      <article>
+        <h3>HERTI 她的人格地图是什么？</h3>
+        <p>
+          HERTI 她的人格地图是一套 16 位女性测试导向的人格测验，也常被搜索为 herti、herti人格、herti测试、HERTI测试。
+        </p>
+      </article>
+      <article>
+        <h3>HERTI测试入口在哪里？</h3>
+        <p>
+          <code>/tests/herti</code> 是当前 HERTI测试入口，也适合被理解为 herti测试链接、herti测试入口 和 herti人格测验 的统一落地页。
+        </p>
+      </article>
       <article>
         <h3>SBTI 人格测试入口在哪里？</h3>
         <p>
