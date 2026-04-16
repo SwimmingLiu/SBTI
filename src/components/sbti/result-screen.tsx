@@ -14,7 +14,6 @@ import {
   inlineShareCardImages,
   isNativeShareSupported,
   isWechatBrowser,
-  shareQrWatermarkInsetWidth,
 } from "@/lib/result-share";
 
 type ResultScreenProps = {
@@ -46,9 +45,9 @@ export function ResultScreen({
         label: `${result.finalType.code}（${result.finalType.cn}）`,
         quizName: "SBTI 人格测试",
         slug: "sbti",
-        summary: result.badge,
+        summary: result.sub,
       }),
-    [result.badge, result.finalType.cn, result.finalType.code],
+    [result.finalType.cn, result.finalType.code, result.sub],
   );
 
   useEffect(() => {
@@ -356,8 +355,6 @@ export function ResultScreen({
                           borderRadius: "18px",
                           marginTop: "18px",
                           padding: "20px",
-                          paddingRight: shareQrWatermarkInsetWidth,
-                          position: "relative",
                         }}
                       >
                         <div style={{ color: "#6a786f", fontSize: "20px", lineHeight: 1.5 }}>
@@ -397,9 +394,17 @@ export function ResultScreen({
                             marginTop: "18px",
                           }}
                         >
-                          {result.sub}
+                          {shareMeta.summary}
                         </div>
-                        <ShareQrWatermark className="absolute right-4 top-4" />
+                        <div
+                          style={{
+                            borderTop: "1px solid #dbe8dd",
+                            marginTop: "18px",
+                            paddingTop: "16px",
+                          }}
+                        >
+                          <ShareQrWatermark />
+                        </div>
                       </div>
                     </div>
                   </div>

@@ -11,7 +11,6 @@ import {
   dataUrlToBlob,
   inlineShareCardImages,
   isNativeShareSupported,
-  shareQrWatermarkInsetWidth,
 } from "@/lib/result-share";
 
 type Screen = "cover" | "loading" | "quiz" | "result";
@@ -63,12 +62,12 @@ export function HertiApp() {
         label: `${currentResult.primary.code}（${currentResult.primary.persona.cn}）`,
         quizName: "HERTI 她的人格测评",
         slug: "herti",
-        summary: currentResult.primary.persona.cnName,
+        summary: currentResult.primary.persona.persona[0],
       }),
     [
       currentResult.primary.code,
       currentResult.primary.persona.cn,
-      currentResult.primary.persona.cnName,
+      currentResult.primary.persona.persona,
     ],
   );
 
@@ -528,11 +527,8 @@ export function HertiApp() {
                     fontFamily:
                       '-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif',
                   }}
-                >
-                  <div
-                    className="relative overflow-hidden rounded-[24px] border border-[#d9d0bd] bg-[#faf7f0] p-6"
-                    style={{ paddingRight: shareQrWatermarkInsetWidth }}
                   >
+                  <div className="overflow-hidden rounded-[24px] border border-[#d9d0bd] bg-[#faf7f0] p-6">
                     <div style={{ color: "#8a7d6a", fontSize: "18px", letterSpacing: "0.18em" }}>
                       HERTI
                     </div>
@@ -579,9 +575,17 @@ export function HertiApp() {
                         marginTop: "24px",
                       }}
                     >
-                      {currentResult.primary.persona.persona[0]}
+                      {shareMeta.summary}
                     </div>
-                    <ShareQrWatermark className="absolute right-5 top-5" />
+                    <div
+                      style={{
+                        borderTop: "1px solid #d9d0bd",
+                        marginTop: "24px",
+                        paddingTop: "16px",
+                      }}
+                    >
+                      <ShareQrWatermark />
+                    </div>
                   </div>
                 </div>
               </div>

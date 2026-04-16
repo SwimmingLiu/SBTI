@@ -8,11 +8,21 @@ type ResultShareMetaInput = {
 
 export type ResultShareMeta = {
   fileName: string;
+  summary: string;
   text: string;
   title: string;
 };
 
-export const shareQrWatermarkInsetWidth = 150;
+function toShareCardSummary(summary: string, maxLength = 48) {
+  const normalized = summary.replace(/\s+/g, " ").trim();
+
+  if (normalized.length <= maxLength) {
+    return normalized;
+  }
+
+  return `${normalized.slice(0, maxLength - 1).trimEnd()}…`;
+}
+
 export function buildResultShareMeta({
   code,
   label,
@@ -20,9 +30,12 @@ export function buildResultShareMeta({
   slug,
   summary,
 }: ResultShareMetaInput): ResultShareMeta {
+  const safeSummary = toShareCardSummary(summary);
+
   return {
     fileName: `${slug}-${code}.png`,
-    text: `我测出来的${quizName}结果是 ${label}，${summary}。快来看看你的结果。`,
+    summary: safeSummary,
+    text: `我测出来的${quizName}结果是 ${label}，${safeSummary}。快来看看你的结果。`,
     title: `我的${quizName}结果：${label}`,
   };
 }

@@ -11,26 +11,21 @@ export function ShareQrWatermark({
 }: ShareQrWatermarkProps) {
   return (
     <div
-      className={`pointer-events-none flex items-center gap-2 bg-transparent px-0 py-0 shadow-none ${className ?? ""}`}
+      className={`pointer-events-none flex items-center gap-3 bg-transparent px-0 py-0 shadow-none ${className ?? ""}`}
     >
-      <div className="h-10 w-10 overflow-hidden rounded-lg border border-transparent bg-transparent">
+      <div className="h-11 w-11 overflow-hidden rounded-xl border border-transparent bg-transparent">
         <img
           alt="小橙有门二维码"
           className="h-full w-full object-cover"
           decoding="sync"
-          height={40}
+          height={44}
           loading="eager"
           src={src}
-          width={40}
+          width={44}
         />
       </div>
-      <div className="text-left">
-        <div className="text-xs font-semibold tracking-[0.12em] text-[#2f3d34]">
-          小橙有门
-        </div>
-        <div className="mt-0.5 text-[11px] leading-4 text-[#5f6f66]">
-          扫码查看入口
-        </div>
+      <div className="whitespace-nowrap text-[12px] font-semibold text-[#2f3d34]">
+        小橙有门 · 扫码开始测试
       </div>
     </div>
   );
