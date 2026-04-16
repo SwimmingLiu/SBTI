@@ -10,7 +10,7 @@ import {
   isWechatMiniProgram,
   shouldAutoRedirectToMiniProgram,
 } from "@/lib/mini-program";
-import { testCatalog } from "@/lib/test-catalog";
+import { testCatalog, type TestSlug } from "@/lib/test-catalog";
 
 const SERVER_CLIENT_ENV_SNAPSHOT = JSON.stringify({
   isInMiniProgram: false,
@@ -20,6 +20,7 @@ const SERVER_CLIENT_ENV_SNAPSHOT = JSON.stringify({
 
 export function TestHome() {
   const miniProgramConfig = useMemo(() => getMiniProgramConfig(), []);
+  const [activeSlug, setActiveSlug] = useState<TestSlug>("sbti");
   const [isRedirectDismissed, setIsRedirectDismissed] = useState(false);
   const [isQrPreviewVisible, setIsQrPreviewVisible] = useState(false);
   const clientEnvSnapshot = useSyncExternalStore(
@@ -70,6 +71,10 @@ export function TestHome() {
       search: clientEnv.search,
     });
   }, [clientEnv, isRedirectDismissed, miniProgramConfig.miniProgramUrl]);
+  const activeEntry = useMemo(
+    () => testCatalog.find((entry) => entry.slug === activeSlug) ?? testCatalog[0],
+    [activeSlug],
+  );
 
   useEffect(() => {
     if (!shouldShowRedirect) {
@@ -123,8 +128,8 @@ export function TestHome() {
           </h1>
         </div>
 
-        {!clientEnv.isInMiniProgram ? (
-          <div className="mt-8 rounded-[24px] border border-[var(--line)] bg-[linear-gradient(180deg,#fbfefb,#f4faf5)] p-5 md:p-6">
+        {!clientEnv.isInMiniProgram && !clientEnv.isMobile ? (
+          <div className="mt-8 hidden rounded-[24px] border border-[var(--line)] bg-[linear-gradient(180deg,#fbfefb,#f4faf5)] p-5 md:block md:p-6">
             <div className="flex flex-col justify-center">
               <div className="inline-flex w-fit rounded-full bg-[var(--soft)] px-3 py-1.5 text-xs font-semibold tracking-[0.14em] text-[var(--accent-strong)]">
                 微信小程序入口
@@ -191,7 +196,33 @@ export function TestHome() {
           className="mt-10 rounded-[24px] border border-[var(--line)] bg-[linear-gradient(180deg,#fdfefd,#f7fbf8)] p-4 md:p-6"
           data-testid="home-library-grid-shell"
         >
-          <div className="grid gap-5 lg:grid-cols-3">
+          <div className="grid grid-cols-3 gap-2 lg:hidden">
+            {testCatalog.map((entry) => {
+              const isActive = entry.slug === activeEntry.slug;
+
+              return (
+                <button
+                  aria-pressed={isActive}
+                  className={`rounded-2xl border px-3 py-3 text-sm font-semibold tracking-[0.08em] transition ${
+                    isActive
+                      ? "border-[var(--accent-strong)] bg-[var(--accent-strong)] text-white"
+                      : "border-[var(--line)] bg-white text-[var(--muted)]"
+                  }`}
+                  key={entry.slug}
+                  onClick={() => setActiveSlug(entry.slug)}
+                  type="button"
+                >
+                  {entry.slug.toUpperCase()}
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="mt-4 lg:hidden">
+            <TestEntryCard compact entry={activeEntry} />
+          </div>
+
+          <div className="hidden gap-5 lg:grid lg:grid-cols-3">
             {testCatalog.map((entry) => (
               <TestEntryCard entry={entry} key={entry.slug} />
             ))}

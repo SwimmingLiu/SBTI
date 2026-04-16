@@ -4,6 +4,8 @@ export type TestCatalogEntry = {
   accent: string;
   description: string;
   href: string;
+  mobileDescription: string;
+  mobileTagline: string;
   name: string;
   questionCount: number;
   resultCount: number;
@@ -19,6 +21,8 @@ export const testCatalog: TestCatalogEntry[] = [
     description:
       "已完成复刻的原始题库，保留 31 题、15 维度、结果图与隐藏机制。",
     href: "/tests/sbti",
+    mobileDescription: "31 题，15 维度，保留结果图与隐藏机制。",
+    mobileTagline: "绿色系 · 图片结果 · 已上线",
     name: "SBTI 人格测试",
     questionCount: 31,
     resultCount: 27,
@@ -32,6 +36,8 @@ export const testCatalog: TestCatalogEntry[] = [
     description:
       "冷灰纸面风格的新题库，32 题、6 个维度、9 类结果，含 Feminist 隐藏结局。",
     href: "/tests/sdti",
+    mobileDescription: "32 题，6 维度，保留隐藏结局与结果图。",
+    mobileTagline: "黑白纸面感 · 隐藏结果图 · 已上线",
     name: "SDTI 人格测评",
     questionCount: 32,
     resultCount: 9,
@@ -45,6 +51,8 @@ export const testCatalog: TestCatalogEntry[] = [
     description:
       "文学长卷式人格测评，20 题、16 位女性原型、镜像人格与反面人格关系卡。",
     href: "/tests/herti",
+    mobileDescription: "20 题，16 原型，保留镜像与反面人格关系。",
+    mobileTagline: "米色文学风 · 长卷结果页 · 已上线",
     name: "HERTI 她的人格测评",
     questionCount: 20,
     resultCount: 16,
