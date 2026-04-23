@@ -6,6 +6,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import { DimensionList } from "@/components/sbti/dimension-list";
 import { ShareQrWatermark } from "@/components/shared/share-qr-watermark";
+import { sbtiPreviewImageUrl } from "@/lib/asset-urls";
 import { typeImages } from "@/lib/sbti-data";
 import type { SbtiResult } from "@/lib/sbti-engine";
 import {
@@ -15,6 +16,7 @@ import {
   isNativeShareSupported,
   isWechatBrowser,
 } from "@/lib/result-share";
+import { buildWechatShareLink, syncWechatShareData } from "@/lib/wechat-share";
 
 type ResultScreenProps = {
   onRestart: () => void;
@@ -37,6 +39,7 @@ export function ResultScreen({
   const shareCardRef = useRef<HTMLDivElement>(null);
   const [isShareOpen, setIsShareOpen] = useState(false);
   const [shareImageUrl, setShareImageUrl] = useState<string | null>(null);
+  const [isWechatShareReady, setIsWechatShareReady] = useState(false);
   const [shareMessage, setShareMessage] = useState("");
   const shareMeta = useMemo(
     () =>
@@ -57,6 +60,39 @@ export function ResultScreen({
       }
     };
   }, [shareImageUrl]);
+
+  useEffect(() => {
+    if (!isWechatBrowser() || typeof window === "undefined") {
+      setIsWechatShareReady(false);
+      return;
+    }
+
+    let cancelled = false;
+
+    void syncWechatShareData({
+      desc: shareMeta.summary,
+      imgUrl: imageSrc ?? sbtiPreviewImageUrl,
+      link: buildWechatShareLink({
+        origin: window.location.origin,
+        slug: "sbti",
+      }),
+      title: shareMeta.title,
+    })
+      .then((ready) => {
+        if (!cancelled) {
+          setIsWechatShareReady(ready);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setIsWechatShareReady(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [imageSrc, shareMeta.summary, shareMeta.title]);
 
   useEffect(() => {
     if (!isShareOpen) {
@@ -108,6 +144,15 @@ export function ResultScreen({
     }
 
     if (!isNativeShareSupported()) {
+      if (isWechatBrowser()) {
+        setShareMessage(
+          isWechatShareReady
+            ? "微信分享卡片已启用，请点击右上角“…”发送给朋友或朋友圈；也可以长按预览图保存到相册。"
+            : "微信分享卡片初始化失败，可长按图片保存后再转发。",
+        );
+        return;
+      }
+
       setShareMessage("当前浏览器不支持系统分享，可长按图片保存后再转发。");
       return;
     }

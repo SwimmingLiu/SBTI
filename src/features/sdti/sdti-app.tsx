@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { ShareQrWatermark } from "@/components/shared/share-qr-watermark";
+import { sbtiPreviewImageUrl } from "@/lib/asset-urls";
 import {
   sdtiQuestions,
   sdtiSingleChoiceCount,
@@ -16,7 +17,9 @@ import {
   dataUrlToBlob,
   inlineShareCardImages,
   isNativeShareSupported,
+  isWechatBrowser,
 } from "@/lib/result-share";
+import { buildWechatShareLink, syncWechatShareData } from "@/lib/wechat-share";
 
 type Screen = "quiz" | "result";
 
@@ -91,6 +94,7 @@ export function SdtiApp() {
   const [multiAnswers, setMultiAnswers] = useState<Record<string, string[]>>({});
   const [isShareOpen, setIsShareOpen] = useState(false);
   const [shareImageUrl, setShareImageUrl] = useState<string | null>(null);
+  const [isWechatShareReady, setIsWechatShareReady] = useState(false);
   const [shareMessage, setShareMessage] = useState("");
   const shareCardRef = useRef<HTMLDivElement>(null);
   const result = useMemo(() => computeSdtiResult(answers), [answers]);
@@ -113,6 +117,39 @@ export function SdtiApp() {
       }
     };
   }, [shareImageUrl]);
+
+  useEffect(() => {
+    if (screen !== "result" || !isWechatBrowser() || typeof window === "undefined") {
+      setIsWechatShareReady(false);
+      return;
+    }
+
+    let cancelled = false;
+
+    void syncWechatShareData({
+      desc: shareMeta.summary,
+      imgUrl: result.image ?? sbtiPreviewImageUrl,
+      link: buildWechatShareLink({
+        origin: window.location.origin,
+        slug: "sdti",
+      }),
+      title: shareMeta.title,
+    })
+      .then((ready) => {
+        if (!cancelled) {
+          setIsWechatShareReady(ready);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setIsWechatShareReady(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [result.image, screen, shareMeta.summary, shareMeta.title]);
 
   useEffect(() => {
     if (!isShareOpen) {
@@ -202,6 +239,15 @@ export function SdtiApp() {
     }
 
     if (!isNativeShareSupported()) {
+      if (isWechatBrowser()) {
+        setShareMessage(
+          isWechatShareReady
+            ? "微信分享卡片已启用，请点击右上角“…”发送给朋友或朋友圈；也可以长按图片保存。"
+            : "微信分享卡片初始化失败，可长按图片保存。",
+        );
+        return;
+      }
+
       setShareMessage("当前浏览器不支持系统分享，可长按图片保存。");
       return;
     }
