@@ -27,6 +27,9 @@ npm run dev
 
 - 默认情况下，运行时图片资源会走阿里云 OSS：
   - `NEXT_PUBLIC_ASSET_BASE_URL=https://sbti-orangemust.oss-cn-beijing.aliyuncs.com/assets`
+- 微信内分享卡片默认会请求同域的 `POST /common/wx/oa/signature`
+- 如果前端与签名后端不在同域，可显式指定：
+  - `NEXT_PUBLIC_WECHAT_OA_SIGNATURE_ENDPOINT=https://your-api.example.com/common/wx/oa/signature`
 - 也可以替换成自定义 CDN / OSS 域名：
 
 ```bash
