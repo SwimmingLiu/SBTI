@@ -30,10 +30,22 @@ npm run dev
 - 微信内分享卡片默认会请求同域的 `POST /common/wx/oa/signature`
 - 如果前端与签名后端不在同域，可显式指定：
   - `NEXT_PUBLIC_WECHAT_OA_SIGNATURE_ENDPOINT=https://your-api.example.com/common/wx/oa/signature`
+- 推荐生产方案：让 `sbti.orangemust.com` 反向代理 `/common/wx/oa/signature` 到实际后端签名服务，保证浏览器侧保持同域请求，避免 CORS 预检失败
 - 也可以替换成自定义 CDN / OSS 域名：
 
 ```bash
 NEXT_PUBLIC_ASSET_BASE_URL=https://your-cdn.example.com/assets npm run dev
+```
+
+示例 Nginx 反向代理：
+
+```nginx
+location /common/wx/oa/signature {
+    proxy_pass https://test.doors.orangemust.com/common/wx/oa/signature;
+    proxy_set_header Host test.doors.orangemust.com;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}
 ```
 
 ## 测试
