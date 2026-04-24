@@ -1,3 +1,5 @@
+import { isCurrentMiniProgramWebView } from "@/lib/mini-program";
+
 const DEFAULT_SIGNATURE_ENDPOINT = "/common/wx/oa/signature";
 const WECHAT_JSSDK_SRC = "https://res.wx.qq.com/open/js/jweixin-1.6.0.js";
 
@@ -270,6 +272,10 @@ function configureWechatSdk(
 
 export async function syncWechatShareData(shareContent: WechatShareContent) {
   if (typeof window === "undefined" || !window.navigator.userAgent) {
+    return false;
+  }
+
+  if (isCurrentMiniProgramWebView()) {
     return false;
   }
 

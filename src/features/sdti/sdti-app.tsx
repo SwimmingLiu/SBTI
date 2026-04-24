@@ -13,6 +13,10 @@ import {
 } from "@/features/sdti/data";
 import { computeSdtiResult } from "@/features/sdti/engine";
 import {
+  isCurrentMiniProgramWebView,
+  postMiniProgramShareMessage,
+} from "@/lib/mini-program";
+import {
   buildResultShareMeta,
   dataUrlToBlob,
   inlineShareCardImages,
@@ -89,6 +93,7 @@ function SdtiQuestionBlock({
 }
 
 export function SdtiApp() {
+  const isMiniProgramWebView = isCurrentMiniProgramWebView();
   const [screen, setScreen] = useState<Screen>("quiz");
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [multiAnswers, setMultiAnswers] = useState<Record<string, string[]>>({});
@@ -119,14 +124,12 @@ export function SdtiApp() {
   }, [shareImageUrl]);
 
   useEffect(() => {
-    if (screen !== "result" || !isWechatBrowser() || typeof window === "undefined") {
+    if (screen !== "result" || typeof window === "undefined") {
       setIsWechatShareReady(false);
       return;
     }
 
-    let cancelled = false;
-
-    void syncWechatShareData({
+    const shareContent = {
       desc: shareMeta.summary,
       imgUrl: result.image ?? sbtiPreviewImageUrl,
       link: buildWechatShareLink({
@@ -134,7 +137,21 @@ export function SdtiApp() {
         slug: "sdti",
       }),
       title: shareMeta.title,
-    })
+    };
+
+    if (isMiniProgramWebView) {
+      setIsWechatShareReady(postMiniProgramShareMessage(shareContent));
+      return;
+    }
+
+    if (!isWechatBrowser()) {
+      setIsWechatShareReady(false);
+      return;
+    }
+
+    let cancelled = false;
+
+    void syncWechatShareData(shareContent)
       .then((ready) => {
         if (!cancelled) {
           setIsWechatShareReady(ready);
@@ -149,7 +166,7 @@ export function SdtiApp() {
     return () => {
       cancelled = true;
     };
-  }, [result.image, screen, shareMeta.summary, shareMeta.title]);
+  }, [isMiniProgramWebView, result.image, screen, shareMeta.summary, shareMeta.title]);
 
   useEffect(() => {
     if (!isShareOpen) {
@@ -238,6 +255,15 @@ export function SdtiApp() {
       return;
     }
 
+    if (isMiniProgramWebView) {
+      setShareMessage(
+        isWechatShareReady
+          ? "分享信息已同步给小程序，请点击右上角“…”完成转发；也可以长按图片保存。"
+          : "当前处于微信小程序内，但分享桥接尚未接通，可长按图片保存。",
+      );
+      return;
+    }
+
     if (!isNativeShareSupported()) {
       if (isWechatBrowser()) {
         setShareMessage(
@@ -273,6 +299,8 @@ export function SdtiApp() {
       setShareMessage("系统分享未完成，可长按图片保存。");
     }
   }
+
+  const shareActionLabel = isMiniProgramWebView ? "去微信菜单分享" : "立即分享";
 
   if (screen === "result") {
     return (
@@ -481,7 +509,7 @@ export function SdtiApp() {
                 }}
                 type="button"
               >
-                立即分享
+                {shareActionLabel}
               </button>
 
               {shareMessage ? (

@@ -6,6 +6,21 @@ export type MiniProgramConfig = {
   qrCodeUrl: string;
 };
 
+export type MiniProgramSharePayload = {
+  desc: string;
+  imgUrl: string;
+  link: string;
+  pageUrl: string;
+  title: string;
+};
+
+type MiniProgramShareMessage = {
+  data: {
+    payload: MiniProgramSharePayload;
+    type: "sbti-share";
+  };
+};
+
 type MiniProgramEnv = {
   hasMiniProgramApi?: boolean;
   userAgent: string;
@@ -22,6 +37,11 @@ type AutoRedirectInput = {
 const DEFAULT_QR_CODE_URL = shareQrPlaceholderUrl;
 const DEFAULT_MINI_PROGRAM_URL = "https://wxaurl.cn/MG3YoSpo23s";
 const DEFAULT_REAL_QR_CODE_URL = shareQrCodeUrl;
+let lastMiniProgramShareKey = "";
+
+function normalizeMiniProgramPageUrl(url: string) {
+  return url.split("#")[0];
+}
 
 export function getMiniProgramConfig(): MiniProgramConfig {
   return {
@@ -52,6 +72,74 @@ export function isWechatMiniProgram({
   }
 
   return userAgent.toLowerCase().includes("miniprogram");
+}
+
+export function isCurrentMiniProgramWebView() {
+  if (typeof window === "undefined") {
+    return false;
+  }
+
+  return isWechatMiniProgram({
+    hasMiniProgramApi: Boolean(
+      (window as {
+        wx?: {
+          miniProgram?: unknown;
+        };
+      }).wx?.miniProgram,
+    ),
+    userAgent: window.navigator.userAgent,
+    wxEnv: (window as { __wxjs_environment?: string }).__wxjs_environment,
+  });
+}
+
+export function buildMiniProgramShareMessage(
+  payload: MiniProgramSharePayload,
+): MiniProgramShareMessage {
+  return {
+    data: {
+      payload,
+      type: "sbti-share",
+    },
+  };
+}
+
+export function postMiniProgramShareMessage(
+  payload: Omit<MiniProgramSharePayload, "pageUrl"> & {
+    pageUrl?: string;
+  },
+) {
+  if (typeof window === "undefined") {
+    return false;
+  }
+
+  const miniProgram = (window as {
+    wx?: {
+      miniProgram?: {
+        postMessage?: (message: MiniProgramShareMessage) => void;
+      };
+    };
+  }).wx?.miniProgram;
+
+  if (typeof miniProgram?.postMessage !== "function") {
+    return false;
+  }
+
+  const normalizedPayload = {
+    ...payload,
+    pageUrl: normalizeMiniProgramPageUrl(payload.pageUrl ?? window.location.href),
+  };
+  const nextShareKey = JSON.stringify(normalizedPayload);
+
+  if (lastMiniProgramShareKey === nextShareKey) {
+    return true;
+  }
+
+  miniProgram.postMessage(
+    buildMiniProgramShareMessage(normalizedPayload),
+  );
+  lastMiniProgramShareKey = nextShareKey;
+
+  return true;
 }
 
 export function shouldAutoRedirectToMiniProgram({
