@@ -38,6 +38,12 @@ async function disableMotion(page: Page) {
       html {
         scroll-behavior: auto !important;
       }
+      [data-next-badge-root],
+      [data-next-mark],
+      [data-nextjs-dev-overlay],
+      nextjs-portal {
+        display: none !important;
+      }
     `,
   });
 }
