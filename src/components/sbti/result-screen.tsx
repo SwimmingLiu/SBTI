@@ -7,6 +7,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { DimensionList } from "@/components/sbti/dimension-list";
 import { ShareQrWatermark } from "@/components/shared/share-qr-watermark";
 import { sbtiPreviewImageUrl } from "@/lib/asset-urls";
+import {
+  isCurrentMiniProgramWebView,
+  postMiniProgramShareMessage,
+} from "@/lib/mini-program";
 import { typeImages } from "@/lib/sbti-data";
 import type { SbtiResult } from "@/lib/sbti-engine";
 import {
@@ -35,6 +39,7 @@ export function ResultScreen({
   onToTop,
   result,
 }: ResultScreenProps) {
+  const isMiniProgramWebView = isCurrentMiniProgramWebView();
   const imageSrc = typeImages[result.finalType.code];
   const shareCardRef = useRef<HTMLDivElement>(null);
   const [isShareOpen, setIsShareOpen] = useState(false);
@@ -62,14 +67,12 @@ export function ResultScreen({
   }, [shareImageUrl]);
 
   useEffect(() => {
-    if (!isWechatBrowser() || typeof window === "undefined") {
+    if (typeof window === "undefined") {
       setIsWechatShareReady(false);
       return;
     }
 
-    let cancelled = false;
-
-    void syncWechatShareData({
+    const shareContent = {
       desc: shareMeta.summary,
       imgUrl: imageSrc ?? sbtiPreviewImageUrl,
       link: buildWechatShareLink({
@@ -77,7 +80,21 @@ export function ResultScreen({
         slug: "sbti",
       }),
       title: shareMeta.title,
-    })
+    };
+
+    if (isMiniProgramWebView) {
+      setIsWechatShareReady(postMiniProgramShareMessage(shareContent));
+      return;
+    }
+
+    if (!isWechatBrowser()) {
+      setIsWechatShareReady(false);
+      return;
+    }
+
+    let cancelled = false;
+
+    void syncWechatShareData(shareContent)
       .then((ready) => {
         if (!cancelled) {
           setIsWechatShareReady(ready);
@@ -92,7 +109,7 @@ export function ResultScreen({
     return () => {
       cancelled = true;
     };
-  }, [imageSrc, shareMeta.summary, shareMeta.title]);
+  }, [imageSrc, isMiniProgramWebView, shareMeta.summary, shareMeta.title]);
 
   useEffect(() => {
     if (!isShareOpen) {
@@ -143,6 +160,15 @@ export function ResultScreen({
       return;
     }
 
+    if (isMiniProgramWebView) {
+      setShareMessage(
+        isWechatShareReady
+          ? "分享信息已同步给小程序，请点击右上角“…”完成转发；也可以长按预览图保存到相册。"
+          : "当前处于微信小程序内，但分享桥接尚未接通，可长按图片保存后再转发。",
+      );
+      return;
+    }
+
     if (!isNativeShareSupported()) {
       if (isWechatBrowser()) {
         setShareMessage(
@@ -178,6 +204,13 @@ export function ResultScreen({
       setShareMessage("系统分享未完成，可长按图片保存后再转发。");
     }
   }
+
+  const shareActionLabel = isMiniProgramWebView ? "去微信菜单分享" : "立即分享";
+  const shareHelpText = isMiniProgramWebView
+    ? "当前在微信小程序内，请点击右上角“…”完成转发；也可以长按预览图保存到相册。"
+    : isWechatBrowser()
+      ? "如果你在微信里，可以点击右上角“…”把结果图分享给朋友或朋友圈；也可以长按预览图保存到相册。"
+      : "移动端可用系统分享；如果系统分享面板没有保存入口，也可以长按预览图保存图片。桌面端可右键另存为。";
 
   return (
     <section className="w-full">
@@ -463,13 +496,11 @@ export function ResultScreen({
                 }}
                 type="button"
               >
-                立即分享
+                {shareActionLabel}
               </button>
 
               <div className="mt-4 rounded-2xl bg-[var(--soft)] px-4 py-3 text-sm leading-7 text-[var(--muted)]">
-                {isWechatBrowser()
-                  ? "如果你在微信里，可以点击右上角“…”把结果图分享给朋友或朋友圈；也可以长按预览图保存到相册。"
-                  : "移动端可用系统分享；如果系统分享面板没有保存入口，也可以长按预览图保存图片。桌面端可右键另存为。"}
+                {shareHelpText}
               </div>
 
               {shareMessage ? (

@@ -8,6 +8,10 @@ import { sbtiPreviewImageUrl } from "@/lib/asset-urls";
 import { hertiQuestions } from "@/features/herti/data";
 import { computeHertiResult, type HertiResult } from "@/features/herti/engine";
 import {
+  isCurrentMiniProgramWebView,
+  postMiniProgramShareMessage,
+} from "@/lib/mini-program";
+import {
   buildResultShareMeta,
   dataUrlToBlob,
   inlineShareCardImages,
@@ -37,6 +41,7 @@ function HtmlBlock({
 }
 
 export function HertiApp() {
+  const isMiniProgramWebView = isCurrentMiniProgramWebView();
   const [screen, setScreen] = useState<Screen>("cover");
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Array<number | null>>(
@@ -87,14 +92,12 @@ export function HertiApp() {
   }, [shareImageUrl]);
 
   useEffect(() => {
-    if (screen !== "result" || !isWechatBrowser() || typeof window === "undefined") {
+    if (screen !== "result" || typeof window === "undefined") {
       setIsWechatShareReady(false);
       return;
     }
 
-    let cancelled = false;
-
-    void syncWechatShareData({
+    const shareContent = {
       desc: shareMeta.summary,
       imgUrl: sbtiPreviewImageUrl,
       link: buildWechatShareLink({
@@ -102,7 +105,21 @@ export function HertiApp() {
         slug: "herti",
       }),
       title: shareMeta.title,
-    })
+    };
+
+    if (isMiniProgramWebView) {
+      setIsWechatShareReady(postMiniProgramShareMessage(shareContent));
+      return;
+    }
+
+    if (!isWechatBrowser()) {
+      setIsWechatShareReady(false);
+      return;
+    }
+
+    let cancelled = false;
+
+    void syncWechatShareData(shareContent)
       .then((ready) => {
         if (!cancelled) {
           setIsWechatShareReady(ready);
@@ -117,7 +134,7 @@ export function HertiApp() {
     return () => {
       cancelled = true;
     };
-  }, [screen, shareMeta.summary, shareMeta.title]);
+  }, [isMiniProgramWebView, screen, shareMeta.summary, shareMeta.title]);
 
   useEffect(() => {
     if (!isShareOpen) {
@@ -173,6 +190,15 @@ export function HertiApp() {
       return;
     }
 
+    if (isMiniProgramWebView) {
+      setShareMessage(
+        isWechatShareReady
+          ? "分享信息已同步给小程序，请点击右上角“…”完成转发；也可以长按图片保存。"
+          : "当前处于微信小程序内，但分享桥接尚未接通，可长按图片保存。",
+      );
+      return;
+    }
+
     if (!isNativeShareSupported()) {
       if (isWechatBrowser()) {
         setShareMessage(
@@ -208,6 +234,8 @@ export function HertiApp() {
       setShareMessage("系统分享未完成，可长按图片保存。");
     }
   }
+
+  const shareActionLabel = isMiniProgramWebView ? "去微信菜单分享" : "立即分享";
 
   function openQuiz() {
     setAnswers(new Array(hertiQuestions.length).fill(null));
@@ -644,7 +672,7 @@ export function HertiApp() {
               }}
               type="button"
             >
-              立即分享
+              {shareActionLabel}
             </button>
 
             {shareMessage ? (
