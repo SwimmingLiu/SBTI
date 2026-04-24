@@ -35,6 +35,7 @@ test("configures wechat share data for sbti result pages inside wechat", async (
   page,
 }) => {
   const answers = buildAnswersForPattern("HHH-HMH-MHH-HHH-MHM");
+  let signatureRequestUrl = "";
   let signatureRequestBody = "";
 
   await page.addInitScript(() => {
@@ -89,6 +90,7 @@ test("configures wechat share data for sbti result pages inside wechat", async (
   });
 
   await page.route("**/common/wx/oa/signature", async (route) => {
+    signatureRequestUrl = route.request().url();
     signatureRequestBody = route.request().postData() ?? "";
 
     await route.fulfill({
@@ -139,6 +141,7 @@ test("configures wechat share data for sbti result pages inside wechat", async (
   expect(JSON.parse(signatureRequestBody)).toEqual({
     url: "http://127.0.0.1:3000/tests/sbti/",
   });
+  expect(signatureRequestUrl).toBe("http://127.0.0.1:3000/common/wx/oa/signature");
   expect(wxCalls.config[0]?.jsApiList).toEqual(
     expect.arrayContaining([
       "updateAppMessageShareData",
