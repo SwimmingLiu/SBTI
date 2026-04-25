@@ -244,6 +244,36 @@ export function isNativeShareSupported() {
   return typeof navigator !== "undefined" && typeof navigator.share === "function";
 }
 
+function copyWithExecCommand(text: string) {
+  if (typeof document === "undefined" || typeof document.execCommand !== "function") {
+    return false;
+  }
+
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.setAttribute("readonly", "true");
+  textarea.style.left = "-9999px";
+  textarea.style.position = "fixed";
+  textarea.style.top = "0";
+  document.body.appendChild(textarea);
+  textarea.select();
+
+  try {
+    return document.execCommand("copy");
+  } finally {
+    textarea.remove();
+  }
+}
+
+export async function copyTextToClipboard(text: string) {
+  if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(text);
+    return true;
+  }
+
+  return copyWithExecCommand(text);
+}
+
 export function isWechatBrowser() {
   if (typeof navigator === "undefined") {
     return false;

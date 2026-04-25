@@ -121,6 +121,7 @@ test("configures wechat share data for sbti result pages inside wechat", async (
   await page.getByRole("button", { name: "提交并查看结果" }).click();
 
   await expect(page).toHaveURL(/screen=result/);
+  const origin = new URL(page.url()).origin;
   await expect
     .poll(async () => {
       return page.evaluate(() => {
@@ -133,15 +134,15 @@ test("configures wechat share data for sbti result pages inside wechat", async (
     .toBe(1);
 
   const wxCalls = await page.evaluate(() => {
-    return (window as Window & {
+    return ((window as unknown) as Window & {
       __wxShareCalls: Record<string, Array<Record<string, unknown>>>;
     }).__wxShareCalls;
   });
 
   expect(JSON.parse(signatureRequestBody)).toEqual({
-    url: "http://127.0.0.1:3000/tests/sbti/",
+    url: `${origin}/tests/sbti/`,
   });
-  expect(signatureRequestUrl).toBe("http://127.0.0.1:3000/common/wx/oa/signature");
+  expect(signatureRequestUrl).toBe(`${origin}/common/wx/oa/signature`);
   expect(wxCalls.config[0]?.jsApiList).toEqual(
     expect.arrayContaining([
       "updateAppMessageShareData",
@@ -153,12 +154,12 @@ test("configures wechat share data for sbti result pages inside wechat", async (
   expect(wxCalls.updateAppMessageShareData[0]).toMatchObject({
     desc: expect.stringContaining("人格画像"),
     imgUrl: expect.stringContaining("CTRL"),
-    link: "http://127.0.0.1:3000/tests/sbti/",
+    link: `${origin}/tests/sbti/`,
     title: "我的SBTI 人格测试结果：CTRL（拿捏者）",
   });
   expect(wxCalls.updateTimelineShareData[0]).toMatchObject({
     imgUrl: expect.stringContaining("CTRL"),
-    link: "http://127.0.0.1:3000/tests/sbti/",
+    link: `${origin}/tests/sbti/`,
     title: "我的SBTI 人格测试结果：CTRL（拿捏者）",
   });
 });

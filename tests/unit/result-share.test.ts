@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import {
   buildResultShareMeta,
+  copyTextToClipboard,
   retryAsync,
   waitForImageToRender,
 } from "@/lib/result-share";
@@ -96,5 +97,46 @@ describe("result share helpers", () => {
       }),
     ).resolves.toBe("ok");
     expect(run).toHaveBeenCalledTimes(2);
+  });
+
+  it("copies share text through the Clipboard API when available", async () => {
+    const writeText = vi.fn(async () => {});
+
+    vi.stubGlobal("navigator", {
+      clipboard: {
+        writeText,
+      },
+    });
+
+    await expect(copyTextToClipboard("share text")).resolves.toBe(true);
+    expect(writeText).toHaveBeenCalledWith("share text");
+  });
+
+  it("falls back to execCommand copy when Clipboard API is unavailable", async () => {
+    const select = vi.fn();
+    const remove = vi.fn();
+    const execCommand = vi.fn(() => true);
+    const body = {
+      appendChild: vi.fn(),
+      removeChild: vi.fn(),
+    };
+
+    vi.stubGlobal("navigator", {});
+    vi.stubGlobal("document", {
+      body,
+      createElement: vi.fn(() => ({
+        remove,
+        select,
+        setAttribute: vi.fn(),
+        style: {},
+        value: "",
+      })),
+      execCommand,
+    });
+
+    await expect(copyTextToClipboard("fallback text")).resolves.toBe(true);
+    expect(execCommand).toHaveBeenCalledWith("copy");
+    expect(select).toHaveBeenCalledTimes(1);
+    expect(remove).toHaveBeenCalledTimes(1);
   });
 });

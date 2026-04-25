@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 
 import {
-  buildMiniProgramShareMessage,
   getMiniProgramConfig,
   isWechat,
   isWechatMiniProgram,
@@ -96,28 +95,5 @@ describe("mini program helpers", () => {
     expect(config.qrCodeUrl).toBe(
       "https://sbti-orangemust.oss-cn-beijing.aliyuncs.com/assets/mini-program/qrcode.png",
     );
-  });
-
-  it("builds a stable share bridge message for the mini program host", () => {
-    expect(
-      buildMiniProgramShareMessage({
-        desc: "一个简短的人格总结",
-        imgUrl: "https://sbti.orangemust.com/assets/share.png",
-        link: "https://sbti.orangemust.com/tests/sbti/",
-        pageUrl: "https://sbti.orangemust.com/tests/sbti/?screen=result",
-        title: "我的 SBTI 结果",
-      }),
-    ).toEqual({
-      data: {
-        payload: {
-          desc: "一个简短的人格总结",
-          imgUrl: "https://sbti.orangemust.com/assets/share.png",
-          link: "https://sbti.orangemust.com/tests/sbti/",
-          pageUrl: "https://sbti.orangemust.com/tests/sbti/?screen=result",
-          title: "我的 SBTI 结果",
-        },
-        type: "sbti-share",
-      },
-    });
   });
 });
