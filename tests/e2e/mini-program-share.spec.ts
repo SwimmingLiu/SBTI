@@ -31,7 +31,7 @@ async function answerQuestion(page: Page, questionId: string, value: number) {
   await page.locator(`input[name="${questionId}"][value="${value}"]`).check();
 }
 
-test("posts share metadata to the mini program host instead of using oa js-sdk", async ({
+test("falls back to image plus copy actions inside mini program webviews", async ({
   page,
 }) => {
   const answers = buildAnswersForPattern("HHH-HMH-MHH-HHH-MHM");
@@ -51,9 +51,19 @@ test("posts share metadata to the mini program host instead of using oa js-sdk",
     });
 
     const calls = {
+      clipboardWrites: [] as Array<string>,
       config: [] as Array<Record<string, unknown>>,
       postMessage: [] as Array<Record<string, unknown>>,
     };
+
+    Object.defineProperty(window.navigator, "clipboard", {
+      configurable: true,
+      value: {
+        async writeText(value: string) {
+          calls.clipboardWrites.push(value);
+        },
+      },
+    });
 
     Object.assign(window, {
       __wxShareCalls: calls,
@@ -76,6 +86,7 @@ test("posts share metadata to the mini program host instead of using oa js-sdk",
   });
 
   await page.goto("/tests/sbti");
+  const origin = new URL(page.url()).origin;
 
   for (const question of questions) {
     const selectedValue = answers[question.id];
@@ -89,36 +100,42 @@ test("posts share metadata to the mini program host instead of using oa js-sdk",
   await page.getByRole("button", { name: "提交并查看结果" }).click();
 
   await expect(page).toHaveURL(/screen=result/);
+  await page.getByRole("button", { name: "分享结果" }).click();
 
-  await expect
-    .poll(async () => {
-      return page.evaluate(() => {
-        const calls = (window as Window & {
-          __wxShareCalls?: {
-            postMessage: Array<Record<string, unknown>>;
-          };
-        }).__wxShareCalls;
-        return calls?.postMessage.length ?? 0;
-      });
-    })
-    .toBe(1);
+  const shareDialog = page.getByRole("dialog", { name: "分享这张结果图" });
+  await expect(shareDialog).toBeVisible();
+  await expect(
+    shareDialog.getByText(
+      "当前在微信小程序内，不能直接调起微信卡片分享。可长按预览图保存，或复制链接和文案后手动转发。",
+    ),
+  ).toBeVisible();
+  await expect(
+    shareDialog.getByRole("button", { name: "复制分享文案" }),
+  ).toBeVisible();
+  await expect(
+    shareDialog.getByRole("button", { name: "复制结果链接" }),
+  ).toBeVisible();
+  await expect(
+    shareDialog.getByRole("button", { name: "长按预览图保存" }),
+  ).toBeVisible();
+
+  await shareDialog.getByRole("button", { name: "复制分享文案" }).click();
+  await shareDialog.getByRole("button", { name: "复制结果链接" }).click();
 
   const wxCalls = await page.evaluate(() => {
-    return (window as Window & {
-      __wxShareCalls: Record<string, Array<Record<string, unknown>>>;
+    return ((window as unknown) as Window & {
+      __wxShareCalls: {
+        clipboardWrites: string[];
+        config: Array<Record<string, unknown>>;
+        postMessage: Array<Record<string, unknown>>;
+      };
     }).__wxShareCalls;
   });
 
   expect(signatureRequestCount).toBe(0);
   expect(wxCalls.config).toHaveLength(0);
-  expect(wxCalls.postMessage[0]).toMatchObject({
-    data: {
-      payload: {
-        link: "http://127.0.0.1:3000/tests/sbti/",
-        pageUrl: "http://127.0.0.1:3000/tests/sbti/?screen=result",
-        title: "我的SBTI 人格测试结果：CTRL（拿捏者）",
-      },
-      type: "sbti-share",
-    },
-  });
+  expect(wxCalls.postMessage).toHaveLength(0);
+  expect(wxCalls.clipboardWrites[0]).toContain("CTRL（拿捏者）");
+  expect(wxCalls.clipboardWrites[0]).toContain("快来看看你的结果");
+  expect(wxCalls.clipboardWrites[1]).toBe(`${origin}/tests/sbti/`);
 });

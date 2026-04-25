@@ -31,6 +31,9 @@ npm run dev
 - 如果前端与签名后端不在同域，可显式指定：
   - `NEXT_PUBLIC_WECHAT_OA_SIGNATURE_ENDPOINT=https://your-api.example.com/common/wx/oa/signature`
 - 推荐生产方案：让 `sbti.orangemust.com` 反向代理 `/common/wx/oa/signature` 到实际后端签名服务，保证浏览器侧保持同域请求，避免 CORS 预检失败
+- 分享能力当前按环境拆分：
+  - 普通微信 H5：支持 OA JS-SDK 卡片分享（好友 / 朋友圈菜单）
+  - 小程序 `web-view`：只提供 H5 内的分享图、复制文案、复制链接，不再假定可直接调起微信卡片分享
 - 也可以替换成自定义 CDN / OSS 域名：
 
 ```bash

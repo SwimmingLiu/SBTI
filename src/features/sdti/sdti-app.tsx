@@ -14,10 +14,10 @@ import {
 import { computeSdtiResult } from "@/features/sdti/engine";
 import {
   isCurrentMiniProgramWebView,
-  postMiniProgramShareMessage,
 } from "@/lib/mini-program";
 import {
   buildResultShareMeta,
+  copyTextToClipboard,
   dataUrlToBlob,
   inlineShareCardImages,
   isNativeShareSupported,
@@ -140,7 +140,7 @@ export function SdtiApp() {
     };
 
     if (isMiniProgramWebView) {
-      setIsWechatShareReady(postMiniProgramShareMessage(shareContent));
+      setIsWechatShareReady(false);
       return;
     }
 
@@ -257,9 +257,7 @@ export function SdtiApp() {
 
     if (isMiniProgramWebView) {
       setShareMessage(
-        isWechatShareReady
-          ? "分享信息已同步给小程序，请点击右上角“…”完成转发；也可以长按图片保存。"
-          : "当前处于微信小程序内，但分享桥接尚未接通，可长按图片保存。",
+        "当前在微信小程序内，不能直接调起微信卡片分享。可长按预览图保存，或复制链接和文案后手动转发。",
       );
       return;
     }
@@ -300,7 +298,27 @@ export function SdtiApp() {
     }
   }
 
-  const shareActionLabel = isMiniProgramWebView ? "去微信菜单分享" : "立即分享";
+  async function handleCopyShareText() {
+    const copied = await copyTextToClipboard(shareMeta.text);
+    setShareMessage(copied ? "分享文案已复制。" : "复制失败，请手动复制文案。");
+  }
+
+  async function handleCopyShareLink() {
+    const shareLink = typeof window === "undefined"
+      ? ""
+      : buildWechatShareLink({
+          origin: window.location.origin,
+          slug: "sdti",
+        });
+    const copied = shareLink ? await copyTextToClipboard(shareLink) : false;
+    setShareMessage(copied ? "结果链接已复制。" : "复制失败，请手动复制当前页面链接。");
+  }
+
+  function handlePreviewSaveHint() {
+    setShareMessage("请长按上方预览图保存到相册后再转发。");
+  }
+
+  const shareActionLabel = isMiniProgramWebView ? "长按预览图保存" : "立即分享";
 
   if (screen === "result") {
     return (
@@ -502,15 +520,53 @@ export function SdtiApp() {
                 </div>
               </div>
 
-              <button
-                className="mt-5 bg-[#222] px-5 py-3 text-sm font-medium text-white"
-                onClick={() => {
-                  void handleNativeShare();
-                }}
-                type="button"
-              >
-                {shareActionLabel}
-              </button>
+              {isMiniProgramWebView ? (
+                <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                  <button
+                    className="bg-[#222] px-5 py-3 text-sm font-medium text-white"
+                    onClick={handlePreviewSaveHint}
+                    type="button"
+                  >
+                    {shareActionLabel}
+                  </button>
+                  <button
+                    className="border border-[#222] bg-white px-5 py-3 text-sm font-medium text-[#222]"
+                    onClick={() => {
+                      void handleCopyShareText();
+                    }}
+                    type="button"
+                  >
+                    复制分享文案
+                  </button>
+                  <button
+                    className="sm:col-span-2 border border-[#222] bg-white px-5 py-3 text-sm font-medium text-[#222]"
+                    onClick={() => {
+                      void handleCopyShareLink();
+                    }}
+                    type="button"
+                  >
+                    复制结果链接
+                  </button>
+                </div>
+              ) : (
+                <button
+                  className="mt-5 bg-[#222] px-5 py-3 text-sm font-medium text-white"
+                  onClick={() => {
+                    void handleNativeShare();
+                  }}
+                  type="button"
+                >
+                  {shareActionLabel}
+                </button>
+              )}
+
+              <div className="mt-4 rounded-[18px] bg-[#f5f5f5] px-4 py-3 text-sm leading-7 text-[#666]">
+                {isMiniProgramWebView
+                  ? "当前在微信小程序内，不能直接调起微信卡片分享。可长按预览图保存，或复制链接和文案后手动转发。"
+                  : isWechatBrowser()
+                    ? "如果你在微信里，可以点击右上角“…”把结果图分享给朋友或朋友圈；也可以长按预览图保存。"
+                    : "当前浏览器优先走系统分享；如果系统面板没有保存入口，也可以长按预览图保存。"}
+              </div>
 
               {shareMessage ? (
                 <p className="mt-3 text-sm text-[#222]">{shareMessage}</p>
